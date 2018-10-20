@@ -1,6 +1,6 @@
 # 315-game-ABCD
 
-The repository for Rebound, creaed by ABCD for CSCE 315.
+The repository for Rebound, created by ABCD for CSCE 315.
 
 #### No code yet, for the current deliverable
 
