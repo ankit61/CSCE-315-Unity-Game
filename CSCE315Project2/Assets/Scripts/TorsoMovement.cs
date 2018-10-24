@@ -32,7 +32,6 @@ public class TorsoMovement : MonoBehaviour {
             Debug.Log("Jumping");
             gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(0.0f, 20000.0f));
             //gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
-            //swampSound.Play();
         }
 
         if (Input.GetKeyDown("c"))
@@ -40,7 +39,6 @@ public class TorsoMovement : MonoBehaviour {
             Debug.Log("Ragdolling");
             gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(-20000.0f, 200.0f));
             gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
-            //swampSound.Play();
         }
     }
 }
