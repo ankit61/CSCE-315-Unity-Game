@@ -15,8 +15,8 @@ You will also need to open the `index.html` file on your own in the browser (ser
 Install docker (this is distro dependant). Navigate to the `./docker` folder and run this command, assuming you have the proper permissions.
 
 ```
-docker-compose build
-docker-compose up
+$ docker-compose build
+$ docker-compose up
 ```
 
 If you want it to run in the background (docker does not run in the background normally, it needs a flag)
@@ -29,7 +29,7 @@ $ docker-compose up -d
 To kill the background docker processes
 
 ```
-docker stop $(docker ps -aq)
+$ docker stop $(docker ps -aq)
 ```
 
 Note that this docker config also supports nginx, so simply navigate to localhost:8080 to get the full experience (no need to load the file yourself)
