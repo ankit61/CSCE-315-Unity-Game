@@ -6,6 +6,8 @@ TagManager:
   tags:
   - RightLowerArm
   - Torso
+  - Sand
+  - Planet
   layers:
   - Default
   - TransparentFX

@@ -17,5 +17,6 @@ public class CollisionDetector : MonoBehaviour {
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.Log("Collision Detected!!!!!. Velocity: " + collision.relativeVelocity.ToString());
+        Debug.Log("Collision with object with Tag: " + collision.gameObject.tag.ToString());
     }
 }
