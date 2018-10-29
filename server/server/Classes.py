@@ -129,6 +129,10 @@ class Server():
         Server.rooms[Room.meta, path]["count"] -= 1
         return {"count": Server.rooms[Room.meta, path]["count"]}
 
+    @staticmethod
+    async def ping(websocket, path):
+        return {"message" : "Ping Success: " + str(websocket.__hash__())}
+
 
     @staticmethod 
     async def parse_JSON(websocket, path, message):
@@ -168,7 +172,8 @@ class Server():
     rooms = UserIndex() 
     actionmap = {
         "increment": lambda websocket, path: Server.increment(websocket, path),
-        "decrement": lambda websocket, path: Server.decrement(websocket, path)
+        "decrement": lambda websocket, path: Server.decrement(websocket, path),
+        "ping" : lambda websocket, path: Server.ping(websocket, path)
     }
 
 
