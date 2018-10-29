@@ -2,132 +2,106 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-enum PlayerState {IdleState, PunchState};
+namespace Rebound
+{
 
-public class BlobController : MonoBehaviour {
+    enum PlayerState { IdleState, PunchState };
 
-    public Animator playerAnimator;
-    public float ragdollTimer = 2.0f;
-    public float speedLimit = 70.0f;
-
-    private float distanceToGround;
-    private Vector2 curVelocity;
-    private float ragdollStartTime;
-
-	// Use this for initialization
-	void Start () {
-        ragdollStartTime = 0.0f;
-        playerAnimator = gameObject.GetComponent<Animator>();
-        distanceToGround = GetComponent<PolygonCollider2D>().bounds.extents.y;
-    }
-
-    void HandleXMovement(){
-
-        if (Input.GetKey("d"))
-        {
-            gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(10.0f, curVelocity.y);
-        }
-        else if (Input.GetKey("a"))
-        {
-            gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(-10.0f, curVelocity.y);
-        }
-    }
-
-    void HandleMovementAndAction()
+    public class BlobController : MonoBehaviour
     {
-        if(gameObject.GetComponent<Rigidbody2D>().constraints == RigidbodyConstraints2D.None){
-            HandleXMovement();
-            if((Time.time - ragdollStartTime) >= ragdollTimer){
-                transform.rotation = Quaternion.identity;
-                gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-            }
-            return;
+
+        public Animator playerAnimator;
+        public float ragdollTimer = 2.0f;
+        public float speedLimit = 70.0f;
+
+        private float distanceToGround;
+        private Vector2 curVelocity;
+        private float ragdollStartTime;
+        private Player m_player;
+
+        // Use this for initialfization
+        void Start()
+        {
+            m_player = gameObject.GetComponent<Player>();
+            ragdollStartTime = 0.0f;
+            playerAnimator = gameObject.GetComponent<Animator>();
+            distanceToGround = GetComponent<PolygonCollider2D>().bounds.extents.y;
+            
         }
 
-        if (Input.GetKeyDown("j")) // Punch
+        void HandleXMovement()
         {
-            float punchVelocity = 0.0f;
-            if (Input.GetKey("a"))
+
+            if (Input.GetKey("d"))
+                m_player.Move(Player.Direction.RIGHT);
+            else if (Input.GetKey("a"))
+                m_player.Move(Player.Direction.LEFT);
+
+        }
+
+        void HandleMovementAndAction()
+        {
+            if (gameObject.GetComponent<Rigidbody2D>().constraints == RigidbodyConstraints2D.None)
             {
-                punchVelocity = -40.0f;
+                HandleXMovement();
+                if ((Time.time - ragdollStartTime) >= ragdollTimer)
+                {
+                    transform.rotation = Quaternion.identity;
+                    gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+                }
+                return;
             }
-            else if (Input.GetKey("d"))
+
+            if (Input.GetKeyDown("j")) // Punch
             {
-                punchVelocity = 40.0f;
+                m_player.Punch();
+                //playerAnimator.SetInteger("Animation State", 1);
+            }
+            else if (Input.GetKeyDown("k")) // Kick
+            {
+                m_player.Kick();
             }
             else
             {
-                punchVelocity = (curVelocity.x >= 0.0f) ? 40.0f : -40.0f;
+                HandleXMovement();
             }
-            playerAnimator.SetInteger("Animation State", 1);
-            gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(punchVelocity, curVelocity.y);
+
+            if (Input.GetKeyDown("s"))
+            {
+                m_player.Move(Player.Direction.DOWN);
+            }
+
+            if (Input.GetKeyDown("space"))
+            {
+                m_player.Jump();
+            }
+
+            if (Input.GetKeyDown("r"))
+            {
+                gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+                ragdollStartTime = Time.time;
+            }
         }
-        else if (Input.GetKeyDown("k")) // Kick
+
+        void GetPlayerState()
         {
-            gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(100000.0f, 0.0f));
+            int curState = playerAnimator.GetInteger("Animation State");
+            //Debug.Log("Player is in state: " + ((PlayerState)curState).ToString());
         }
-        else
+
+        bool IsGrounded()
         {
-            HandleXMovement();
+            bool val = Physics.Raycast(transform.position, Vector2.down, distanceToGround + 0.1f);
+            Debug.Log("Standing : " + val.ToString());
+            return val;
         }
 
-        if (Input.GetKey("s"))
+        // Update is called once per frame
+        void Update()
         {
-            gameObject.GetComponent<Rigidbody2D>().gravityScale = 3.0f;
+            curVelocity = gameObject.GetComponent<Rigidbody2D>().velocity;
+            GetPlayerState();
+            HandleMovementAndAction();
         }
-        else
-        {
-            gameObject.GetComponent<Rigidbody2D>().gravityScale = 1.0f;
-        }
-
-        if (Input.GetKeyDown("space"))
-        {
-            gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(curVelocity.x, 10.0f);
-        }
-
-        if (Input.GetKeyDown("r"))
-        {
-            gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
-            ragdollStartTime = Time.time;
-        }
-    }
-
-    void HandleMovementDirection()
-    {
-        Vector2 curVelocity = gameObject.GetComponent<Rigidbody2D>().velocity;
-        if (curVelocity.x >= 0.0f){
-            gameObject.GetComponent<SpriteRenderer>().flipX = false;
-        }
-        else
-        {
-            gameObject.GetComponent<SpriteRenderer>().flipX = true;
-        }
-    }
-
-    void GetPlayerState(){
-        int curState = playerAnimator.GetInteger("Animation State");
-        //Debug.Log("Player is in state: " + ((PlayerState)curState).ToString());
-    }
-
-    bool IsGrounded(){
-        bool val = Physics.Raycast(transform.position, Vector2.down, distanceToGround + 0.1f);
-        Debug.Log("Standing : " + val.ToString());
-        return val;
-    }
-
-    void CheckSpeedLimit(){
-        float xSpeed = (curVelocity.x > speedLimit) ? speedLimit : curVelocity.x;
-        float ySpeed = (curVelocity.y > speedLimit) ? speedLimit : curVelocity.y;
-        gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(xSpeed, ySpeed);
-    }
-
-// Update is called once per frame
-    void Update()
-    {
-        curVelocity = gameObject.GetComponent<Rigidbody2D>().velocity;
-        CheckSpeedLimit();
-        GetPlayerState();
-        HandleMovementAndAction();
-        HandleMovementDirection();
     }
 }
