@@ -21,8 +21,15 @@ namespace Rebound
 
         private float m_stateStartTime;
 
+        public Dictionary<Player.State, float> STATE_TIMES = new Dictionary<Player.State, float>() {
+                                                            {Player.State.PUNCHING, 1.0f},
+                                                            {Player.State.KICKING, 1.0f},
+                                                        };
+
         public void Move(Direction _direction)
         {
+            if (m_currentState == State.KICKING || m_currentState == State.PUNCHING || m_currentState == State.RAGDOLLING)
+                return;
             ChangeState(State.MOVING);
             switch (_direction)
             {
@@ -43,14 +50,9 @@ namespace Rebound
             }
         }
 
-        public Dictionary<Player.State, float> STATE_TIMES = new Dictionary<Player.State, float>() {
-                                                            {Player.State.PUNCHING, 1.0f},
-                                                            {Player.State.KICKING, 1.0f},
-                                                        };
-
         public void Jump()
         {
-            if (m_currentState == State.JUMPING)
+            if (m_currentState != State.MOVING || m_currentState != State.IDLE)
                 return;
             ChangeState(State.JUMPING);
             AddVelocity(new Vector2(0, Constants.JUMP_SPEED));
@@ -92,7 +94,7 @@ namespace Rebound
                     break;
                 case State.MOVING:
                     m_animator.enabled = true;
-                    m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
+                    //m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
                     break;
                 case State.JUMPING:
                     break;
