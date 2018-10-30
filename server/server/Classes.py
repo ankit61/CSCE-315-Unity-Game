@@ -160,11 +160,16 @@ class Server():
 
     @staticmethod
     def main():
+        addr = "0.0.0.0"
+        port = 8080
+
         start_server = websockets.serve(
             Server.dispatcher, 
-            "0.0.0.0", 
-            8080
+            addr, 
+            port
         )
+        
+        print("Server started on {addr}:{port}".format(addr=addr, port=port))
         asyncio.get_event_loop().run_until_complete(start_server)
         asyncio.get_event_loop().run_forever()
         return
