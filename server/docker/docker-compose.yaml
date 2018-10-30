@@ -39,7 +39,6 @@ services:
       - TEST_PLATFORM=linux
       - WORKDIR=/root/project
     command: /opt/Unity/Editor/Unity -nographics -batchmode -quit -logFile stderr.log -projectPath /root/project -executeMethod WebGLBuilder.build
-    
     ########################### ^ BLACK MAGIC DO NOT TOUCH ^ #############################
 
     #command: /opt/Unity/Editor/Unity -nographics -batchmode -logFile stderr.log -projectPath /root/project -executeMethod WebGLBuilder.build

@@ -92,7 +92,7 @@ namespace Rebound
         bool IsGrounded()
         {
             bool val = Physics.Raycast(transform.position, Vector2.down, distanceToGround + 0.1f);
-            Debug.Log("Standing : " + val.ToString());
+            //Debug.Log("Standing : " + val.ToString());
             return val;
         }
 
