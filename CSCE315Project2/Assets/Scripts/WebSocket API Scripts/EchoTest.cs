@@ -9,8 +9,8 @@ public class ConnectReply{
 
 public class EchoTest : MonoBehaviour
 {
-    public Text statusObj;
-    public Text userIDObj;
+    //public Text statusObj;
+    //public Text userIDObj;
 
     private WebSocket m_socket;
 
@@ -35,8 +35,8 @@ public class EchoTest : MonoBehaviour
                 ConnectReply connectReply = JsonUtility.FromJson<ConnectReply>(reply);
                 if (connectReply.newuser != 0)
                 {
-                    statusObj.text = "Connected!";
-                    userIDObj.text = connectReply.newuser.ToString();
+                    //statusObj.text = "Connected!";
+                    //userIDObj.text = connectReply.newuser.ToString();
                 }
             }
             if (m_socket.error != null)
