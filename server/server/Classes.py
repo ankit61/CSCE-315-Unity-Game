@@ -131,6 +131,7 @@ class Server():
 
     @staticmethod
     async def ping(websocket, path):
+        print("Recieved Ping")
         return {"message" : "Ping Success: " + str(websocket.__hash__())}
 
     @staticmethod
