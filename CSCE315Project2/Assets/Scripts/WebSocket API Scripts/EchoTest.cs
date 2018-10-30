@@ -41,7 +41,7 @@ public class EchoTest : MonoBehaviour
             }
             if (m_socket.error != null)
             {
-                Debug.LogError(m_socket.error);
+                //Debug.Log(m_socket.error);
                 //userIDObj.text = m_socket.error;
             }
             yield return 0;
