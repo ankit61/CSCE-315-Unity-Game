@@ -8,6 +8,7 @@ namespace Rebound {
         public const float JUMP_SPEED = 20f;
         public const float MOVEMENT_SPEED = 10f;
         public const float PUNCH_SPEED = 20f;
+        public const float KICK_SPEED = 30f;
 
         public const string PUNCH_SPRITE_PATH = "Punch";
         public const string KICK_SPRITE_PATH = "Kick";
@@ -16,7 +17,7 @@ namespace Rebound {
         public const int IDLE_STATE_CODE = 1;
 
         public const float PLAYER_MASS = 5.0f;
-        public const float PUNCH_MASS = 100.0f;
+        public const float PUNCH_MASS = 1000.0f;
         public const float KICK_MASS = 12.0f;
 
     }
