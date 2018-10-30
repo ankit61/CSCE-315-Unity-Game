@@ -3,30 +3,35 @@ using UnityEngine.UI;
 using System.Collections;
 using System;
 
+public class ConnectReply{
+    public long newuser = 0;
+}
+
 public class EchoTest : MonoBehaviour
 {
     public Text statusObj;
     public Text userIDObj;
-    // Use this for initialization
+    // Use this for initialization 206.189.78.132
     IEnumerator Start()
     {
-        WebSocket w = new WebSocket(new Uri("ws://localhost:8080/AAAAA"));
+        WebSocket w = new WebSocket(new Uri("ws://206.189.78.132:8080/AAAAA"));
         yield return StartCoroutine(w.Connect());
         string connectStr = "{\"action\" : [], \"data\" : {} }";
         string pingStr = "{\"action\" : [\"ping\"], \"data\" : {} }";
         w.SendString(connectStr);
-        statusObj.text = "Connected!";
         long i = 0;
         while (true)
         {
             string reply = w.RecvString();
+            //userIDObj.text = reply;
             if (reply != null)
             {
-                int newUserIndex = reply.IndexOf("newuser");
-                if (newUserIndex != -1){
+                statusObj.text = "Connected!";
+                ConnectReply connectReply = JsonUtility.FromJson<ConnectReply>(reply);
+                if(connectReply.newuser != 0){
                     Debug.Log(reply);
-                    userIDObj.text = reply.Substring(newUserIndex + 10, reply.Length - newUserIndex -11);
-                    Debug.Log(reply.Substring(newUserIndex + 10, reply.Length - newUserIndex - 11));
+                    Debug.Log("Found Reply NewUser: " + connectReply.newuser.ToString());
+                    userIDObj.text = connectReply.newuser.ToString();
                 }
                 w.SendString(pingStr);
             }
