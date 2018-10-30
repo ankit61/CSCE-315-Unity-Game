@@ -13,11 +13,13 @@ namespace Rebound
         public Animator playerAnimator;
         public float ragdollTimer = 2.0f;
         public float speedLimit = 70.0f;
+        public GameObject m_websocketHandler;
 
         private float distanceToGround;
         private Vector2 curVelocity;
         private float ragdollStartTime;
         private Player m_player;
+        private EchoTest m_apiHandler;
 
         // Use this for initialfization
         void Start()
@@ -26,7 +28,10 @@ namespace Rebound
             ragdollStartTime = 0.0f;
             playerAnimator = gameObject.GetComponent<Animator>();
             distanceToGround = GetComponent<PolygonCollider2D>().bounds.extents.y;
-            
+            m_apiHandler = m_websocketHandler.GetComponent<EchoTest>();
+            if(m_apiHandler == null){
+                Debug.LogError("Websocker API Handler for player has not been initialized");
+            }
         }
 
         void HandleXMovement()
@@ -54,12 +59,15 @@ namespace Rebound
 
             if (Input.GetKeyDown("j")) // Punch
             {
+
                 m_player.Punch();
-                //playerAnimator.SetInteger("Animation State", 1);
+                StartCoroutine(m_apiHandler.BroadcastAction("Punch"));
+;                //playerAnimator.SetInteger("Animation State", 1);
             }
             else if (Input.GetKeyDown("k")) // Kick
             {
                 m_player.Kick();
+                StartCoroutine(m_apiHandler.BroadcastAction("Kick"));
             }
             else
             {
@@ -74,6 +82,7 @@ namespace Rebound
             if (Input.GetKeyDown("space"))
             {
                 m_player.Jump();
+                StartCoroutine(m_apiHandler.BroadcastAction("Jump"));
             }
 
             if (Input.GetKeyDown("r"))
@@ -92,7 +101,7 @@ namespace Rebound
         bool IsGrounded()
         {
             bool val = Physics.Raycast(transform.position, Vector2.down, distanceToGround + 0.1f);
-            Debug.Log("Standing : " + val.ToString());
+            //Debug.Log("Standing : " + val.ToString());
             return val;
         }
 
