@@ -133,6 +133,10 @@ class Server():
     async def ping(websocket, path):
         return {"message" : "Ping Success: " + str(websocket.__hash__())}
 
+    @staticmethod
+    async def action(websocket, path):
+        return {"actionBy": str(websocket.__hash__())}
+
 
     @staticmethod 
     async def parse_JSON(websocket, path, message):
@@ -178,7 +182,8 @@ class Server():
     actionmap = {
         "increment": lambda websocket, path: Server.increment(websocket, path),
         "decrement": lambda websocket, path: Server.decrement(websocket, path),
-        "ping" : lambda websocket, path: Server.ping(websocket, path)
+        "ping" : lambda websocket, path: Server.ping(websocket, path),
+        "action" : lambda websocket, path: Server.action(websocket, path)
     }
 
 

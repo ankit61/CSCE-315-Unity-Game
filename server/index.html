@@ -63,12 +63,15 @@
                 websocket.send(JSON.stringify({action: ['decrement']}));
             }
             plus.onclick = function (event) {
-                websocket.send(JSON.stringify({action: ['increment']}));
+                websocket.send(JSON.stringify({action: ['action']}));
             }
             websocket.onmessage = function (event) {
                 data = JSON.parse(event.data);
                 if (data.count !== undefined) {
                     value.textContent = data.count
+                }
+                if (data.actionBy !== undefined) {
+                    console.log(data.actionBy)
                 }
                 if (data.newuser !== undefined) {
                     var messages = document.getElementById('log'),
