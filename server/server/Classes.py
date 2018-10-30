@@ -120,28 +120,33 @@ class Server():
             )    
 
     @staticmethod
-    async def increment(websocket, path):
+    async def increment(websocket, path, message):
         Server.rooms[Room.meta, path]["count"] += 1
         return {"count": Server.rooms[Room.meta, path]["count"]}
 
     @staticmethod
-    async def decrement(websocket, path):
+    async def decrement(websocket, path, message):
         Server.rooms[Room.meta, path]["count"] -= 1
         return {"count": Server.rooms[Room.meta, path]["count"]}
 
     @staticmethod
-    async def ping(websocket, path):
+    async def ping(websocket, path, message):
         return {"message" : "Ping Success: " + str(websocket.__hash__())}
 
     @staticmethod
-    async def action(websocket, path):
-        return {"actionBy": str(websocket.__hash__())}
-
+    async def action(websocket, path, message):
+        actionID = message['data']['actionID']
+        return {
+            "actionBy": {
+                "sockethash": websocket.__hash__(),
+                "actionID": actionID
+            }
+        }
 
     @staticmethod 
     async def parse_JSON(websocket, path, message):
         for action in message['action']:
-            response = await Server.actionmap[action](websocket,path)
+            response = await Server.actionmap[action](websocket, path, message)
             if response: 
                 await Server.notify_users(Server.rooms[Room.player, path], response)
         
@@ -180,10 +185,10 @@ class Server():
 
     rooms = UserIndex() 
     actionmap = {
-        "increment": lambda websocket, path: Server.increment(websocket, path),
-        "decrement": lambda websocket, path: Server.decrement(websocket, path),
-        "ping" : lambda websocket, path: Server.ping(websocket, path),
-        "action" : lambda websocket, path: Server.action(websocket, path)
+        "increment": lambda websocket, path, message: Server.increment(websocket, path, message),
+        "decrement": lambda websocket, path, message: Server.decrement(websocket, path, message),
+        "ping" : lambda websocket, path, message: Server.ping(websocket, path, message),
+        "action" : lambda websocket, path, message: Server.action(websocket, path, message)
     }
 
 

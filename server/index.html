@@ -58,12 +58,12 @@
                 plus = document.querySelector('.plus'),
                 value = document.querySelector('.value'),
                 users = document.querySelector('.users'),
-                websocket = new WebSocket("ws://127.0.0.1:8080/AAAAA");
+                websocket = new WebSocket("ws://0.0.0.0:8080/AAAAA");
             minus.onclick = function (event) {
                 websocket.send(JSON.stringify({action: ['decrement']}));
             }
             plus.onclick = function (event) {
-                websocket.send(JSON.stringify({action: ['action']}));
+                websocket.send(JSON.stringify({action: ['action'], data: {'actionID' : "fake"}}));
             }
             websocket.onmessage = function (event) {
                 data = JSON.parse(event.data);
