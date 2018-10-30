@@ -485,6 +485,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114898348512146404, guid: 3acaa0aa4265244aeb8f8f4506edbd42,
+        type: 2}
+      propertyPath: m_websocketHandler
+      value: 
+      objectReference: {fileID: 1666900230}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3acaa0aa4265244aeb8f8f4506edbd42, type: 2}
   m_IsPrefabAsset: 0
@@ -833,6 +838,7 @@ MonoBehaviour:
   playerAnimator: {fileID: 0}
   ragdollTimer: 4
   speedLimit: 80
+  m_websocketHandler: {fileID: 1666900230}
 --- !u!95 &1723161236
 Animator:
   serializedVersion: 3

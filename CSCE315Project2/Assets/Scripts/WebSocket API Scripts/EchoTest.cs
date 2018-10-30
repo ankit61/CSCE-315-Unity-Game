@@ -22,37 +22,39 @@ public class EchoTest : MonoBehaviour
         yield return StartCoroutine(m_socket.Connect());
         string connectStr = "{\"action\" : [], \"data\" : {} }";
         m_socket.SendString(connectStr);
+        StartCoroutine(StartListener());
+        /*
+        m_socket.Close();
+        */
+    }
+
+    IEnumerator StartListener(){
         while (true)
         {
             string reply = m_socket.RecvString();
             if (reply != null)
             {
-                statusObj.text = "Connected!";
+                Debug.Log(reply);
                 ConnectReply connectReply = JsonUtility.FromJson<ConnectReply>(reply);
                 if (connectReply.newuser != 0)
                 {
-                    Debug.Log(reply);
+                    statusObj.text = "Connected!";
                     userIDObj.text = connectReply.newuser.ToString();
                 }
-                break;
             }
             if (m_socket.error != null)
             {
                 userIDObj.text = m_socket.error;
-                break;
             }
             yield return 0;
         }
-        /*
-        m_socket.Close();
-        */
     }
 
     IEnumerator PingServer()
     {
         string pingStr = "{\"action\" : [\"ping\"], \"data\" : {} }";
         m_socket.SendString(pingStr);
-        while (true)
+        /*while (true)
         {
             string reply = m_socket.RecvString();
             if (reply != null)
@@ -66,14 +68,15 @@ public class EchoTest : MonoBehaviour
                 break;
             }
             yield return 0;
-        }
+        }*/
+        yield return 0;
     }
 
     public IEnumerator BroadcastAction()
     {
         string pingStr = "{\"action\" : [\"action\"], \"data\" : {} }";
         m_socket.SendString(pingStr);
-        while (true)
+        /*while (true)
         {
             string reply = m_socket.RecvString();
             if (reply != null)
@@ -87,6 +90,7 @@ public class EchoTest : MonoBehaviour
                 break;
             }
             yield return 0;
-        }
+        }*/
+        yield return 0;
     }
 }
