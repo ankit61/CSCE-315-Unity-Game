@@ -61,12 +61,13 @@ namespace Rebound
             {
 
                 m_player.Punch();
-                StartCoroutine(m_apiHandler.BroadcastAction());
+                StartCoroutine(m_apiHandler.BroadcastAction("Punch"));
 ;                //playerAnimator.SetInteger("Animation State", 1);
             }
             else if (Input.GetKeyDown("k")) // Kick
             {
                 m_player.Kick();
+                StartCoroutine(m_apiHandler.BroadcastAction("Kick"));
             }
             else
             {
@@ -81,6 +82,7 @@ namespace Rebound
             if (Input.GetKeyDown("space"))
             {
                 m_player.Jump();
+                StartCoroutine(m_apiHandler.BroadcastAction("Jump"));
             }
 
             if (Input.GetKeyDown("r"))

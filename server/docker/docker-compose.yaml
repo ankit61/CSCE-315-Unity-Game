@@ -29,15 +29,12 @@ services:
   unity:
     image: gableroux/unity3d:latest
     volumes: 
-      - ../../CSCE315Project2:/root/project
+      - ../../CSCE315Project2:/root/project/
       - ./unity/Unity_v2018.x.ulf:/root/.local/share/unity3d/Unity/Unity_lic.ulf
     environment:
       - TEST_PLATFORM=linux
       - WORKDIR=/root/project
-    command: /opt/Unity/Editor/Unity -nographics -batchmode -quit -logFile stderr.log -projectPath /root/project -executeMethod WebGLBuilder.build
-    ########################### ^ BLACK MAGIC DO NOT TOUCH ^ #############################
-
-    #command: /opt/Unity/Editor/Unity -nographics -batchmode -logFile stderr.log -projectPath /root/project -executeMethod WebGLBuilder.build
+    command: /opt/Unity/Editor/Unity -nographics -batchmode -quit -logFile stderr.log -projectPath /root/project -executeMethod WebGLBuilder.build && chmod -R 0777 /root/project/build
     #command: xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity -logFile -batchmode -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD"
     #command: xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity -nographics -batchmode -quit -logFile stderr.log -projectPath /root/project -executeMethod WebGLBuilder.build
 
