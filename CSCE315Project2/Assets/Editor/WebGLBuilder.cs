@@ -16,7 +16,7 @@ public class WebGLBuilder : MonoBehaviour {
 			"Assets/Scenes/Ragdoll.unity" 
 		};
 
-        buildPlayerOptions.locationPathName = "builds/WebGL";
+        buildPlayerOptions.locationPathName = "build/WebGL";
         buildPlayerOptions.target = BuildTarget.WebGL;
         buildPlayerOptions.options = BuildOptions.None;
 

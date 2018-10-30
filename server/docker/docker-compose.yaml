@@ -33,7 +33,7 @@ services:
     image: gableroux/unity3d:latest
     volumes: 
       - ../../CSCE315Project2:/root/project
-      - webglbuild:/root/project/builds/
+      - webglbuild:/root/project/build/
       - ./unity/Unity_v2018.x.ulf:/root/.local/share/unity3d/Unity/Unity_lic.ulf
     environment:
       - TEST_PLATFORM=linux
