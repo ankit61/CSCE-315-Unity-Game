@@ -139,6 +139,10 @@ namespace Rebound
 
         private void Draw()
         {
+            //if (gameObject.GetComponent<Rigidbody2D>().velocity.magnitude == 0)
+            //    m_currentState = State.IDLE;
+
+            //Debug.Log(m_currentState);
 
             m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
 
@@ -162,6 +166,7 @@ namespace Rebound
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
                     gameObject.GetComponent<Rigidbody2D>().mass = Constants.PUNCH_MASS;
+                    //Debug.Log(gameObject.GetComponent<SpriteRenderer>().sprite);
                     break;
                 case State.KICKING:
                     break;
