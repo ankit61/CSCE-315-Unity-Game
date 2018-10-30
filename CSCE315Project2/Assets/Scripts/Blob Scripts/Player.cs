@@ -80,7 +80,7 @@ namespace Rebound
             //if (gameObject.GetComponent<Rigidbody2D>().velocity.magnitude == 0)
             //    m_currentState = State.IDLE;
 
-            Debug.Log(m_currentState);
+            //Debug.Log(m_currentState);
 
             m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
 
@@ -99,7 +99,7 @@ namespace Rebound
                 case State.PUNCHING:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.PUNCH_SPRITE_PATH);
-                    Debug.Log(gameObject.GetComponent<SpriteRenderer>().sprite);
+                    //Debug.Log(gameObject.GetComponent<SpriteRenderer>().sprite);
                     break;
                 case State.KICKING:
                     break;
