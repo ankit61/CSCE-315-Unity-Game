@@ -23,9 +23,6 @@ public class EchoTest : MonoBehaviour
         string connectStr = "{\"action\" : [], \"data\" : {} }";
         m_socket.SendString(connectStr);
         StartCoroutine(StartListener());
-        /*
-        m_socket.Close();
-        */
     }
 
     IEnumerator StartListener(){
@@ -44,7 +41,8 @@ public class EchoTest : MonoBehaviour
             }
             if (m_socket.error != null)
             {
-                userIDObj.text = m_socket.error;
+                Debug.LogError(m_socket.error);
+                //userIDObj.text = m_socket.error;
             }
             yield return 0;
         }
@@ -54,43 +52,19 @@ public class EchoTest : MonoBehaviour
     {
         string pingStr = "{\"action\" : [\"ping\"], \"data\" : {} }";
         m_socket.SendString(pingStr);
-        /*while (true)
-        {
-            string reply = m_socket.RecvString();
-            if (reply != null)
-            {
-                Debug.Log(reply);
-                break;
-            }
-            if (m_socket.error != null)
-            {
-                userIDObj.text = m_socket.error;
-                break;
-            }
-            yield return 0;
-        }*/
         yield return 0;
     }
 
-    public IEnumerator BroadcastAction()
+    public IEnumerator BroadcastAction(string actionID = "Basic Action")
     {
-        string pingStr = "{\"action\" : [\"action\"], \"data\" : {} }";
-        m_socket.SendString(pingStr);
-        /*while (true)
-        {
-            string reply = m_socket.RecvString();
-            if (reply != null)
-            {
-                Debug.Log(reply);
-                break;
-            }
-            if (m_socket.error != null)
-            {
-                userIDObj.text = m_socket.error;
-                break;
-            }
-            yield return 0;
-        }*/
+        string actionJSONStr = "{\"action\" : [\"action\"], \"data\" : { \"actionID\" : \"" + actionID + "\"} }";
+        m_socket.SendString(actionJSONStr);
         yield return 0;
     }
+
+    IEnumerator CloseConnection(){
+        StopCoroutine(StartListener());
+        m_socket.Close();
+        yield return 0;
+;    }
 }
