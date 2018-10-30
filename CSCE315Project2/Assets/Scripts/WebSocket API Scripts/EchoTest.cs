@@ -14,7 +14,7 @@ public class EchoTest : MonoBehaviour
     // Use this for initialization 206.189.78.132
     IEnumerator Start()
     {
-        WebSocket w = new WebSocket(new Uri("ws://localhost:8080/AAAAA"));
+        WebSocket w = new WebSocket(new Uri("ws://206.189.78.132:8080/AAAAA"));
         yield return StartCoroutine(w.Connect());
         string connectStr = "{\"action\" : [], \"data\" : {} }";
         string pingStr = "{\"action\" : [\"ping\"], \"data\" : {} }";
