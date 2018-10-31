@@ -38,7 +38,7 @@ services:
     environment:
       - TEST_PLATFORM=linux
       - WORKDIR=/root/project
-    command: /opt/Unity/Editor/Unity -nographics -batchmode -quit -logFile stderr.log -projectPath /root/project -executeMethod WebGLBuilder.build && chmod -R 0777 /root/project/build
+    command: /opt/Unity/Editor/Unity -nographics -batchmode -quit -logFile /root/project/stderr.log -projectPath /root/project -executeMethod WebGLBuilder.build
     #command: xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity -logFile -batchmode -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD"
     #command: xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity -nographics -batchmode -quit -logFile stderr.log -projectPath /root/project -executeMethod WebGLBuilder.build
 
