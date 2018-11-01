@@ -20,6 +20,8 @@ namespace Rebound
     public class Player : MonoBehaviour
     {
 
+        public Transform playerCenter, standingTag;
+
         public enum Direction { LEFT, RIGHT, DOWN, UP }
 
         public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING }
@@ -253,6 +255,9 @@ namespace Rebound
         }
 
         void Update() {
+
+            Debug.DrawLine(playerCenter.position, standingTag.position);
+            m_inAir = !Physics2D.Linecast(playerCenter.position, standingTag.position, 1 << LayerMask.NameToLayer("Solid"));
             ManageState();
             if (gameObject.GetComponent<Rigidbody2D>().velocity.x != 0.0f)
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
@@ -261,7 +266,7 @@ namespace Rebound
         }
 
         void OnCollisionEnter2D(Collision2D _col) {
-            m_inAir = false;
+            //m_inAir = false;
             if (_col.collider.CompareTag("Enemy") || _col.collider.CompareTag("Player")) {
             _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
                 if (m_currentState == State.PUNCHING || m_currentState == State.KICKING)
@@ -271,12 +276,12 @@ namespace Rebound
 
         void OnCollisionStay2D(Collision2D _col)
         {
-            m_inAir = false;
+            //m_inAir = false;
         }
 
         void OnCollisionExit2D(Collision2D _col)
         {
-            m_inAir = true;
+            //m_inAir = true;
         }
 
         public void Hit(ColInfo _colInfo)
