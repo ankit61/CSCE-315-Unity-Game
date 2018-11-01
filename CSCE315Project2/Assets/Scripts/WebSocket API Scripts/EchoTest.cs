@@ -18,7 +18,7 @@ public class EchoTest : MonoBehaviour
     // Use this for initialization
     IEnumerator Start()
     {
-        m_socket = new WebSocket(new Uri("ws://0.0.0.0:8080/AAAAA"));
+        m_socket = new WebSocket(new Uri("ws://206.189.78.132:8080/AAAAA"));
         yield return StartCoroutine(m_socket.Connect());
         string connectStr = "{\"action\" : [], \"data\" : {} }";
         m_socket.SendString(connectStr);
