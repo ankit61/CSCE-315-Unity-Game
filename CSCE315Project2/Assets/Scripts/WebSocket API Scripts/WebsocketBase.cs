@@ -10,9 +10,6 @@ public class ConnectReply
 
 public class WebsocketBase : MonoBehaviour {
 
-    //public Text statusObj;
-    //public Text userIDObj;
-
     private WebSocket m_socket;
 
     // Server IP : 206.189.78.132

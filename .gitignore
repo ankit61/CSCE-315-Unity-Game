@@ -37,3 +37,4 @@ sysinfo.txt
 
 # OSX Things
 *.DS_Store
+.vscode
