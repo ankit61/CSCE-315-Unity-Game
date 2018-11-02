@@ -5,10 +5,7 @@ namespace Rebound
 {
     public class ServerData
     {
-
-        public int m_playerId;
-        public int[] pos;
-
-        
+        public int[] m_position;
+        public int[] m_velocity;
     }
 }
