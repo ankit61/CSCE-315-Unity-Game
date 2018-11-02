@@ -251,7 +251,7 @@ namespace Rebound
         void Start()
         {
             ChangeState(State.IDLE);
-
+            gameObject.GetComponent<Rigidbody2D>().gravityScale = Constants.GRAVITY_SCALE;
         }
 
         void Update() {

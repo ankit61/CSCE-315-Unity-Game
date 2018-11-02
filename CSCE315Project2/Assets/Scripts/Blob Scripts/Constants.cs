@@ -5,10 +5,11 @@ using UnityEngine;
 namespace Rebound {
     public static class Constants {
         public const float SPEED_LIMIT = 70f;
-        public const float JUMP_SPEED = 20f;
-        public const float MOVEMENT_SPEED = 10f;
+        public const float JUMP_SPEED = 40f;
+        public const float MOVEMENT_SPEED = 20f;
         public const float PUNCH_SPEED = 20f;
         public const float KICK_SPEED = 30f;
+        public const float GRAVITY_SCALE = 4f;
 
         public const string PUNCH_SPRITE_PATH = "Punch";
         public const string KICK_SPRITE_PATH = "Kick";
