@@ -19,12 +19,6 @@ namespace Rebound
         public BroadcastPayload data;
     }
 
-    public class ServerUpdatePayload
-    {
-        public List<string> action = new List<string> { "action" };
-        public BroadcastPayload data;
-    }
-
     public class WebsocketBase : MonoBehaviour
     {
 
@@ -39,9 +33,9 @@ namespace Rebound
         // Use this for initialization
         IEnumerator Start()
         {
-            m_socket = new WebSocket(new Uri("ws://206.189.214.224:8080/AAAAA"));
+            m_socket = new WebSocket(new Uri("ws://206.189.78.132:8080/AAAAA"));
             yield return StartCoroutine(m_socket.Connect());
-            string connectStr = "{\"action\" : [], \"data\" : {} }";
+            string connectStr = "{\"method\" : [], \"data\" : {}}";
             m_socket.SendString(connectStr);
 
             StartCoroutine(StartListener());
@@ -113,7 +107,7 @@ namespace Rebound
                 if ((Time.frameCount % Constants.UPDATE_FREQUENCY) == 0)
                 {
                     BroadcastPayload payloadData = m_curPlayer.GetComponent<Player>().GetInfo();
-                    string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
+                    string payloadJSON = "{ \"method\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
                     m_socket.SendString(payloadJSON);
                 }
                 yield return 0;
@@ -122,7 +116,7 @@ namespace Rebound
 
         IEnumerator PingServer()
         {
-            string pingStr = "{\"action\" : [\"ping\"], \"data\" : {} }";
+            string pingStr = "{\"method\" : [\"ping\"], \"data\" : {} }";
             m_socket.SendString(pingStr);
             yield return 0;
         }
@@ -132,7 +126,7 @@ namespace Rebound
             BroadcastPayload payloadData = m_curPlayer.GetComponent<Player>().GetInfo();
             payloadData.action = actionID;
             Debug.Log("Sending Action : " + actionID);
-            string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
+            string payloadJSON = "{ \"method\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
             m_socket.SendString(payloadJSON);
             yield return 0;
         }

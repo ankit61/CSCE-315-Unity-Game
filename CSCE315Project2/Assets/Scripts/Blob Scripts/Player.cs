@@ -155,8 +155,8 @@ namespace Rebound
 
         public void Jump()
         {
-            Debug.Log(m_currentState);
-            Debug.Log(m_inAir);
+            //Debug.Log(m_currentState);
+            //Debug.Log(m_inAir);
             if (!ChangeState(State.JUMPING) || m_inAir)
                 return;
             StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 

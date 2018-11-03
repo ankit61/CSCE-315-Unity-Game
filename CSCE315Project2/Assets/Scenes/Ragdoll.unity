@@ -215,7 +215,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b06a57c49c868490bacac1507a74d571, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sendUpdateFrequency: 10
   m_curPlayer: {fileID: 0}
 --- !u!4 &471144369
 Transform:
