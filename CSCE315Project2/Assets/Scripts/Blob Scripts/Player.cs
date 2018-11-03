@@ -27,13 +27,13 @@ namespace Rebound
 
         public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING }
 
+        public WebsocketBase m_webAPI;
+
         private State m_currentState;
 
         private Animator m_animator;
 
         private bool m_isFacingLeft = false;
-
-        private WebsocketBase m_webAPI;
 
         private bool m_inAir = false;
 
