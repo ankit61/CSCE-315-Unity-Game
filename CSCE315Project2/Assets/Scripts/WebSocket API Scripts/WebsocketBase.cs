@@ -23,8 +23,6 @@ namespace Rebound
 
         private WebSocket m_socket;
 
-        public int m_sendUpdateFrequency = 10;
-
         public GameObject m_curPlayer;
 
         // Server IP : 206.189.78.132
@@ -74,7 +72,7 @@ namespace Rebound
         {
             while (true)
             {
-                if ((Time.frameCount % m_sendUpdateFrequency) == 0)
+                if ((Time.frameCount % Constants.UPDATE_FREQUENCY) == 0)
                 {
                     PlayerInfo playerInfo = m_curPlayer.GetComponent<Player>().GetInfo();
                     //ServerUpdatePayload payload = new ServerUpdatePayload();
