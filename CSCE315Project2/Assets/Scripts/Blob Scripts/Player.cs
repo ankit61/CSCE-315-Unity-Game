@@ -149,6 +149,10 @@ namespace Rebound
             AddVelocity(new Vector2(xDirection * Constants.KICK_SPEED, 0));
         }
 
+        public Vector2 GetPosition() {
+            return gameObject.GetComponent<Rigidbody2D>().position;
+        }
+
         private void Draw()
         {
             m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);

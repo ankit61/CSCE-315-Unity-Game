@@ -1,11 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Rebound
 {
     public class ServerData
     {
-        public int[] m_position;
-        public int[] m_velocity;
+        public Vector2 position;
+
+        public Vector2 velocity;
+
+        public string action;
+
+        public string[] args;
+
     }
 }
