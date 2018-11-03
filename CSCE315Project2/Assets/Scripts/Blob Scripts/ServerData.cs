@@ -4,17 +4,9 @@ using UnityEngine;
 
 namespace Rebound
 {
-    public class ServerData
+    public class ServerData : PlayerInfo
     {
-        public Vector2 position;
-
-        public Vector2 velocity;
-
-        public Player.State state;
-
         public string action;
-
-        public string[] args;
 
     }
 }

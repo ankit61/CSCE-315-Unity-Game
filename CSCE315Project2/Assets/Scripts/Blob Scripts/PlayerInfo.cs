@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Rebound
 {
-    public struct PlayerInfo
+    public class PlayerInfo
     {
         public Vector2 velocity;
         public Vector2 position;
