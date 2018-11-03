@@ -46,7 +46,15 @@ namespace Rebound {
         //server-client communication
         public const int UPDATE_FREQUENCY = 10;
 
-
+        public static readonly List<Vector2> SPAWN_POINTS =
+            new List<Vector2>(new[]
+        {
+            new Vector2(0.0f, 35.0f),
+            new Vector2(-35.0f, 13.0f),
+            new Vector2(30.0f, 13.0f),
+            new Vector2(30.0f, -3.5f),
+            new Vector2(-35.0f, -3.5f)
+        });
 
     }
 }

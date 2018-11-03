@@ -29,6 +29,7 @@ namespace Rebound
 
         private WebSocket m_socket;
         private long m_curHash = 0;
+        private int m_numSpawned = 0;
 
         public GameObject m_curPlayer;
 
@@ -37,7 +38,7 @@ namespace Rebound
         // Use this for initialization
         IEnumerator Start()
         {
-            m_socket = new WebSocket(new Uri("ws://206.189.78.132:8080/AAAAA"));
+            m_socket = new WebSocket(new Uri("ws://206.189.214.224:8080/AAAAA"));
             yield return StartCoroutine(m_socket.Connect());
             string connectStr = "{\"action\" : [], \"data\" : {} }";
             m_socket.SendString(connectStr);
@@ -136,7 +137,8 @@ namespace Rebound
             else{
                 player.AddComponent<WebController>();
             }
-            player.transform.position = new Vector2(0.0f, 35.0f);
+            m_numSpawned++;
+            player.transform.position = Constants.SPAWN_POINTS[m_numSpawned % Constants.SPAWN_POINTS.Count];
             player.name = playerName;
             player.tag = playerTag;
             return player;
