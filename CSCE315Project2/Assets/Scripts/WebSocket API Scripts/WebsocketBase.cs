@@ -32,6 +32,7 @@ namespace Rebound
 
         public GameObject m_curPlayer;
 
+        // Test Server IP : 206.189.214.224
         // Server IP : 206.189.78.132
         // Use this for initialization
         IEnumerator Start()
@@ -42,7 +43,7 @@ namespace Rebound
             m_socket.SendString(connectStr);
 
             StartCoroutine(StartListener());
-            //StartCoroutine(StartServerUpdator());
+            StartCoroutine(StartServerUpdator());
         }
 
         IEnumerator StartListener()
@@ -52,11 +53,11 @@ namespace Rebound
                 string reply = m_socket.RecvString();
                 if (reply != null)
                 {
-                    Debug.Log(reply);
                     ConnectReply connectReply = JsonUtility.FromJson<ConnectReply>(reply);
                     UpdateReply updateReply = JsonUtility.FromJson<UpdateReply>(reply);
                     if (connectReply.newuser != 0)
                     {
+                        Debug.Log(reply);
                         if(m_curHash == 0){ // When the player has not been initialized
                             Debug.Log("Connected to server!");
                             m_curHash = connectReply.newuser;
@@ -69,7 +70,10 @@ namespace Rebound
                             InstantiatePlayer(connectReply.newuser.ToString(), "Enemy");
                         }
                     }
-                    if (updateReply.sockethash != 0){
+                    if ((updateReply.sockethash != 0) && (updateReply.sockethash != m_curHash)){
+                        Debug.Log(updateReply.sockethash);
+                        Debug.Log(m_curHash);
+                        Debug.Log(reply);
                         GameObject player = GameObject.Find(updateReply.sockethash.ToString());
                         if (player == null){
                             player = InstantiatePlayer(updateReply.sockethash.ToString(), "Enemy");
@@ -95,8 +99,7 @@ namespace Rebound
                     //ServerUpdatePayload payload = new ServerUpdatePayload();
                     //payload.data = playerInfo;
                     string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(playerInfo) + "}";
-                    Debug.Log(payloadJSON);
-                    //m_socket.SendString(payloadJSON);
+                    m_socket.SendString(payloadJSON);
                 }
                 yield return 0;
             }
