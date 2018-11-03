@@ -39,6 +39,8 @@ namespace Rebound{
             GameObject player = (GameObject)Instantiate(Resources.Load("Character"));
             player.AddComponent<PlayerController>();
             player.transform.position = new Vector2(0.0f, 35.0f);
+            player.name = "Player";
+            player.tag = "Player";
             m_curPlayer = player;
 
             StartCoroutine(StartListener());

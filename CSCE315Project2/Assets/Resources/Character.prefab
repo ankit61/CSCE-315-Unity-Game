@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 60979601609518416}
   - component: {fileID: 114557934255022568}
   m_Layer: 0
-  m_Name: Opponent
+  m_Name: Character
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -219,6 +219,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCenter: {fileID: 4383491016955618}
   standingTag: {fileID: 4787128903125218}
+  m_numOpp: 0
 --- !u!212 &212189548087060678
 SpriteRenderer:
   m_ObjectHideFlags: 1
