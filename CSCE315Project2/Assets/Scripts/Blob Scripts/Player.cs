@@ -27,8 +27,6 @@ namespace Rebound
 
         public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING }
 
-        public WebsocketBase m_webAPI;
-
         private State m_currentState;
 
         public string m_name;
@@ -40,6 +38,8 @@ namespace Rebound
         private bool m_inAir = false;
 
         private float m_stateStartTime;
+
+        public WebsocketBase m_webAPI;
 
         private Dictionary<Player.State, float> m_STATE_TIMES = new Dictionary<Player.State, float>() {
                                                             {Player.State.PUNCHING, Constants.PUNCH_TIME},
@@ -158,7 +158,7 @@ namespace Rebound
         {
             if (!ChangeState(State.JUMPING) || m_inAir)
                 return;
-            m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name); 
+            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             AddVelocity(new Vector2(0, Constants.JUMP_SPEED));
         }
 
@@ -168,8 +168,8 @@ namespace Rebound
             if (!ChangeState(State.PUNCHING))
                 return;
             
-            Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().Name); 
-            m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name); 
+            Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().Name);
+            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             float sign = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
 
             if (sign == 0) {
@@ -188,7 +188,7 @@ namespace Rebound
             if (!ChangeState(State.KICKING))
                 return;
 
-            m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name); 
+            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             float xDirection = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
 
             if (xDirection == 0)
@@ -205,7 +205,7 @@ namespace Rebound
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void Missile()
         {
-            m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name); 
+            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
         }
 
         private void Draw()

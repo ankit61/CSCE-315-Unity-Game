@@ -49,12 +49,7 @@ namespace Rebound {
         public static readonly float CORRECTION_THRESHOLD = 2;
 
         //server-client communication
-<<<<<<< HEAD
         public static readonly int UPDATE_FREQUENCY = 10;
-
-
-=======
-        public const int UPDATE_FREQUENCY = 5;
 
         public static readonly List<Vector2> SPAWN_POINTS =
             new List<Vector2>(new[]
@@ -65,7 +60,6 @@ namespace Rebound {
             new Vector2(30.0f, -3.5f),
             new Vector2(-35.0f, -3.5f)
         });
->>>>>>> 6a652f3030fb33ec5d43dd55ae29bc587e6d82c5
 
     }
 }
