@@ -44,7 +44,7 @@ namespace Rebound {
         public const float CORRECTION_THRESHOLD = 2;
 
         //server-client communication
-        public const int UPDATE_FREQUENCY = 10;
+        public const int UPDATE_FREQUENCY = 5;
 
         public static readonly List<Vector2> SPAWN_POINTS =
             new List<Vector2>(new[]

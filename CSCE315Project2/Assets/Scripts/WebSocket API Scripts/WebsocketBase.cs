@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Rebound;
+using SimpleJSON;
 
 namespace Rebound
 {
@@ -72,14 +73,18 @@ namespace Rebound
                         }
                     }
                     if ((updateReply.sockethash != 0) && (updateReply.sockethash != m_curHash)){
-                        Debug.Log(updateReply.sockethash);
-                        Debug.Log(m_curHash);
-                        Debug.Log(reply);
+                        var replyJSON = JSON.Parse(reply);
+                        PlayerInfo data = new PlayerInfo
+                        {
+                            position = new Vector2(replyJSON["data"]["position"]["x"].AsFloat, replyJSON["data"]["position"]["y"].AsFloat),
+                            velocity = new Vector2(replyJSON["data"]["velocity"]["x"].AsFloat, replyJSON["data"]["velocity"]["y"].AsFloat),
+                            state = (Player.State)replyJSON["data"]["state"].AsInt
+                        };
                         GameObject player = GameObject.Find(updateReply.sockethash.ToString());
                         if (player == null){
                             player = InstantiatePlayer(updateReply.sockethash.ToString(), "Enemy");
                         }
-                        player.GetComponent<WebController>().UpdateTransform(updateReply.data);
+                        player.GetComponent<WebController>().UpdateTransform(data);
                     }
                 }
                 if (m_socket.error != null)
