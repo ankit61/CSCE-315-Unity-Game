@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Rebound{
+namespace Rebound
+{
     public struct PlayerInfo
     {
         public Vector2 velocity;

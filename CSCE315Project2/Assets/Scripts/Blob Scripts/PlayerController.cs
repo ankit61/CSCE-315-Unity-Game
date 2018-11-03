@@ -9,9 +9,6 @@ namespace Rebound
 
     public class PlayerController : MonoBehaviour
     {
-
-        public GameObject m_websocketHandler;
-
         private Player m_player;
 
         // Use this for initialfization

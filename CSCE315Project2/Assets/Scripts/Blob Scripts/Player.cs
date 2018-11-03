@@ -36,8 +36,6 @@ namespace Rebound
 
         private float m_stateStartTime;
 
-        public int m_numOpp = 0;
-
         private Dictionary<Player.State, float> m_STATE_TIMES = new Dictionary<Player.State, float>() {
                                                             {Player.State.PUNCHING, Constants.PUNCH_TIME},
                                                             {Player.State.KICKING, Constants.KICK_TIME},
@@ -285,6 +283,16 @@ namespace Rebound
             }
         }
 
+        void OnCollisionStay2D(Collision2D _col)
+        {
+            //m_inAir = false;
+        }
+
+        void OnCollisionExit2D(Collision2D _col)
+        {
+            //m_inAir = true;
+        }
+
         public void Hit(ColInfo _colInfo)
         {
             if (_colInfo.state != State.PUNCHING && _colInfo.state != State.KICKING)
@@ -294,7 +302,8 @@ namespace Rebound
             ChangeState(State.RAGDOLLING);
         }
 
-        public PlayerInfo GetInfo(){
+        public PlayerInfo GetInfo()
+        {
             PlayerInfo curInfo = new PlayerInfo
             {
                 velocity = gameObject.GetComponent<Rigidbody2D>().velocity,

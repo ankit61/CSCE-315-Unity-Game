@@ -4,7 +4,8 @@ using UnityEngine;
 using System;
 using Rebound;
 
-namespace Rebound{
+namespace Rebound
+{
 
     public class ConnectReply
     {
@@ -13,7 +14,7 @@ namespace Rebound{
 
     public class ServerUpdatePayload
     {
-        public List<string> action = new List<string>{"action"};
+        public List<string> action = new List<string> { "action" };
         public PlayerInfo data;
     }
 
@@ -71,7 +72,7 @@ namespace Rebound{
 
         IEnumerator StartServerUpdator()
         {
-            while(true)
+            while (true)
             {
                 if ((Time.frameCount % m_sendUpdateFrequency) == 0)
                 {
@@ -82,7 +83,7 @@ namespace Rebound{
                     Debug.Log(payloadJSON);
                     //m_socket.SendString(payloadJSON);
                 }
-                yield return 0; 
+                yield return 0;
             }
         }
 
