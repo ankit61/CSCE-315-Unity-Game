@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 50475722701267914}
   - component: {fileID: 95307110520625626}
   - component: {fileID: 114383082815657610}
+  - component: {fileID: 114193190053043880}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -67,7 +68,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1707441756323758}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.7, y: 28.73, z: 0}
+  m_LocalPosition: {x: 9.5, y: 26.71, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4521958784659152}
@@ -139,6 +140,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114193190053043880
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1707441756323758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c975a527c9aca4618b7c3b63362bbad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_websocketHandler: {fileID: 0}
 --- !u!114 &114383082815657610
 MonoBehaviour:
   m_ObjectHideFlags: 1
