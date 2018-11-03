@@ -158,7 +158,7 @@ namespace Rebound
             player.name = playerName;
             player.tag = playerTag;
             player.GetComponent<Player>().m_webAPI = gameObject.GetComponent<WebsocketBase>();
-            player.GetComponent<Player>().SetName(Constants.PLAYER_NAMES[m_numSpawned % Constants.PLAYER_NAMES.Length]);
+            player.GetComponent<Player>().InitializePlayer(Constants.PLAYER_NAMES[m_numSpawned % Constants.PLAYER_NAMES.Length]);
             m_numSpawned++;
             return player;
         }

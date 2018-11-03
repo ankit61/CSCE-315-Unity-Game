@@ -20,7 +20,7 @@ namespace Rebound {
         public static readonly string JUMP_SPRITE_PATH = "Jump";
 
         //player names
-        public static readonly string[] PLAYER_NAMES = {"Frog", "Pudding", "Ball", "Meanie"};
+        public static readonly string[] PLAYER_NAMES = {"Frog", "Blob", "Ball", "Meanie"};
 
         //codes of different animation states
         public static readonly int EMPTY_STATE_CODE = 0;

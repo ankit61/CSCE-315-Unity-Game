@@ -75,7 +75,7 @@ namespace Rebound
             return curInfo;
         }
 
-        public void SetName(string _name)
+        public void InitializePlayer(string _name)
         {
             bool isFound = false;
             for(int i = 0; i < Constants.PLAYER_NAMES.Length; i++)
@@ -88,6 +88,7 @@ namespace Rebound
                 throw new ArgumentException("Incorrect name passed", "_name");
 
             m_name = _name;
+
 
         }
 
@@ -166,7 +167,6 @@ namespace Rebound
             if (!ChangeState(State.PUNCHING))
                 return;
             
-            Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().Name);
             StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             float sign = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
 
@@ -321,8 +321,10 @@ namespace Rebound
             Debug.DrawLine(playerCenter.position, standingTag.position);
             m_inAir = !Physics2D.Linecast(playerCenter.position, standingTag.position, 1 << LayerMask.NameToLayer("Solid"));
             ManageState();
-            if (gameObject.GetComponent<Rigidbody2D>().velocity.x != 0.0f)
+            if (gameObject.GetComponent<Rigidbody2D>().velocity.x != 0.0f) {
+                Debug.Log(m_name + ": " + gameObject.GetComponent<Rigidbody2D>().velocity.x);
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
+            }
         }
 
         void OnCollisionEnter2D(Collision2D _col) 
