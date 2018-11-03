@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Rebound;
+using SimpleJSON;
 
 namespace Rebound
 {
@@ -15,13 +16,13 @@ namespace Rebound
     public class UpdateReply
     {
         public long sockethash = 0;
-        public PlayerInfo data;
+        public BroadcastPayload data;
     }
 
     public class ServerUpdatePayload
     {
         public List<string> action = new List<string> { "action" };
-        public PlayerInfo data;
+        public BroadcastPayload data;
     }
 
     public class WebsocketBase : MonoBehaviour
@@ -29,6 +30,7 @@ namespace Rebound
 
         private WebSocket m_socket;
         private long m_curHash = 0;
+        private int m_numSpawned = 0;
 
         public GameObject m_curPlayer;
 
@@ -37,7 +39,7 @@ namespace Rebound
         // Use this for initialization
         IEnumerator Start()
         {
-            m_socket = new WebSocket(new Uri("ws://206.189.78.132:8080/AAAAA"));
+            m_socket = new WebSocket(new Uri("ws://206.189.214.224:8080/AAAAA"));
             yield return StartCoroutine(m_socket.Connect());
             string connectStr = "{\"action\" : [], \"data\" : {} }";
             m_socket.SendString(connectStr);
@@ -71,14 +73,26 @@ namespace Rebound
                         }
                     }
                     if ((updateReply.sockethash != 0) && (updateReply.sockethash != m_curHash)){
-                        Debug.Log(updateReply.sockethash);
-                        Debug.Log(m_curHash);
-                        Debug.Log(reply);
+                        var replyJSON = JSON.Parse(reply);
+                        BroadcastPayload data = new BroadcastPayload
+                        {
+                            position = new Vector2(replyJSON["data"]["position"]["x"].AsFloat, replyJSON["data"]["position"]["y"].AsFloat),
+                            velocity = new Vector2(replyJSON["data"]["velocity"]["x"].AsFloat, replyJSON["data"]["velocity"]["y"].AsFloat),
+                            state = (Player.State)replyJSON["data"]["state"].AsInt,
+                            action = replyJSON["data"]["action"].ToString()
+                        };
                         GameObject player = GameObject.Find(updateReply.sockethash.ToString());
                         if (player == null){
                             player = InstantiatePlayer(updateReply.sockethash.ToString(), "Enemy");
                         }
-                        player.GetComponent<WebController>().UpdateTransform(updateReply.data);
+                        if(data.action != null){
+                            Debug.Log("Got action broadcast : " + data.action);
+                            player.GetComponent<WebController>().Act(data);
+                        }
+                        else
+                        {
+                            player.GetComponent<WebController>().UpdateTransform(data);
+                        }
                     }
                 }
                 if (m_socket.error != null)
@@ -95,10 +109,8 @@ namespace Rebound
             {
                 if ((Time.frameCount % Constants.UPDATE_FREQUENCY) == 0)
                 {
-                    PlayerInfo playerInfo = m_curPlayer.GetComponent<Player>().GetInfo();
-                    //ServerUpdatePayload payload = new ServerUpdatePayload();
-                    //payload.data = playerInfo;
-                    string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(playerInfo) + "}";
+                    BroadcastPayload payloadData = m_curPlayer.GetComponent<Player>().GetInfo();
+                    string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
                     m_socket.SendString(payloadJSON);
                 }
                 yield return 0;
@@ -112,10 +124,12 @@ namespace Rebound
             yield return 0;
         }
 
-        public IEnumerator BroadcastAction(string actionID = "Basic Action")
+        public IEnumerator BroadcastAction(string actionID = null)
         {
-            string actionJSONStr = "{\"action\" : [\"action\"], \"data\" : { \"actionID\" : \"" + actionID + "\"} }";
-            m_socket.SendString(actionJSONStr);
+            BroadcastPayload payloadData = m_curPlayer.GetComponent<Player>().GetInfo();
+            payloadData.action = actionID;
+            string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
+            m_socket.SendString(payloadJSON);
             yield return 0;
         }
 
@@ -136,9 +150,10 @@ namespace Rebound
             else{
                 player.AddComponent<WebController>();
             }
-            player.transform.position = new Vector2(0.0f, 35.0f);
+            player.transform.position = Constants.SPAWN_POINTS[m_numSpawned % Constants.SPAWN_POINTS.Count];
             player.name = playerName;
             player.tag = playerTag;
+            m_numSpawned++;
             return player;
         }
     }

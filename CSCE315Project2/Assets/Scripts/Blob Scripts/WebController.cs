@@ -14,13 +14,13 @@ namespace Rebound
             m_player = gameObject.GetComponent<Player>();
         }
 
-        public void Act(ServerData _data) {
+        public void Act(BroadcastPayload _data) {
             Correct(_data.position, _data.velocity);
             if(_data.action != null)
                 m_player.GetType().GetMethod(_data.action).Invoke(m_player, null);
         }
 
-        public void UpdateTransform(PlayerInfo _data)
+        public void UpdateTransform(BroadcastPayload _data)
         {
             m_player.SetPosition(_data.position);
             gameObject.GetComponent<Rigidbody2D>().velocity = _data.velocity;

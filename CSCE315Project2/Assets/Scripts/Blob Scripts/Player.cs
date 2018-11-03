@@ -63,13 +63,14 @@ namespace Rebound
             return m_currentState;
         }
         
-        public PlayerInfo GetInfo()
+        public BroadcastPayload GetInfo()
         {
-            PlayerInfo curInfo = new PlayerInfo
+            BroadcastPayload curInfo = new BroadcastPayload
             {
                 velocity = gameObject.GetComponent<Rigidbody2D>().velocity,
                 position = gameObject.GetComponent<Rigidbody2D>().position,
-                state = m_currentState
+                state = m_currentState,
+                action = "null"
             };
             return curInfo;
         }
