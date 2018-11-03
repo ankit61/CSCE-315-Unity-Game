@@ -137,10 +137,10 @@ namespace Rebound
             else{
                 player.AddComponent<WebController>();
             }
-            m_numSpawned++;
             player.transform.position = Constants.SPAWN_POINTS[m_numSpawned % Constants.SPAWN_POINTS.Count];
             player.name = playerName;
             player.tag = playerTag;
+            m_numSpawned++;
             return player;
         }
     }
