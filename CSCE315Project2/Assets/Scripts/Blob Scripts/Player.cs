@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Rebound
 {
@@ -31,6 +32,8 @@ namespace Rebound
         private Animator m_animator;
 
         private bool m_isFacingLeft = false;
+
+        private WebsocketBase m_webAPI;
 
         private bool m_inAir = false;
 
@@ -73,6 +76,8 @@ namespace Rebound
         {
             m_animator = gameObject.GetComponent<Animator>();
             gameObject.AddComponent<PolygonCollider2D>();
+
+            m_webAPI = new WebsocketBase();
 
             m_STATE_TRANSITIONS[State.IDLE] = new HashSet<State>()
             {
@@ -129,19 +134,22 @@ namespace Rebound
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Jump()
         {
-            Debug.Log(m_inAir);
             if (!ChangeState(State.JUMPING) || m_inAir)
                 return;
-            Debug.Log("here");
+            m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name); 
             AddVelocity(new Vector2(0, Constants.JUMP_SPEED));
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Punch()
         {
             if (!ChangeState(State.PUNCHING))
                 return;
+            
+            m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name); 
             float sign = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
 
             if (sign == 0) {
@@ -153,12 +161,14 @@ namespace Rebound
             AddVelocity(new Vector2(sign * Constants.PUNCH_SPEED, 0));
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Kick()
         {
 
             if (!ChangeState(State.KICKING))
                 return;
 
+            m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name); 
             float xDirection = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
 
             if (xDirection == 0)
@@ -168,13 +178,14 @@ namespace Rebound
                 else
                     xDirection++;
             }
-
+            
             AddVelocity(new Vector2(xDirection * Constants.KICK_SPEED, 0));
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Missile()
         {
-            
+            m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name); 
         }
 
         private void Draw()
@@ -204,7 +215,6 @@ namespace Rebound
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
                     gameObject.GetComponent<Rigidbody2D>().mass = Constants.PUNCH_MASS;
-                    //Debug.Log(gameObject.GetComponent<SpriteRenderer>().sprite);
                     break;
                 case State.KICKING:
                     m_animator.enabled = false;
@@ -293,9 +303,6 @@ namespace Rebound
             ManageState();
             if (gameObject.GetComponent<Rigidbody2D>().velocity.x != 0.0f)
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
-            Debug.Log(gameObject.tag + ": " + m_currentState);
-            Debug.Log(gameObject.GetComponent<Rigidbody2D>().velocity);
-            Debug.Log(gameObject.tag + ": " + m_inAir);
         }
 
         void OnCollisionEnter2D(Collision2D _col) 
