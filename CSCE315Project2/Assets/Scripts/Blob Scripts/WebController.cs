@@ -19,6 +19,12 @@ namespace Rebound
             m_player.GetType().GetMethod(_data.action).Invoke(m_player, null);
         }
 
+        public void UpdateTransform(PlayerInfo _data)
+        {
+            m_player.SetPosition(_data.position);
+            gameObject.GetComponent<Rigidbody2D>().velocity = _data.velocity;
+        }
+
         public void Correct(Vector2 _pos, Vector2 _vel) {
             if((m_player.GetPosition() - _pos).magnitude < Constants.CORRECTION_THRESHOLD)
                 m_player.SetPosition(_pos);
