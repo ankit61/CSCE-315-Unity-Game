@@ -36,6 +36,8 @@ namespace Rebound
 
         private float m_stateStartTime;
 
+        public int m_numOpp = 0;
+
         private Dictionary<Player.State, float> m_STATE_TIMES = new Dictionary<Player.State, float>() {
                                                             {Player.State.PUNCHING, 1.0f},
                                                             {Player.State.KICKING, 1.0f},
@@ -146,11 +148,6 @@ namespace Rebound
 
         private void Draw()
         {
-            //if (gameObject.GetComponent<Rigidbody2D>().velocity.magnitude == 0)
-            //    m_currentState = State.IDLE;
-
-            //Debug.Log(m_currentState);
-
             m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
 
             switch (m_currentState)
@@ -255,33 +252,19 @@ namespace Rebound
         }
 
         void Update() {
-
             Debug.DrawLine(playerCenter.position, standingTag.position);
             m_inAir = !Physics2D.Linecast(playerCenter.position, standingTag.position, 1 << LayerMask.NameToLayer("Solid"));
             ManageState();
             if (gameObject.GetComponent<Rigidbody2D>().velocity.x != 0.0f)
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
-            //Debug.Log(m_inAir);
-            //Debug.Log(m_currentState);
         }
 
         void OnCollisionEnter2D(Collision2D _col) {
-            //m_inAir = false;
             if (_col.collider.CompareTag("Enemy") || _col.collider.CompareTag("Player")) {
             _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
                 if (m_currentState == State.PUNCHING || m_currentState == State.KICKING)
                     gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             }
-        }
-
-        void OnCollisionStay2D(Collision2D _col)
-        {
-            //m_inAir = false;
-        }
-
-        void OnCollisionExit2D(Collision2D _col)
-        {
-            //m_inAir = true;
         }
 
         public void Hit(ColInfo _colInfo)
@@ -290,6 +273,16 @@ namespace Rebound
                 return;
 
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(1.5f * _colInfo.velocity.x, 1.5f * _colInfo.velocity.y);
+        }
+
+        public PlayerInfo GetInfo(){
+            PlayerInfo curInfo = new PlayerInfo
+            {
+                velocity = gameObject.GetComponent<Rigidbody2D>().velocity,
+                position = gameObject.GetComponent<Rigidbody2D>().position,
+                state = m_currentState
+            };
+            return curInfo;
         }
 
     }

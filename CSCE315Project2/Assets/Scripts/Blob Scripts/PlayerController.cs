@@ -19,7 +19,6 @@ namespace Rebound
         private Vector2 curVelocity;
         private float ragdollStartTime;
         private Player m_player;
-        private WebsocketBase m_apiHandler;
 
         // Use this for initialfization
         void Start()
@@ -28,10 +27,6 @@ namespace Rebound
             ragdollStartTime = 0.0f;
             playerAnimator = gameObject.GetComponent<Animator>();
             distanceToGround = GetComponent<PolygonCollider2D>().bounds.extents.y;
-            m_apiHandler = m_websocketHandler.GetComponent<WebsocketBase>();
-            if(m_apiHandler == null){
-                Debug.LogError("Websocker API Handler for player has not been initialized");
-            }
         }
 
         void HandleXMovement()
