@@ -136,12 +136,11 @@ class Server():
 
     @staticmethod
     async def action(websocket, path, message):
-        actionID = message['data']['actionID']
+        #actionID = message['data']['actionID']
+        data = message['data']
         return {
-            "actionBy": {
-                "sockethash": websocket.__hash__(),
-                "actionID": actionID
-            }
+            "sockethash": websocket.__hash__(),
+            "data" : data
         }
 
     @staticmethod 
