@@ -26,7 +26,7 @@ namespace Rebound
 
         public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING }
 
-        private State m_currentState; 
+        private State m_currentState;
 
         private Animator m_animator;
 
@@ -44,6 +44,20 @@ namespace Rebound
 
         private Dictionary<Player.State, HashSet<State> > m_STATE_TRANSITIONS = new Dictionary<State, HashSet<State>>(); //state transition graph
 
+        
+        //Getters and Setters
+        public Vector2 GetPosition() {
+            return gameObject.GetComponent<Rigidbody2D>().position;
+        }
+
+        public void SetPosition(Vector2 _pos) {
+            gameObject.GetComponent<Rigidbody2D>().position = _pos;
+        }
+
+        public Player.State GetState() {
+            return m_currentState;
+        }
+        
         void Awake()
         {
             m_animator = gameObject.GetComponent<Animator>();
@@ -145,10 +159,6 @@ namespace Rebound
             }
 
             AddVelocity(new Vector2(xDirection * Constants.KICK_SPEED, 0));
-        }
-
-        public Vector2 GetPosition() {
-            return gameObject.GetComponent<Rigidbody2D>().position;
         }
 
         private void Draw()

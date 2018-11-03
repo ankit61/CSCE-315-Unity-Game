@@ -40,6 +40,9 @@ namespace Rebound {
         public const float KICK_TIME = 1.0f; 
         public const float RAGDOLL_TIME = 3.0f; 
 
+        //corrections
+        public const float CORRECTION_THRESHOLD = 2;
+
 
 
     }

@@ -10,6 +10,8 @@ namespace Rebound
 
         public Vector2 velocity;
 
+        public Player.State state;
+
         public string action;
 
         public string[] args;
