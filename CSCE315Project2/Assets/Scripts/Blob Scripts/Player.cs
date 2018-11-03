@@ -31,6 +31,8 @@ namespace Rebound
 
         private State m_currentState;
 
+        public string m_name;
+
         private Animator m_animator;
 
         private bool m_isFacingLeft = false;
@@ -71,6 +73,22 @@ namespace Rebound
                 action = "null"
             };
             return curInfo;
+        }
+
+        public void SetName(string _name)
+        {
+            bool isFound = false;
+            for(int i = 0; i < Constants.PLAYER_NAMES.Length; i++)
+                if(_name == Constants.PLAYER_NAMES[i]) {
+                    isFound = true;
+                    break;
+                }
+
+            if(!isFound)
+                throw new ArgumentException("Incorrect name passed", "_name");
+
+            m_name = _name;
+
         }
 
         void Awake()
@@ -150,6 +168,7 @@ namespace Rebound
             if (!ChangeState(State.PUNCHING))
                 return;
             
+            Debug.Log(System.Reflection.MethodBase.GetCurrentMethod().Name); 
             m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name); 
             float sign = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
 
@@ -209,6 +228,8 @@ namespace Rebound
                     m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
                     break;
                 case State.JUMPING:
+                    m_animator.enabled = false;
+                    //gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.JUMP_SPRITE_PATH);
                     break;
                 case State.PUNCHING:
                     m_animator.enabled = false;
@@ -225,6 +246,7 @@ namespace Rebound
                     gameObject.GetComponent<Rigidbody2D>().mass = Constants.KICK_MASS;
                     break;
                 case State.RAGDOLLING:
+                    //gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.RAGDOLL_SPRITE_PATH);
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
                     break;
                 default:
@@ -298,7 +320,6 @@ namespace Rebound
 
         void Update() 
         {
-
             Debug.DrawLine(playerCenter.position, standingTag.position);
             m_inAir = !Physics2D.Linecast(playerCenter.position, standingTag.position, 1 << LayerMask.NameToLayer("Solid"));
             ManageState();
