@@ -14,9 +14,11 @@ namespace Rebound
             m_player = gameObject.GetComponent<Player>();
         }
 
-        public void Act(BroadcastPayload _data) {
+        public void Act(BroadcastPayload _data)
+        {
             Correct(_data.position, _data.velocity);
-            m_player.GetType().GetMethod(_data.action).Invoke(m_player, null);
+            //m_player.GetType().GetMethod(_data.action).Invoke(m_player, null);
+            m_player.SendMessage(_data.action);
         }
 
         public void UpdateTransform(BroadcastPayload _data)
