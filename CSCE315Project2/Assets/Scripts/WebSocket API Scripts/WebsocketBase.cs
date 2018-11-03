@@ -85,7 +85,14 @@ namespace Rebound
                         if (player == null){
                             player = InstantiatePlayer(updateReply.sockethash.ToString(), "Enemy");
                         }
-                        player.GetComponent<WebController>().UpdateTransform(data);
+                        if(data.action != null){
+                            Debug.Log("Got action broadcast : " + data.action);
+                            player.GetComponent<WebController>().Act(data);
+                        }
+                        else
+                        {
+                            player.GetComponent<WebController>().UpdateTransform(data);
+                        }
                     }
                 }
                 if (m_socket.error != null)
@@ -102,10 +109,8 @@ namespace Rebound
             {
                 if ((Time.frameCount % Constants.UPDATE_FREQUENCY) == 0)
                 {
-                    BroadcastPayload playerInfo = m_curPlayer.GetComponent<Player>().GetInfo();
-                    //ServerUpdatePayload payload = new ServerUpdatePayload();
-                    //payload.data = playerInfo;
-                    string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(playerInfo) + "}";
+                    BroadcastPayload payloadData = m_curPlayer.GetComponent<Player>().GetInfo();
+                    string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
                     m_socket.SendString(payloadJSON);
                 }
                 yield return 0;
@@ -119,10 +124,12 @@ namespace Rebound
             yield return 0;
         }
 
-        public IEnumerator BroadcastAction(string actionID = "Basic Action")
+        public IEnumerator BroadcastAction(string actionID = null)
         {
-            string actionJSONStr = "{\"action\" : [\"action\"], \"data\" : { \"actionID\" : \"" + actionID + "\"} }";
-            m_socket.SendString(actionJSONStr);
+            BroadcastPayload payloadData = m_curPlayer.GetComponent<Player>().GetInfo();
+            payloadData.action = actionID;
+            string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
+            m_socket.SendString(payloadJSON);
             yield return 0;
         }
 
