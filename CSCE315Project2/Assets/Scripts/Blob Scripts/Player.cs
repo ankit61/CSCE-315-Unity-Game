@@ -153,7 +153,6 @@ namespace Rebound
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Jump()
         {
             if (!ChangeState(State.JUMPING) || m_inAir)
@@ -162,7 +161,6 @@ namespace Rebound
             AddVelocity(new Vector2(0, Constants.JUMP_SPEED));
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Punch()
         {
             if (!ChangeState(State.PUNCHING))
