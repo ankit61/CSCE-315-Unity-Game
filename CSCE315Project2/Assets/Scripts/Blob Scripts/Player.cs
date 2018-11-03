@@ -120,10 +120,10 @@ namespace Rebound
 
         public void Jump()
         {
-            Debug.Log(m_inAir);
+            //Debug.Log(m_inAir);
             if (!ChangeState(State.JUMPING) || m_inAir)
                 return;
-            Debug.Log("here");
+            //Debug.Log("here");
             AddVelocity(new Vector2(0, Constants.JUMP_SPEED));
         }
 
@@ -277,9 +277,9 @@ namespace Rebound
             ManageState();
             if (gameObject.GetComponent<Rigidbody2D>().velocity.x != 0.0f)
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
-            Debug.Log(gameObject.tag + ": " + m_currentState);
-            Debug.Log(gameObject.GetComponent<Rigidbody2D>().velocity);
-            Debug.Log(gameObject.tag + ": " + m_inAir);
+            //Debug.Log(gameObject.tag + ": " + m_currentState);
+            //Debug.Log(gameObject.GetComponent<Rigidbody2D>().velocity);
+            //Debug.Log(gameObject.tag + ": " + m_inAir);
         }
 
         void OnCollisionEnter2D(Collision2D _col) 

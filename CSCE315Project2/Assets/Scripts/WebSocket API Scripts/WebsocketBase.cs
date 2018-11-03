@@ -12,6 +12,12 @@ namespace Rebound
         public long newuser = 0;
     }
 
+    public class UpdateReply
+    {
+        public long sockethash = 0;
+        public PlayerInfo data;
+    }
+
     public class ServerUpdatePayload
     {
         public List<string> action = new List<string> { "action" };
@@ -22,6 +28,7 @@ namespace Rebound
     {
 
         private WebSocket m_socket;
+        private long m_curHash = 0;
 
         public GameObject m_curPlayer;
 
@@ -33,14 +40,6 @@ namespace Rebound
             yield return StartCoroutine(m_socket.Connect());
             string connectStr = "{\"action\" : [], \"data\" : {} }";
             m_socket.SendString(connectStr);
-
-            // Instantiate Player ---- TODO --- This should be moved to after getting a 'Connected' from the server
-            GameObject player = (GameObject)Instantiate(Resources.Load("Character"));
-            player.AddComponent<PlayerController>();
-            player.transform.position = new Vector2(0.0f, 35.0f);
-            player.name = "Player";
-            player.tag = "Player";
-            m_curPlayer = player;
 
             StartCoroutine(StartListener());
             //StartCoroutine(StartServerUpdator());
@@ -55,9 +54,27 @@ namespace Rebound
                 {
                     Debug.Log(reply);
                     ConnectReply connectReply = JsonUtility.FromJson<ConnectReply>(reply);
+                    UpdateReply updateReply = JsonUtility.FromJson<UpdateReply>(reply);
                     if (connectReply.newuser != 0)
                     {
-                        Debug.Log("New user connected!");
+                        if(m_curHash == 0){ // When the player has not been initialized
+                            Debug.Log("Connected to server!");
+                            m_curHash = connectReply.newuser;
+
+                            // Instantiate Player ---- TODO --- This should be moved to after getting a 'Connected' from the server
+                            GameObject player = InstantiatePlayer("Player", "Player");
+                            m_curPlayer = player;
+                        }
+                        else{
+                            InstantiatePlayer(connectReply.newuser.ToString(), "Enemy");
+                        }
+                    }
+                    if (updateReply.sockethash != 0){
+                        GameObject player = GameObject.Find(updateReply.sockethash.ToString());
+                        if (player == null){
+                            player = InstantiatePlayer(updateReply.sockethash.ToString(), "Enemy");
+                        }
+                        player.GetComponent<WebController>().UpdateTransform(updateReply.data);
                     }
                 }
                 if (m_socket.error != null)
@@ -106,8 +123,21 @@ namespace Rebound
             m_socket.Close();
             yield return 0;
         }
+
+        private GameObject InstantiatePlayer(string playerName, string playerTag){
+            GameObject player = (GameObject)Instantiate(Resources.Load("Character"));
+            if (playerTag == "Player")
+            {
+                player.AddComponent<PlayerController>();
+            }
+            else{
+                player.AddComponent<WebController>();
+            }
+            player.transform.position = new Vector2(0.0f, 35.0f);
+            player.name = playerName;
+            player.tag = playerTag;
+            return player;
+        }
     }
-
-
 }
 
