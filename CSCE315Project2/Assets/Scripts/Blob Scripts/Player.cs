@@ -58,6 +58,17 @@ namespace Rebound
             return m_currentState;
         }
         
+        public PlayerInfo GetInfo()
+        {
+            PlayerInfo curInfo = new PlayerInfo
+            {
+                velocity = gameObject.GetComponent<Rigidbody2D>().velocity,
+                position = gameObject.GetComponent<Rigidbody2D>().position,
+                state = m_currentState
+            };
+            return curInfo;
+        }
+
         void Awake()
         {
             m_animator = gameObject.GetComponent<Animator>();
@@ -159,6 +170,11 @@ namespace Rebound
             }
 
             AddVelocity(new Vector2(xDirection * Constants.KICK_SPEED, 0));
+        }
+
+        public void Missile()
+        {
+            
         }
 
         private void Draw()
@@ -310,17 +326,6 @@ namespace Rebound
 
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(1.5f * _colInfo.velocity.x, 1.5f * _colInfo.velocity.y);
             ChangeState(State.RAGDOLLING);
-        }
-
-        public PlayerInfo GetInfo()
-        {
-            PlayerInfo curInfo = new PlayerInfo
-            {
-                velocity = gameObject.GetComponent<Rigidbody2D>().velocity,
-                position = gameObject.GetComponent<Rigidbody2D>().position,
-                state = m_currentState
-            };
-            return curInfo;
         }
 
     }

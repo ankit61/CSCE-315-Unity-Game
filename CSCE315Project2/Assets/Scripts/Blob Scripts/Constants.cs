@@ -44,7 +44,7 @@ namespace Rebound {
         public const float CORRECTION_THRESHOLD = 2;
 
         //server-client communication
-        public const int UPDATE_FREQUENCY = 10f;
+        public const int UPDATE_FREQUENCY = 10;
 
 
 
