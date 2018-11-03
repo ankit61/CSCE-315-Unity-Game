@@ -10,11 +10,13 @@ namespace Rebound
 
     public class ConnectReply
     {
+        public string method;
         public long newuser = 0;
     }
 
     public class UpdateReply
     {
+        public string method;
         public long sockethash = 0;
         public BroadcastPayload data;
     }
