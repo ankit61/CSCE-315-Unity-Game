@@ -26,7 +26,7 @@ namespace Rebound
 
         public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING }
 
-        private State m_currentState;
+        private State m_currentState; 
 
         private Animator m_animator;
 
@@ -37,15 +37,17 @@ namespace Rebound
         private float m_stateStartTime;
 
         private Dictionary<Player.State, float> m_STATE_TIMES = new Dictionary<Player.State, float>() {
-                                                            {Player.State.PUNCHING, 1.0f},
-                                                            {Player.State.KICKING, 1.0f},
+                                                            {Player.State.PUNCHING, Constants.PUNCH_TIME},
+                                                            {Player.State.KICKING, Constants.KICK_TIME},
+                                                            {Player.State.RAGDOLLING, Constants.RAGDOLL_TIME},
                                                         };
 
-        private Dictionary<Player.State, HashSet<State> > m_STATE_TRANSITIONS = new Dictionary<State, HashSet<State>>();
+        private Dictionary<Player.State, HashSet<State> > m_STATE_TRANSITIONS = new Dictionary<State, HashSet<State>>(); //state transition graph
 
         void Awake()
         {
             m_animator = gameObject.GetComponent<Animator>();
+            gameObject.AddComponent<PolygonCollider2D>();
 
             m_STATE_TRANSITIONS[State.IDLE] = new HashSet<State>()
             {
@@ -104,9 +106,10 @@ namespace Rebound
 
         public void Jump()
         {
+            Debug.Log(m_inAir);
             if (!ChangeState(State.JUMPING) || m_inAir)
                 return;
-            
+            Debug.Log("here");
             AddVelocity(new Vector2(0, Constants.JUMP_SPEED));
         }
 
@@ -146,11 +149,6 @@ namespace Rebound
 
         private void Draw()
         {
-            //if (gameObject.GetComponent<Rigidbody2D>().velocity.magnitude == 0)
-            //    m_currentState = State.IDLE;
-
-            //Debug.Log(m_currentState);
-
             m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
 
             switch (m_currentState)
@@ -159,6 +157,8 @@ namespace Rebound
                     m_animator.enabled = true;
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
+                    gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
+                    gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                     gameObject.GetComponent<Rigidbody2D>().mass = Constants.PLAYER_MASS;
                     m_animator.SetInteger("Animation State", Constants.IDLE_STATE_CODE);
                     break;
@@ -184,6 +184,7 @@ namespace Rebound
                     gameObject.GetComponent<Rigidbody2D>().mass = Constants.KICK_MASS;
                     break;
                 case State.RAGDOLLING:
+                    gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
                     break;
                 default:
                     break;
@@ -193,14 +194,14 @@ namespace Rebound
 
         private void ManageState()
         {
-            if (gameObject.GetComponent<Rigidbody2D>().velocity.magnitude == 0)
+            if (!m_inAir && gameObject.GetComponent<Rigidbody2D>().velocity.x == 0)
                 ChangeState(State.IDLE);
 
-            if (gameObject.GetComponent<Rigidbody2D>().velocity.y != 0)
+            if (m_inAir)
                 ChangeState(State.JUMPING);
         }
 
-        private bool ChangeState()
+        private bool ChangeState() //treated as a callback
         {
             return ChangeState(State.IDLE);
         }
@@ -254,21 +255,25 @@ namespace Rebound
             gameObject.GetComponent<Rigidbody2D>().gravityScale = Constants.GRAVITY_SCALE;
         }
 
-        void Update() {
+        void Update() 
+        {
 
             Debug.DrawLine(playerCenter.position, standingTag.position);
             m_inAir = !Physics2D.Linecast(playerCenter.position, standingTag.position, 1 << LayerMask.NameToLayer("Solid"));
             ManageState();
             if (gameObject.GetComponent<Rigidbody2D>().velocity.x != 0.0f)
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
-            //Debug.Log(m_inAir);
-            //Debug.Log(m_currentState);
+            Debug.Log(gameObject.tag + ": " + m_currentState);
+            Debug.Log(gameObject.GetComponent<Rigidbody2D>().velocity);
+            Debug.Log(gameObject.tag + ": " + m_inAir);
         }
 
-        void OnCollisionEnter2D(Collision2D _col) {
+        void OnCollisionEnter2D(Collision2D _col) 
+        {
             //m_inAir = false;
+
             if (_col.collider.CompareTag("Enemy") || _col.collider.CompareTag("Player")) {
-            _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
+                _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
                 if (m_currentState == State.PUNCHING || m_currentState == State.KICKING)
                     gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             }
@@ -290,6 +295,7 @@ namespace Rebound
                 return;
 
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(1.5f * _colInfo.velocity.x, 1.5f * _colInfo.velocity.y);
+            ChangeState(State.RAGDOLLING);
         }
 
     }
