@@ -57,6 +57,7 @@ namespace Rebound
                 {
                     ConnectReply connectReply = JsonUtility.FromJson<ConnectReply>(reply);
                     UpdateReply updateReply = JsonUtility.FromJson<UpdateReply>(reply);
+                    var replyJSON = JSON.Parse(reply);
                     if (connectReply.newuser != 0)
                     {
                         Debug.Log(reply);
@@ -73,19 +74,18 @@ namespace Rebound
                         }
                     }
                     if ((updateReply.sockethash != 0) && (updateReply.sockethash != m_curHash)){
-                        var replyJSON = JSON.Parse(reply);
                         BroadcastPayload data = new BroadcastPayload
                         {
                             position = new Vector2(replyJSON["data"]["position"]["x"].AsFloat, replyJSON["data"]["position"]["y"].AsFloat),
                             velocity = new Vector2(replyJSON["data"]["velocity"]["x"].AsFloat, replyJSON["data"]["velocity"]["y"].AsFloat),
                             state = (Player.State)replyJSON["data"]["state"].AsInt,
-                            action = replyJSON["data"]["action"].ToString()
+                            action = replyJSON["data"]["action"]
                         };
                         GameObject player = GameObject.Find(updateReply.sockethash.ToString());
                         if (player == null){
                             player = InstantiatePlayer(updateReply.sockethash.ToString(), "Enemy");
                         }
-                        if(data.action != "\"null\""){
+                        if(data.action != "null"){
                             Debug.Log("Got action broadcast : " + data.action);
                             player.GetComponent<WebController>().Act(data);
                         }
@@ -93,6 +93,9 @@ namespace Rebound
                         {
                             player.GetComponent<WebController>().UpdateTransform(data);
                         }
+                    }
+                    if (replyJSON["deaduser"] != null){
+                        Debug.Log(reply);
                     }
                 }
                 if (m_socket.error != null)
