@@ -89,7 +89,6 @@ namespace Rebound
 
             m_name = _name;
 
-
         }
 
         void Awake()
@@ -156,6 +155,8 @@ namespace Rebound
 
         public void Jump()
         {
+            Debug.Log(m_currentState);
+            Debug.Log(m_inAir);
             if (!ChangeState(State.JUMPING) || m_inAir)
                 return;
             StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
@@ -255,7 +256,7 @@ namespace Rebound
 
         private void ManageState()
         {
-            if (!m_inAir && gameObject.GetComponent<Rigidbody2D>().velocity.x == 0)
+            if (!m_inAir && Math.Abs(gameObject.GetComponent<Rigidbody2D>().velocity.x) < Constants.EPSILON)
                 ChangeState(State.IDLE);
 
             if (m_inAir)
@@ -321,8 +322,7 @@ namespace Rebound
             Debug.DrawLine(playerCenter.position, standingTag.position);
             m_inAir = !Physics2D.Linecast(playerCenter.position, standingTag.position, 1 << LayerMask.NameToLayer("Solid"));
             ManageState();
-            if (gameObject.GetComponent<Rigidbody2D>().velocity.x != 0.0f) {
-                Debug.Log(m_name + ": " + gameObject.GetComponent<Rigidbody2D>().velocity.x);
+            if (Math.Abs(gameObject.GetComponent<Rigidbody2D>().velocity.x) > Constants.EPSILON) {
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
             }
         }

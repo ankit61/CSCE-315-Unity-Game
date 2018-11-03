@@ -61,5 +61,8 @@ namespace Rebound {
             new Vector2(-35.0f, -3.5f)
         });
 
+        //miscellaneous
+        public static readonly float EPSILON = 0.001f;
+
     }
 }
