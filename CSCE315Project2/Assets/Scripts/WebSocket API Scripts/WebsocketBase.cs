@@ -16,13 +16,13 @@ namespace Rebound
     public class UpdateReply
     {
         public long sockethash = 0;
-        public PlayerInfo data;
+        public BroadcastPayload data;
     }
 
     public class ServerUpdatePayload
     {
         public List<string> action = new List<string> { "action" };
-        public PlayerInfo data;
+        public BroadcastPayload data;
     }
 
     public class WebsocketBase : MonoBehaviour
@@ -74,11 +74,12 @@ namespace Rebound
                     }
                     if ((updateReply.sockethash != 0) && (updateReply.sockethash != m_curHash)){
                         var replyJSON = JSON.Parse(reply);
-                        PlayerInfo data = new PlayerInfo
+                        BroadcastPayload data = new BroadcastPayload
                         {
                             position = new Vector2(replyJSON["data"]["position"]["x"].AsFloat, replyJSON["data"]["position"]["y"].AsFloat),
                             velocity = new Vector2(replyJSON["data"]["velocity"]["x"].AsFloat, replyJSON["data"]["velocity"]["y"].AsFloat),
-                            state = (Player.State)replyJSON["data"]["state"].AsInt
+                            state = (Player.State)replyJSON["data"]["state"].AsInt,
+                            action = replyJSON["data"]["action"].ToString()
                         };
                         GameObject player = GameObject.Find(updateReply.sockethash.ToString());
                         if (player == null){
@@ -101,7 +102,7 @@ namespace Rebound
             {
                 if ((Time.frameCount % Constants.UPDATE_FREQUENCY) == 0)
                 {
-                    PlayerInfo playerInfo = m_curPlayer.GetComponent<Player>().GetInfo();
+                    BroadcastPayload playerInfo = m_curPlayer.GetComponent<Player>().GetInfo();
                     //ServerUpdatePayload payload = new ServerUpdatePayload();
                     //payload.data = playerInfo;
                     string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(playerInfo) + "}";

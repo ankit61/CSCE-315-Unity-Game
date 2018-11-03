@@ -489,6 +489,11 @@ namespace SimpleJSON
             return !(a == b);
         }
 
+        public static implicit operator global::Rebound.Player.State(JSONNode v)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool Equals(object obj)
         {
             return ReferenceEquals(this, obj);
