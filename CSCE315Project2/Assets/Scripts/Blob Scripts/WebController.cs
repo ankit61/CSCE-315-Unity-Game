@@ -16,8 +16,7 @@ namespace Rebound
 
         public void Act(BroadcastPayload _data) {
             Correct(_data.position, _data.velocity);
-            if(_data.action != null)
-                m_player.GetType().GetMethod(_data.action).Invoke(m_player, null);
+            m_player.GetType().GetMethod(_data.action).Invoke(m_player, null);
         }
 
         public void UpdateTransform(BroadcastPayload _data)

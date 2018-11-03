@@ -85,7 +85,7 @@ namespace Rebound
                         if (player == null){
                             player = InstantiatePlayer(updateReply.sockethash.ToString(), "Enemy");
                         }
-                        if(data.action != null){
+                        if(data.action != "\"null\""){
                             Debug.Log("Got action broadcast : " + data.action);
                             player.GetComponent<WebController>().Act(data);
                         }
@@ -128,6 +128,7 @@ namespace Rebound
         {
             BroadcastPayload payloadData = m_curPlayer.GetComponent<Player>().GetInfo();
             payloadData.action = actionID;
+            Debug.Log("Sending Action : " + actionID);
             string payloadJSON = "{ \"action\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
             m_socket.SendString(payloadJSON);
             yield return 0;
@@ -153,6 +154,8 @@ namespace Rebound
             player.transform.position = Constants.SPAWN_POINTS[m_numSpawned % Constants.SPAWN_POINTS.Count];
             player.name = playerName;
             player.tag = playerTag;
+            player.GetComponent<Player>().m_webAPI = gameObject.GetComponent<WebsocketBase>();
+            player.GetComponent<Player>().SetName(Constants.PLAYER_NAMES[m_numSpawned % Constants.PLAYER_NAMES.Length]);
             m_numSpawned++;
             return player;
         }
