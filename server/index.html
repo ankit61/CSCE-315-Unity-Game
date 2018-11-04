@@ -60,13 +60,14 @@
                 users = document.querySelector('.users'),
                 websocket = new WebSocket("ws://0.0.0.0:8080/AAAAA");
             minus.onclick = function (event) {
-                websocket.send(JSON.stringify({action: ['decrement']}));
+                websocket.send(JSON.stringify({method: ['decrement']}));
             }
             plus.onclick = function (event) {
-                websocket.send(JSON.stringify({action: ['action'], data: {'actionID' : "fake"}}));
+                websocket.send(JSON.stringify({method: ['increment'], data: {'actionID' : "fake"}}));
             }
             websocket.onmessage = function (event) {
                 data = JSON.parse(event.data);
+                console.log(data)
                 if (data.count !== undefined) {
                     value.textContent = data.count
                 }

@@ -4,6 +4,7 @@
 
 from queue import Queue
 from Classes import Server
+from endpoints import start
 
 if __name__ == "__main__":
-    Server.main()
+    start()

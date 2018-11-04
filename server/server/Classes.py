@@ -2,21 +2,20 @@ import threading
 import asyncio
 import websockets
 import sys
-import json
+import json 
+import functools
 
 #unused as of now
 #TODO! Do something with me
 DEFAULT_ROOM_SIZE = 4
 
-class Room():
 
+class Room():
     meta, player = range(2)
-    
-    def __init__(self, path, playerSlots, defaultMetaData={}):
+    def __init__(self, path, defaultMetaData={}):
         self.path = path
         self.metaData = defaultMetaData
         self.playerData = {}
-        self.maxPlayers = playerSlots
 
 class UserIndex():
 
@@ -43,7 +42,10 @@ class UserIndex():
     def __setitem__(self, key, value):
         with self.lock:
             if key[0] == Room.meta:
-                self.d[key[1]] = value
+                if key[1] not in self.d:
+                    self.d[key[1]] = Room(key[1], value)
+                else:
+                    self.d[key[1]].metaData = value 
             elif len(key) == 2:
                 self.d[key[1]].playerData = value
             else:
@@ -60,118 +62,35 @@ class UserIndex():
 
 class Server():  
 
-    @staticmethod
-    async def notify_users(iterable, message):
-        for websocket in iterable:
-            await websocket.send(json.dumps(message))
-
-    @staticmethod
-    async def register(websocket, path):
-        #temporary ID for the purposes of testing
-        userID = websocket.__hash__()
-
-        if path not in Server.rooms:
-            print("room {0} created".format(path))
-            Server.rooms[Room.meta, path] = Room(
-                path, 
-                DEFAULT_ROOM_SIZE,
-                {
-                    "count" : 0,
-                    "userCount" : 0
-                }
-            )
-        
-        if websocket not in Server.rooms[Room.player, path]:
-            print("added user {0} to room {1}".format(websocket, path))
-            Server.rooms[Room.player, path, websocket] = {}
-        
-        Server.rooms[Room.meta, path]["userCount"] += 1
-
-        #something like the user ID will be the value of this in the future, for right now it is unused
-        message = {
-            "newuser" : userID
-        }
-
-        await Server.notify_users(
-            Server.rooms[Room.player, path],
-            message
-        )
-
-    @staticmethod
-    async def unregister(websocket, path):  
-        #temporary ID for the purposes of testing
-        userID = websocket.__hash__()
-
-        print("removed user {0} to room {1}".format(websocket, path))
-        del Server.rooms[Room.player, path, websocket]
-        
-        if Server.rooms[Room.meta, path]["userCount"] == 1:
-            print("room {0} removed".format(path))
-            del Server.rooms[Room.meta, path] 
-        else:
-            #something like the user ID will be the value of this in the future, for right now it is unused
-            message = {
-                "deaduser" : userID
-            }
-
-            await Server.notify_users(
-                Server.rooms[Room.player, path],
-                message
-            )    
-
-    @staticmethod
-    async def increment(websocket, path, message):
-        Server.rooms[Room.meta, path]["count"] += 1
-        return {"count": Server.rooms[Room.meta, path]["count"]}
-
-    @staticmethod
-    async def decrement(websocket, path, message):
-        Server.rooms[Room.meta, path]["count"] -= 1
-        return {"count": Server.rooms[Room.meta, path]["count"]}
-
-    @staticmethod
-    async def ping(websocket, path, message):
-        print(f"Received Ping from {websocket.hash()}")
-        return {"message" : "Ping Success: " + str(websocket.__hash__())}
-
-    @staticmethod
-    async def action(websocket, path, message):
-        actionID = message['data']['actionID']
-        return {
-            "actionBy": {
-                "sockethash": websocket.__hash__(),
-                "actionID": actionID
-            }
-        }
-
-    @staticmethod 
-    async def parse_JSON(websocket, path, message):
-        for action in message['action']:
-            response = await Server.actionmap[action](websocket, path, message)
-            if response: 
-                await Server.notify_users(Server.rooms[Room.player, path], response)
-        
-
+    TOALL, TOSELF, TOOTHERS = range(3)
+    _handlers = {}
+    _rooms = UserIndex()
+    _PersonalClass = object
+    _SharedClass = object
+    _open = []
+    _close = []
+    
     @staticmethod
     async def dispatcher(websocket, path):
-        #print(websocket)
-        #print(path)
-
         path = path[1:]
-        await Server.register(websocket, path)
-        try:
-            #This behaves like a wait function more than a for loop
-            async for message in websocket:
-                # we will also include a path parsing system here
-                # however this is not necessary right now
-                await Server.parse_JSON(websocket, path, json.loads(message))
-        finally:    
-            await Server.unregister(websocket, path)
+        
+        check = await Server.default_register(websocket, path)
+        if check:
+            try:
+                #This behaves like a wait function more than a for loop
+                async for message in websocket:
+                    # we will also include a path parsing system here
+                    # however this is not necessary right now
+                    json_message = json.loads(message)
+                    for purpose in json_message['method']:
+                        await Server.route(purpose, websocket, path, json_message)           
+            finally:    
+                await Server.default_unregister(websocket, path)
 
     @staticmethod
-    def main():
-        addr = "0.0.0.0"
-        port = 8080
+    def start(host, port):
+        addr = str(host)
+        port = int(port)
 
         start_server = websockets.serve(
             Server.dispatcher, 
@@ -184,14 +103,152 @@ class Server():
         asyncio.get_event_loop().run_forever()
         return
 
-    rooms = UserIndex() 
-    actionmap = {
-        "increment": lambda websocket, path, message: Server.increment(websocket, path, message),
-        "decrement": lambda websocket, path, message: Server.decrement(websocket, path, message),
-        "ping" : lambda websocket, path, message: Server.ping(websocket, path, message),
-        "action" : lambda websocket, path, message: Server.action(websocket, path, message)
-    }
+    #uses the request path to distinguish rooms, keeps private and public data about each users
+    #assumes all responses are in JSON 
 
+    #####################default functions##########################
+    @staticmethod
+    async def default_register(websocket, path):
+        
+        #default actions
+        if path not in Server._rooms:
+            print(f"Room {path} created")
+            Server._rooms[Room.meta, path] = Server._SharedClass() 
+        if Server._rooms[Room.meta, path].userCount < DEFAULT_ROOM_SIZE:  
+            Server._rooms[Room.player, path, websocket] = Server._PersonalClass()
+            Server._rooms[Room.meta, path].userCount += 1
+        
+            print(f"player created {websocket.__hash__()}")
+            #custom action
+            for func in Server._open:
+                await func(websocket, path)
+            return True
+        else:
+            return False
+      
+    @staticmethod
+    async def default_unregister(websocket, path):
+        
+        #custom actions
+        print(f"player killed {websocket.__hash__()}")
+        for func in Server._close:
+            await func(websocket, path)
 
+        #default actions
+        Server._rooms[Room.meta, path].userCount -= 1
+        del Server._rooms[Room.player, path, websocket]
+        if Server._rooms[Room.meta, path].userCount == 0:
+            print(f"Room {path} destroyed")
+            del Server._rooms[Room.meta, path]
+        
+        return True
+
+    @staticmethod
+    def fetch_player_data(websocket, path): 
+        return Server._rooms[Room.player, path, websocket]
+    
+    @staticmethod
+    def fetch_player_list(path):
+        return Server._rooms[Room.player, path]
+    
+    @staticmethod
+    def fetch_room_data(path):
+        return Server._rooms[Room.meta, path]
+    
+    @staticmethod
+    async def route(identifier, websocket, path, message):
+        for func in Server._handlers[identifier]:
+            await func(websocket, path, message)
+    
+    @staticmethod
+    async def responseToAll(websocket, path, message):
+        ready = json.dumps(message)
+        for ws in Server._rooms[Room.player, path]:
+            await ws.send(json.dumps(ready))
+    
+    @staticmethod
+    async def responseToSelf(websocket, path, message):
+        ready = json.dumps(message)
+        await websocket.send(json.dumps(ready))
+
+    @staticmethod
+    async def responseToOthers(websocket, path, message):
+        ready = json.dumps(message)
+        for ws in Server._rooms[Room.player, path]:
+            if ws != websocket:
+                await ws.send(json.dumps(ready))
+
+    ########################decorators##############################
+
+    @staticmethod
+    def shareddata(original):
+        oldinit = original.__init__
+
+        def __init__(self):
+            oldinit(self)
+            self.userCount = 0
+
+        original.__init__ = __init__ 
+
+        Server._SharedClass = original
+        return original
+
+    @staticmethod
+    def personaldata(original):
+        Server._PersonalClass = original
+        return original
+
+    @staticmethod
+    def message(identifier, method):
+        def message_decorator(func):
+            @functools.wraps(func)
+            async def message_wrapper(*args, **kwargs):
+                message = func(*args, **kwargs)
+                if method == Server.TOALL:
+                    await Server.responseToAll(args[0], args[1], message)
+                elif method == Server.TOSELF:
+                    await Server.responseToSelf(args[0], args[1], message)
+                elif method == Server.TOOTHERS:
+                    await Server.responseToOthers(args[0], args[1], message)
+            if identifier in Server._handlers:
+                Server._handlers[identifier].append(message_wrapper)
+            else:
+                Server._handlers[identifier] = [message_wrapper]
+            return message_wrapper
+        return message_decorator    
+
+    @staticmethod
+    def register(method):
+        def message_decorator(func):
+            @functools.wraps(func)
+            async def message_wrapper(*args, **kwargs):
+                message = func(*args, **kwargs)
+                if method == Server.TOALL:
+                    await Server.responseToAll(args[0], args[1], message)
+                elif method == Server.TOSELF:
+                    await Server.responseToSelf(args[0], args[1], message)
+                elif method == Server.TOOTHERS:
+                    await Server.responseToOthers(args[0], args[1], message)
+            Server._open.append(message_wrapper)
+            return message_wrapper
+        return message_decorator   
+
+    @staticmethod
+    def unregister(method):
+        def message_decorator(func):
+            @functools.wraps(func)
+            async def message_wrapper(*args, **kwargs):
+                message = func(*args, **kwargs)
+                if method == Server.TOALL:
+                    await Server.responseToAll(args[0], args[1], message)
+                elif method == Server.TOSELF:
+                    await Server.responseToSelf(args[0], args[1], message)
+                elif method == Server.TOOTHERS:
+                    await Server.responseToOthers(args[0], args[1], message)
+            Server._close.append(message_wrapper)
+            return message_wrapper
+        return message_decorator     
+    
+    #######################
     
 
