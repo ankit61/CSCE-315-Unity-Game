@@ -4,11 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - RightLowerArm
-  - Torso
+  - Enemy
   - Sand
   - Planet
-  - Enemy
   layers:
   - Default
   - TransparentFX
