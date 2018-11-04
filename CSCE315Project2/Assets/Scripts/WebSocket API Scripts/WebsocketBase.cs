@@ -1,16 +1,14 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using System;
 
-public class ConnectReply{
+public class ConnectReply
+{
     public long newuser = 0;
 }
 
-public class EchoTest : MonoBehaviour
-{
-    public Text statusObj;
-    public Text userIDObj;
+public class WebsocketBase : MonoBehaviour {
 
     private WebSocket m_socket;
 
@@ -25,7 +23,8 @@ public class EchoTest : MonoBehaviour
         StartCoroutine(StartListener());
     }
 
-    IEnumerator StartListener(){
+    IEnumerator StartListener()
+    {
         while (true)
         {
             string reply = m_socket.RecvString();
@@ -35,14 +34,12 @@ public class EchoTest : MonoBehaviour
                 ConnectReply connectReply = JsonUtility.FromJson<ConnectReply>(reply);
                 if (connectReply.newuser != 0)
                 {
-                    statusObj.text = "Connected!";
-                    userIDObj.text = connectReply.newuser.ToString();
+                    Debug.Log("New user connected!");
                 }
             }
             if (m_socket.error != null)
             {
                 Debug.LogError(m_socket.error);
-                //userIDObj.text = m_socket.error;
             }
             yield return 0;
         }
@@ -62,9 +59,10 @@ public class EchoTest : MonoBehaviour
         yield return 0;
     }
 
-    IEnumerator CloseConnection(){
+    IEnumerator CloseConnection()
+    {
         StopCoroutine(StartListener());
         m_socket.Close();
         yield return 0;
-;    }
+    }
 }
