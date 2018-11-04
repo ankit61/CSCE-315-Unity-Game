@@ -9,9 +9,9 @@ namespace Rebound {
         public static readonly float SPEED_LIMIT = 70f;
         public static readonly float JUMP_SPEED = 40f;
         public static readonly float MOVEMENT_SPEED = 20f;
-        public static readonly float PUNCH_SPEED = 20f;
+        public static readonly float PUNCH_SPEED = 30f;
         public static readonly float KICK_SPEED = 30f;
-        public static readonly float GRAVITY_SCALE = 4f;
+        public static readonly float GRAVITY_SCALE = 5f;
 
         //paths to sprites (relative to Resources)
         public static readonly string PUNCH_SPRITE_PATH = "Punch";
@@ -49,7 +49,7 @@ namespace Rebound {
         public static readonly float CORRECTION_THRESHOLD = 2;
 
         //server-client communication
-        public static readonly int UPDATE_FREQUENCY = 10;
+        public static readonly int UPDATE_FREQUENCY = 5;
 
         public static readonly List<Vector2> SPAWN_POINTS =
             new List<Vector2>(new[]
@@ -63,6 +63,6 @@ namespace Rebound {
 
         //miscellaneous
         public static readonly float EPSILON = 0.001f;
-
+        public static readonly int MAX_PLAYERS = 4;
     }
 }
