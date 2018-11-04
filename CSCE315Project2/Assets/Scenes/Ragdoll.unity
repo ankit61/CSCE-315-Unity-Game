@@ -215,7 +215,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b06a57c49c868490bacac1507a74d571, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sendUpdateFrequency: 10
   m_curPlayer: {fileID: 0}
 --- !u!4 &471144369
 Transform:
@@ -1262,6 +1261,10 @@ Prefab:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1424759984185532, guid: 12cee934bd09a7a46a2f112f8734f128, type: 2}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1958286828434208, guid: 12cee934bd09a7a46a2f112f8734f128, type: 2}
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
