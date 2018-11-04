@@ -21,7 +21,7 @@ namespace Rebound
     public class Player : MonoBehaviour
     {
 
-        public Transform playerCenter, standingTag;
+        public Transform m_playerCenter, m_standingTag, m_standingTag_1, m_standingTag_2;
 
         public enum Direction { LEFT, RIGHT, DOWN, UP }
 
@@ -319,8 +319,7 @@ namespace Rebound
 
         void Update() 
         {
-            Debug.DrawLine(playerCenter.position, standingTag.position);
-            m_inAir = !Physics2D.Linecast(playerCenter.position, standingTag.position, 1 << LayerMask.NameToLayer("Solid"));
+            m_inAir = !GetStanding();
             ManageState();
             if (Math.Abs(gameObject.GetComponent<Rigidbody2D>().velocity.x) > Constants.EPSILON) {
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
@@ -355,6 +354,16 @@ namespace Rebound
 
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(1.5f * _colInfo.velocity.x, 1.5f * _colInfo.velocity.y);
             ChangeState(State.RAGDOLLING);
+        }
+
+        private bool GetStanding(){
+            Debug.DrawLine(m_playerCenter.position, m_standingTag.position);
+            Debug.DrawLine(m_playerCenter.position, m_standingTag_1.position);
+            Debug.DrawLine(m_playerCenter.position, m_standingTag_2.position);
+            bool straightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag.position, 1 << LayerMask.NameToLayer("Solid"));
+            bool diagLeftStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_1.position, 1 << LayerMask.NameToLayer("Solid"));
+            bool diagRightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_2.position, 1 << LayerMask.NameToLayer("Solid"));
+            return straightStanding || diagLeftStanding || diagRightStanding;
         }
 
     }

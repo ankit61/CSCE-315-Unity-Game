@@ -58,10 +58,8 @@ namespace Rebound
                 string reply = m_socket.RecvString();
                 if (reply != null)
                 {
-                    Debug.Log(reply);
                     var replyJSON = JSON.Parse(reply);
                     string method = replyJSON["method"];
-                    Debug.Log(method);
                     if (method == "joininfo")
                     {
                         m_curPlayerSlot = replyJSON["slot"].AsInt;
@@ -107,11 +105,13 @@ namespace Rebound
                             player.GetComponent<WebController>().UpdateTransform(data);
                         }
                     }
-                    if(method == "deaduser"){   
+                    if(method == "deaduser"){
+                        Debug.Log("Got deaduser request");
                         int playerSlot = replyJSON["deaduser"].AsInt;
                         GameObject deadPlayer = playerList[playerSlot];
                         Destroy(deadPlayer);
                         playerList[playerSlot] = (GameObject)Instantiate(Resources.Load("Character"));
+                        playerList[playerSlot].SetActive(false);
                     }
                 }
                 if (m_socket.error != null)
@@ -157,12 +157,10 @@ namespace Rebound
             yield return 0;
         }
 
-        IEnumerator CloseConnection()
-        {
+        public void OnDestroy(){
             StopCoroutine(StartListener());
             StopCoroutine(StartServerUpdator());
             m_socket.Close();
-            yield return 0;
         }
 
         private GameObject InstantiatePlayer(int playerSlot, string playerTag){
