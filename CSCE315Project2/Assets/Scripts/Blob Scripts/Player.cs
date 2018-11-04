@@ -189,6 +189,12 @@ namespace Rebound
 
             StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             float xDirection = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
+            float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
+            float yCorrection = 0;
+            if(yDirection < 0)
+            {
+                yCorrection = -yDirection;
+            }
 
             if (xDirection == 0)
             {
@@ -198,7 +204,7 @@ namespace Rebound
                     xDirection++;
             }
             
-            AddVelocity(new Vector2(xDirection * Constants.KICK_SPEED, 0));
+            AddVelocity(new Vector2(xDirection * Constants.KICK_SPEED, yCorrection + Constants.KICK_SPEED));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -286,28 +292,24 @@ namespace Rebound
             float vx = gameObject.GetComponent<Rigidbody2D>().velocity.x;
             float vy = gameObject.GetComponent<Rigidbody2D>().velocity.y;
 
-            float limit = 0;
+            float xlimit = Constants.MOVEMENT_SPEED;
+            float ylimit = Constants.JUMP_SPEED;
 
             switch(m_currentState)
             {
-                case State.JUMPING:
-                    limit = Constants.JUMP_SPEED;
-                    break;
-                case State.MOVING:
-                    limit = Constants.MOVEMENT_SPEED;
-                    break;
-                case State.IDLE:
+               
                 case State.PUNCHING:
+                    xlimit = Constants.PUNCH_SPEED;
+                    break;
                 case State.KICKING:
-                default:
-                    limit = Constants.SPEED_LIMIT;
+                    xlimit = Constants.KICK_SPEED;
                     break;
             }
 
             vx += _velocity.x;
             vy += _velocity.y;
-            vx = Math.Sign(vx) * Math.Min(limit, Math.Abs(vx));
-            vy = Math.Sign(vy) * Math.Min(limit, Math.Abs(vy));
+            vx = Math.Sign(vx) * Math.Min(xlimit, Math.Abs(vx));
+            vy = Math.Sign(vy) * Math.Min(ylimit, Math.Abs(vy));
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(vx, vy);
         }
 
