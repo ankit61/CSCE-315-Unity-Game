@@ -78,7 +78,8 @@ namespace Rebound
         public void InitializePlayer(string _name)
         {
             bool isFound = false;
-            for(int i = 0; i < Constants.PLAYER_NAMES.Length; i++)
+            gameObject.AddComponent<PolygonCollider2D>();
+            for (int i = 0; i < Constants.PLAYER_NAMES.Length; i++)
                 if(_name == Constants.PLAYER_NAMES[i]) {
                     isFound = true;
                     break;
@@ -94,7 +95,6 @@ namespace Rebound
         void Awake()
         {
             m_animator = gameObject.GetComponent<Animator>();
-            gameObject.AddComponent<PolygonCollider2D>();
 
             m_webAPI = new WebsocketBase();
 

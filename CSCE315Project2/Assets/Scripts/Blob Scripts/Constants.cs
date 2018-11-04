@@ -63,6 +63,6 @@ namespace Rebound {
 
         //miscellaneous
         public static readonly float EPSILON = 0.001f;
-
+        public static readonly int MAX_PLAYERS = 4;
     }
 }
