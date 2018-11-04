@@ -164,19 +164,19 @@ class Server():
     async def responseToAll(websocket, path, message):
         ready = json.dumps(message)
         for ws in Server._rooms[Room.player, path]:
-            await ws.send(json.dumps(ready))
+            await ws.send(ready)
     
     @staticmethod
     async def responseToSelf(websocket, path, message):
         ready = json.dumps(message)
-        await websocket.send(json.dumps(ready))
+        await websocket.send(ready)
 
     @staticmethod
     async def responseToOthers(websocket, path, message):
         ready = json.dumps(message)
         for ws in Server._rooms[Room.player, path]:
             if ws != websocket:
-                await ws.send(json.dumps(ready))
+                await ws.send(ready)
 
     ########################decorators##############################
 
