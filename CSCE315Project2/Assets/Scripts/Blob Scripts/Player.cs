@@ -347,6 +347,7 @@ namespace Rebound
             //m_inAir = false;
 
             if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && (m_currentState == State.PUNCHING || m_currentState == State.KICKING)) {
+                Debug.Log(gameObject.tag + " hits " + _col.collider.tag);
                 _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
                 gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             }

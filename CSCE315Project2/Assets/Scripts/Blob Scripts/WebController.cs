@@ -20,7 +20,6 @@ namespace Rebound
             Correct(_data.position, _data.velocity);
             if(_data.action != "null") 
             {
-                Debug.Log(_data.action.Substring(0, 4));
                 if(_data.action.Substring(0, 4) == "Move")                
                     m_player.SendMessage(_data.action.Substring(0, 4), (Player.Direction)Enum.Parse(typeof(Player.Direction), _data.action.Substring(4, _data.action.Length - 4)));
                 else
@@ -29,8 +28,10 @@ namespace Rebound
         }
 
         public void Correct(Vector2 _pos, Vector2 _vel) {
-            if((m_player.GetPosition() - _pos).magnitude < Constants.CORRECTION_THRESHOLD)
+            if((m_player.GetPosition() - _pos).magnitude > Constants.CORRECTION_THRESHOLD) {
+                Debug.Log("Correcting");
                 m_player.SetPosition(_pos);
+            }
 
             //FIXME: use state and veclocity
 
