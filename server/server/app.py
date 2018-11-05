@@ -1,4 +1,4 @@
-from Classes import UserIndex, Server
+from roomio.structures import Server
 from collections import deque
 import functools
 import json

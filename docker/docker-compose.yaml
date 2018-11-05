@@ -12,7 +12,7 @@ services:
       context: ./websocket-server
       dockerfile: ./dockerfile
     volumes:
-      - ../server:/usr/src/app/server
+      - ../server/server:/usr/src/app/server
     networks:
       - pysock
 
@@ -22,7 +22,7 @@ services:
       - ./nginx-server/nginx.conf:/etc/nginx/conf.d/mysite.template
       - webglbuild:/etc/nginx/html/
     ports:
-      - 8080:8080
+      - 80:80
     command: /bin/bash -c "envsubst '$${API_LOCATION},$${UI_LOCATION}' < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
     networks:
       - pysock
@@ -33,7 +33,7 @@ services:
     image: gableroux/unity3d:latest
     volumes: 
       - webglbuild:/root/project/build/
-      - ../../CSCE315Project2:/root/project/
+      - ../CSCE315Project2:/root/project/
       - ./unity/Unity_v2018.x.ulf:/root/.local/share/unity3d/Unity/Unity_lic.ulf
     environment:
       - TEST_PLATFORM=linux
