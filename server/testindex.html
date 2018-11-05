@@ -58,7 +58,7 @@
                 plus = document.querySelector('.plus'),
                 value = document.querySelector('.value'),
                 users = document.querySelector('.users'),
-                websocket = new WebSocket("ws://0.0.0.0:80/AAAAA");
+                websocket = new WebSocket("ws://localhost:80/AAAAA"); //206.189.78.132
             minus.onclick = function (event) {
                 websocket.send(JSON.stringify({method: ['decrement']}));
             }
