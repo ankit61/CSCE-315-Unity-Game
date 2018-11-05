@@ -27,6 +27,8 @@ namespace Rebound
 
         public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING }
 
+        private bool m_isUserControllable;
+
         private State m_currentState;
 
         public string m_name;
@@ -75,9 +77,10 @@ namespace Rebound
             return curInfo;
         }
 
-        public void InitializePlayer(string _name)
+        public void InitializePlayer(string _name, bool _isUserControllable)
         {
             bool isFound = false;
+            m_isUserControllable = _isUserControllable;
             gameObject.AddComponent<PolygonCollider2D>();
             for (int i = 0; i < Constants.PLAYER_NAMES.Length; i++)
                 if(_name == Constants.PLAYER_NAMES[i]) {
@@ -95,8 +98,6 @@ namespace Rebound
         void Awake()
         {
             m_animator = gameObject.GetComponent<Animator>();
-
-            m_webAPI = new WebsocketBase();
 
             m_STATE_TRANSITIONS[State.IDLE] = new HashSet<State>()
             {
@@ -159,7 +160,8 @@ namespace Rebound
             //Debug.Log(m_inAir);
             if (!ChangeState(State.JUMPING) || m_inAir)
                 return;
-            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
+            if(m_isUserControllable)
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             AddVelocity(new Vector2(0, Constants.JUMP_SPEED));
         }
 
@@ -167,8 +169,9 @@ namespace Rebound
         {
             if (!ChangeState(State.PUNCHING))
                 return;
-            
-            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
+
+            if (m_isUserControllable)
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             float sign = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
 
             if (sign == 0) {
@@ -187,7 +190,8 @@ namespace Rebound
             if (!ChangeState(State.KICKING))
                 return;
 
-            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
+            if (m_isUserControllable)
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             float xDirection = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
             float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
             float yCorrection = 0;
@@ -210,7 +214,8 @@ namespace Rebound
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void Missile()
         {
-            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
+            if (m_isUserControllable)
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
         }
 
         private void Draw()

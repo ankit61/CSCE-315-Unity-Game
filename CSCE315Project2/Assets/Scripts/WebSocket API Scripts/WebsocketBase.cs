@@ -165,10 +165,12 @@ namespace Rebound
 
         private GameObject InstantiatePlayer(int playerSlot, string playerTag){
             GameObject player = playerList[playerSlot];
+            bool userControllable = false;
             if (playerTag == Constants.PLAYER_TAG)
             {
                 Debug.Log("Instantiating main player");
                 player.AddComponent<PlayerController>();
+                userControllable = true;
             }
             else{
                 player.AddComponent<WebController>();
@@ -186,7 +188,7 @@ namespace Rebound
             player.GetComponent<SpriteRenderer>().sprite = sprite;
             player.GetComponent<Animator>().runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(animatorName);
 
-            player.GetComponent<Player>().InitializePlayer(Constants.PLAYER_NAMES[playerSlot % Constants.PLAYER_NAMES.Length]);
+            player.GetComponent<Player>().InitializePlayer(Constants.PLAYER_NAMES[playerSlot % Constants.PLAYER_NAMES.Length], userControllable);
             player.SetActive(true);
             return player;
         }
