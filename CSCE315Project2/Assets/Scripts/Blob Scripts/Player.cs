@@ -39,6 +39,8 @@ namespace Rebound
 
         private bool m_inAir = false;
 
+        private bool m_alive = true;
+
         private float m_stateStartTime;
 
         public WebsocketBase m_webAPI;
@@ -372,6 +374,11 @@ namespace Rebound
             bool diagLeftStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_1.position, 1 << LayerMask.NameToLayer(Constants.MAP_LAYER));
             bool diagRightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_2.position, 1 << LayerMask.NameToLayer(Constants.MAP_LAYER));
             return straightStanding || diagLeftStanding || diagRightStanding;
+        }
+
+        public void Die(){
+            m_alive = false;
+            StartCoroutine(m_webAPI.KillUserPlayer());
         }
 
     }

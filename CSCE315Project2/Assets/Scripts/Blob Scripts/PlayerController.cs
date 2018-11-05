@@ -10,6 +10,7 @@ namespace Rebound
     public class PlayerController : MonoBehaviour
     {
         private Player m_player;
+        private bool m_playerAlive = true;
 
         // Use this for initialfization
         void Start()
@@ -54,10 +55,25 @@ namespace Rebound
             }
         }
 
+        void CheckPlayerAlive(){
+            if (!m_playerAlive)
+                return;
+            float thresholdHeight = Camera.main.orthographicSize * 1f + 1;
+            float thresholdWidth = Camera.main.aspect * thresholdHeight + 1;
+            float curX = m_player.GetComponent<Rigidbody2D>().position.x;
+            float curY = m_player.GetComponent<Rigidbody2D>().position.y;
+            if( (curX > thresholdWidth) || (curX < -thresholdWidth) || (curY < -thresholdHeight)){
+                m_player.Die();
+                Debug.Log("Killing Player");
+                m_playerAlive = false;
+            }
+        }
+
         // Update is called once per frame
         void Update()
         {
             HandleMovementAndAction();
+            CheckPlayerAlive();
         }
     }
 }
