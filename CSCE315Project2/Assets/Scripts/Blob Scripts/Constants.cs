@@ -46,7 +46,7 @@ namespace Rebound {
         public static readonly float RAGDOLL_TIME = 3.0f; 
 
         //corrections
-        public static readonly float CORRECTION_THRESHOLD = 2;
+        public static readonly float CORRECTION_THRESHOLD = 5;
 
         //server-client communication
         public static readonly int UPDATE_FREQUENCY = 5;
