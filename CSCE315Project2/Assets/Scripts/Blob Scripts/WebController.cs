@@ -31,7 +31,6 @@ namespace Rebound
             if((m_player.GetPosition() - _pos).magnitude > Constants.CORRECTION_THRESHOLD) {
                 Debug.Log("Correcting");
                 m_player.SetPosition(_pos);
-                gameObject.GetComponent<Rigidbody2D>().velocity = _vel;
             }
 
             //FIXME: use state and veclocity
