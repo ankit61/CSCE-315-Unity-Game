@@ -139,21 +139,30 @@ namespace Rebound
             {
                 case Direction.LEFT:
                     AddVelocity(new Vector2(-Constants.MOVEMENT_SPEED, 0));
+                    if(m_isUserControllable)
+                        StartCoroutine(m_webAPI.BroadcastAction("MoveLEFT")); 
                     break;
                 case Direction.RIGHT:
                     AddVelocity(new Vector2(Constants.MOVEMENT_SPEED, 0));
+                    if(m_isUserControllable)
+                        StartCoroutine(m_webAPI.BroadcastAction("MoveRIGHT")); 
                     break;
                 case Direction.UP:
                     Jump();
+                    if(m_isUserControllable)
+                        StartCoroutine(m_webAPI.BroadcastAction("MoveUP")); 
                     return;
                 case Direction.DOWN:
                     AddVelocity(new Vector2(0, -Constants.MOVEMENT_SPEED));
+                    if(m_isUserControllable)
+                        StartCoroutine(m_webAPI.BroadcastAction("MoveDOWN")); 
                     break;
                 default:
                     throw new ArgumentException("Invalid direction", "_direction");
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Jump()
         {
             //Debug.Log(m_currentState);
@@ -165,6 +174,7 @@ namespace Rebound
             AddVelocity(new Vector2(0, Constants.JUMP_SPEED));
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Punch()
         {
             if (!ChangeState(State.PUNCHING))
@@ -332,7 +342,6 @@ namespace Rebound
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
             }
         }
-
         void OnCollisionEnter2D(Collision2D _col) 
         {
             //m_inAir = false;

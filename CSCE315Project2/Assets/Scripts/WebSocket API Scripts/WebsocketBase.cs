@@ -92,17 +92,11 @@ namespace Rebound
                         };
                         GameObject player = playerList[playerSlot];
                         if (player.activeSelf == false)
-                        {
                             player = InstantiatePlayer(playerSlot, Constants.ENEMY_TAG);
-                        }
-                        if (data.action != "null")
+                        else
                         {
                             Debug.Log("Got action broadcast : " + data.action);
                             player.GetComponent<WebController>().Act(data);
-                        }
-                        else
-                        {
-                            player.GetComponent<WebController>().UpdateTransform(data);
                         }
                     }
                     if(method == "deaduser"){
