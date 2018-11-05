@@ -321,7 +321,7 @@ namespace Rebound
 
         void Update() 
         {
-            m_inAir = !GetStanding();
+            m_inAir = !IsStanding();
             ManageState();
             if (Math.Abs(gameObject.GetComponent<Rigidbody2D>().velocity.x) > Constants.EPSILON) {
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
@@ -332,10 +332,9 @@ namespace Rebound
         {
             //m_inAir = false;
 
-            if (_col.collider.CompareTag("Enemy") || _col.collider.CompareTag("Player")) {
+            if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && (m_currentState == State.PUNCHING || m_currentState == State.KICKING)) {
                 _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
-                if (m_currentState == State.PUNCHING || m_currentState == State.KICKING)
-                    gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             }
         }
 
@@ -358,13 +357,13 @@ namespace Rebound
             ChangeState(State.RAGDOLLING);
         }
 
-        private bool GetStanding(){
+        private bool IsStanding(){
             Debug.DrawLine(m_playerCenter.position, m_standingTag.position);
             Debug.DrawLine(m_playerCenter.position, m_standingTag_1.position);
             Debug.DrawLine(m_playerCenter.position, m_standingTag_2.position);
-            bool straightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag.position, 1 << LayerMask.NameToLayer("Solid"));
-            bool diagLeftStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_1.position, 1 << LayerMask.NameToLayer("Solid"));
-            bool diagRightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_2.position, 1 << LayerMask.NameToLayer("Solid"));
+            bool straightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag.position, 1 << LayerMask.NameToLayer(Constants.MAP_LAYER));
+            bool diagLeftStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_1.position, 1 << LayerMask.NameToLayer(Constants.MAP_LAYER));
+            bool diagRightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_2.position, 1 << LayerMask.NameToLayer(Constants.MAP_LAYER));
             return straightStanding || diagLeftStanding || diagRightStanding;
         }
 

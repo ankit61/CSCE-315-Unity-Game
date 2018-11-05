@@ -386,7 +386,7 @@ Prefab:
         type: 3}
     - target: {fileID: 1707441756323758, guid: d58ae7d1d84b97a48a3ff0510346460f, type: 2}
       propertyPath: m_TagString
-      value: Enemy
+      value: Undefined
       objectReference: {fileID: 0}
     - target: {fileID: 1707441756323758, guid: d58ae7d1d84b97a48a3ff0510346460f, type: 2}
       propertyPath: m_IsActive
@@ -6842,6 +6842,10 @@ Prefab:
         type: 2}
       propertyPath: m_TileMatrixArray.Array.data[1].m_Data.e30
       value: 1e-45
+      objectReference: {fileID: 0}
+    - target: {fileID: 1958286828434208, guid: 12cee934bd09a7a46a2f112f8734f128, type: 2}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 12cee934bd09a7a46a2f112f8734f128, type: 2}

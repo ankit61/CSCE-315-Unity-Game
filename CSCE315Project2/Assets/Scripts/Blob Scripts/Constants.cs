@@ -64,5 +64,10 @@ namespace Rebound {
         //miscellaneous
         public static readonly float EPSILON = 0.001f;
         public static readonly int MAX_PLAYERS = 4;
+
+        //tags & layers
+        public static readonly string PLAYER_TAG = "Player";
+        public static readonly string ENEMY_TAG = "Enemy";
+        public static readonly string MAP_LAYER = "Solid";
     }
 }

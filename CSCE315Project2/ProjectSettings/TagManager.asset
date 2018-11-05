@@ -4,9 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Undefined
   - Enemy
-  - Sand
-  - Planet
   layers:
   - Default
   - TransparentFX

@@ -63,7 +63,7 @@ namespace Rebound
                     if (method == "joininfo")
                     {
                         m_curPlayerSlot = replyJSON["slot"].AsInt;
-                        m_curPlayer = InstantiatePlayer(m_curPlayerSlot, "Player");
+                        m_curPlayer = InstantiatePlayer(m_curPlayerSlot, Constants.PLAYER_TAG);
                         var registeredPlayerSlots = replyJSON["players"].AsArray;
                         for (int i = 0; i < registeredPlayerSlots.Count; i++)
                         {
@@ -72,13 +72,13 @@ namespace Rebound
                             if (selectedPlayer.activeSelf == false)
                             {
                                 Debug.Log("Instantiating enemy in slot: " + index.ToString());
-                                InstantiatePlayer(index, "Enemy");
+                                InstantiatePlayer(index, Constants.ENEMY_TAG);
                             }
                         }
                     }
                     if (method == "newuser"){
                         int playerSlot = replyJSON["slot"].AsInt;
-                        InstantiatePlayer(playerSlot, "Enemy");
+                        InstantiatePlayer(playerSlot, Constants.ENEMY_TAG);
                     }
                     if (method == "action")
                     {
@@ -93,7 +93,7 @@ namespace Rebound
                         GameObject player = playerList[playerSlot];
                         if (player.activeSelf == false)
                         {
-                            player = InstantiatePlayer(playerSlot, "Enemy");
+                            player = InstantiatePlayer(playerSlot, Constants.ENEMY_TAG);
                         }
                         if (data.action != "null")
                         {
@@ -165,7 +165,7 @@ namespace Rebound
 
         private GameObject InstantiatePlayer(int playerSlot, string playerTag){
             GameObject player = playerList[playerSlot];
-            if (playerTag == "Player")
+            if (playerTag == Constants.PLAYER_TAG)
             {
                 Debug.Log("Instantiating main player");
                 player.AddComponent<PlayerController>();
