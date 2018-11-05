@@ -4,7 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Undefined
+  - Sand
+  - Planet
   - Enemy
   layers:
   - Default

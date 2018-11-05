@@ -338,6 +338,7 @@ namespace Rebound
             //m_inAir = false;
 
             if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && (m_currentState == State.PUNCHING || m_currentState == State.KICKING)) {
+                Debug.Log(gameObject.tag + " hits " + _col.collider.tag);
                 _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
                 gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             }
@@ -359,6 +360,7 @@ namespace Rebound
                 return;
 
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(1.5f * _colInfo.velocity.x, 1.5f * _colInfo.velocity.y);
+            Debug.Log(gameObject.tag + " got velocity of " + gameObject.GetComponent<Rigidbody2D>().velocity);
             ChangeState(State.RAGDOLLING);
         }
 
