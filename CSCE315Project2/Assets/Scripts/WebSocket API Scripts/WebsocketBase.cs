@@ -8,20 +8,6 @@ using SimpleJSON;
 namespace Rebound
 {
 
-    public class ConnectReply
-    {
-        public string method = "";
-        public int slot = -1;
-        public List<int> players;
-    }
-
-    public class UpdateReply
-    {
-        public string method;
-        public long sockethash = 0;
-        public BroadcastPayload data;
-    }
-
     public class WebsocketBase : MonoBehaviour
     {
 
@@ -43,14 +29,13 @@ namespace Rebound
                 m_playerList.Add(playerObj);
             }
             m_socket = new WebSocket(new Uri("ws://206.189.78.132:80/AAAAA"));
+
             yield return StartCoroutine(m_socket.Connect());
             string connectStr = "{\"method\" : [], \"data\" : {}}";
             m_socket.SendString(connectStr);
 
             StartCoroutine(StartListener());
             StartCoroutine(StartServerUpdator());
-            float height = Camera.main.orthographicSize * 2f;
-            float width = height * Camera.main.aspect;
         }
 
         IEnumerator StartListener()
@@ -150,7 +135,7 @@ namespace Rebound
         }
 
         public IEnumerator KillUserPlayer(){
-            m_playerList[m_curPlayerSlot].SetActive(false);
+            m_playerList[m_curPlayerSlot].SetActive(false); // TODO - Despawn the user object if required, just deactivates it for now
             Instantiate(Resources.Load("GameOverText"));
             yield return 0;
         }
