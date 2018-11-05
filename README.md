@@ -2,17 +2,17 @@
 
 The repository for Rebound, created by ABCD for CSCE 315. Written in Unity.
 
-# Compiling and running
+## Compiling and running
 
 This project is written in Unity, and needs Unity to compile and run. You can open the folder in Unity, which will open the project, and then click on run to run the game.
 
-# Website
+## Website
 
 Currently we do not have a domain name, but we are reachable at this IP!
 
 ` 206.189.78.132 `
 
-# Structure
+## Structure
 
 ```
 - CSCE315Project2 : Unity Project Folder
@@ -23,7 +23,7 @@ Currently we do not have a domain name, but we are reachable at this IP!
 - server : Folder containing the websocket server code
 ```
 
-# Contributors
+## Contributors
 
 * Ankit Ramchandani : ankit61@tamu.edu
 * Benton Guess : bguess10@tamu.edu
