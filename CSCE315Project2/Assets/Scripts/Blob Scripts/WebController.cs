@@ -23,8 +23,7 @@ namespace Rebound
         public void UpdateTransform(BroadcastPayload _data)
         {
             m_player.SetPosition(_data.position);
-            //gameObject.GetComponent<Rigidbody2D>().velocity = _data.velocity;
-            Debug.Log(gameObject.tag + "'s velocity reset" + _data.velocity);
+            gameObject.GetComponent<Rigidbody2D>().velocity = _data.velocity;
         }
 
         public void Correct(Vector2 _pos, Vector2 _vel) {
