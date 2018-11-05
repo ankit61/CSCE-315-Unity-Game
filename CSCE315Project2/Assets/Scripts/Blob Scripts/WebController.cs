@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System;
 using UnityEngine;
 
 namespace Rebound
@@ -18,14 +17,13 @@ namespace Rebound
         public void Act(BroadcastPayload _data)
         {
             Correct(_data.position, _data.velocity);
-            if(_data.action != "null") 
-            {
-                Debug.Log(_data.action.Substring(0, 4));
-                if(_data.action.Substring(0, 4) == "Move")                
-                    m_player.SendMessage(_data.action.Substring(0, 4), (Player.Direction)Enum.Parse(typeof(Player.Direction), _data.action.Substring(4, _data.action.Length - 4)));
-                else
-                    m_player.SendMessage(_data.action, 0);
-            }
+            m_player.SendMessage(_data.action, 0);
+        }
+
+        public void UpdateTransform(BroadcastPayload _data)
+        {
+            m_player.SetPosition(_data.position);
+            gameObject.GetComponent<Rigidbody2D>().velocity = _data.velocity;
         }
 
         public void Correct(Vector2 _pos, Vector2 _vel) {
