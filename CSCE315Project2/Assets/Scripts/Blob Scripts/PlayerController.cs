@@ -43,10 +43,14 @@ namespace Rebound
             {
                 HandleXMovement();
             }
-
-            if (Input.GetKeyDown(Constants.DOWN_KEY))
+            if (Input.GetKeyDown(Constants.MISSILE_KEY)) //Missile
             {
-                m_player.Move(Player.Direction.DOWN);
+                m_player.Missile();
+            }
+            else if (Input.GetKeyDown(Constants.ROCK_KEY))
+            {
+                //m_player.Move(Player.Direction.DOWN);
+                m_player.Rock();
             }
 
             if (Input.GetKeyDown(Constants.JUMP_KEY))

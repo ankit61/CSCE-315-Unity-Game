@@ -25,7 +25,7 @@ namespace Rebound
 
         public enum Direction { LEFT, RIGHT, DOWN, UP }
 
-        public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING }
+        public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING, MISSILE, ROCK }
 
         private bool m_isUserControllable;
 
@@ -49,6 +49,7 @@ namespace Rebound
                                                             {Player.State.PUNCHING, Constants.PUNCH_TIME},
                                                             {Player.State.KICKING, Constants.KICK_TIME},
                                                             {Player.State.RAGDOLLING, Constants.RAGDOLL_TIME},
+                                                            {Player.State.MISSILE, Constants.MISSILE_TIME },
                                                         };
 
         private Dictionary<Player.State, HashSet<State> > m_STATE_TRANSITIONS = new Dictionary<State, HashSet<State>>(); //state transition graph
@@ -103,12 +104,12 @@ namespace Rebound
 
             m_STATE_TRANSITIONS[State.IDLE] = new HashSet<State>()
             {
-                State.JUMPING, State.KICKING, State.MOVING, State.PUNCHING, State.RAGDOLLING, State.IDLE
+                State.JUMPING, State.KICKING, State.MOVING, State.PUNCHING, State.RAGDOLLING, State.IDLE, State.MISSILE, State.ROCK
             };
 
             m_STATE_TRANSITIONS[State.MOVING] = new HashSet<State>()
             {
-                State.MOVING, State.JUMPING, State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING
+                State.MOVING, State.JUMPING, State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MISSILE, State.ROCK
             };
 
             m_STATE_TRANSITIONS[State.PUNCHING] = new HashSet<State>()
@@ -121,9 +122,19 @@ namespace Rebound
                 State.IDLE
             };
 
+            m_STATE_TRANSITIONS[State.MISSILE] = new HashSet<State>()
+            {
+                State.IDLE
+            };
+
+            m_STATE_TRANSITIONS[State.ROCK] = new HashSet<State>()
+            {
+                State.IDLE
+            };
+
             m_STATE_TRANSITIONS[State.JUMPING] = new HashSet<State>()
             {
-                State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MOVING
+                State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MOVING, State.MISSILE, State.ROCK
             };
 
             m_STATE_TRANSITIONS[State.RAGDOLLING] = new HashSet<State>()
@@ -216,9 +227,41 @@ namespace Rebound
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void Missile()
         {
+            if (!ChangeState(State.MISSILE))
+                return;
+
             if (m_isUserControllable)
-                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name));
+            float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
+            float yCorrection = 0;
+            if(yDirection < 0)
+            {
+                yCorrection = -yDirection;
+            }
+
+            AddVelocity(new Vector2(0, yCorrection + Constants.MISSILE_SPEED));
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public void Rock()
+        {
+            if (!ChangeState(State.ROCK))
+                return;
+
+            if (m_isUserControllable)
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name));
+            float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
+            float xDirection = gameObject.GetComponent<Rigidbody2D>().velocity.x;
+            float yCorrection = 0;
+            if (yDirection > 0)
+            {
+                yCorrection = -yDirection;
+            }
+
+            AddVelocity(new Vector2(-xDirection, yCorrection - Constants.ROCK_SPEED));
+        }
+
+
 
         private void Draw()
         {
@@ -256,6 +299,20 @@ namespace Rebound
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
                     gameObject.GetComponent<Rigidbody2D>().mass = Constants.KICK_MASS;
+                    break;
+                case State.MISSILE:
+                    m_animator.enabled = false;
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.MISSILE_SPRITE_PATH);
+                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
+                    gameObject.AddComponent<PolygonCollider2D>();
+                    gameObject.GetComponent<Rigidbody2D>().mass = Constants.MISSILE_MASS;
+                    break;
+                case State.ROCK:
+                    m_animator.enabled = false;
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.ROCK_SPRITE_PATH);
+                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
+                    gameObject.AddComponent<PolygonCollider2D>();
+                    gameObject.GetComponent<Rigidbody2D>().mass = Constants.ROCK_MASS;
                     break;
                 case State.RAGDOLLING:
                     //gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.RAGDOLL_SPRITE_PATH);
