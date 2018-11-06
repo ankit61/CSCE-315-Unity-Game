@@ -1,13 +1,9 @@
 fileFormatVersion: 2
-guid: 612d5d36749f45c4db6be6b32bbf4297
+guid: 64ce597238af24ce3869ea70efea408c
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Meanie_0
-    21300002: Meanie_1
-    21300004: Meanie_2
-    21300006: Meanie_3
-    21300008: Meanie_4
-    21300010: Meanie_5
+    21300000: Idle Sprite_0
+    21300002: Idle Sprite_1
   externalObjects: {}
   serializedVersion: 7
   mipmaps:
@@ -101,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Meanie_0
+      name: Idle Sprite_0
       rect:
         serializedVersion: 2
-        x: 62
-        y: 2270
-        width: 900
-        height: 612
+        x: 0
+        y: 1024
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,19 +111,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 549f7f5404c6849459532134bea9ccdd
+      spriteID: 900c9b8de5d62409eae6e7bbca49d625
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Meanie_1
+      name: Idle Sprite_1
       rect:
         serializedVersion: 2
-        x: 1086
-        y: 2270
-        width: 900
-        height: 612
+        x: 0
+        y: 0
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -135,87 +131,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1c06f5780b9257d4fa4966989286767e
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Meanie_2
-      rect:
-        serializedVersion: 2
-        x: 62
-        y: 1246
-        width: 900
-        height: 612
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 735e156b37c54fe488b3cfaedea26068
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Meanie_3
-      rect:
-        serializedVersion: 2
-        x: 1086
-        y: 1246
-        width: 900
-        height: 612
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 249285ea5f12e9a41b2f9392129db595
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Meanie_4
-      rect:
-        serializedVersion: 2
-        x: 62
-        y: 223
-        width: 900
-        height: 610
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 701b79d83c717e9499511a3f110de92e
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Meanie_5
-      rect:
-        serializedVersion: 2
-        x: 1086
-        y: 223
-        width: 900
-        height: 610
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9fc4a943c14b23543b2764ad6823c04a
+      spriteID: 3d8942576709a4c67a39d2095d15a671
       vertices: []
       indices: 
       edges: []
@@ -223,7 +139,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 2b3f7cc157e0a0d4ba340f5d1d653a96
+    spriteID: c234d595e3c4c4906b89494f4243243d
     vertices: []
     indices: 
     edges: []

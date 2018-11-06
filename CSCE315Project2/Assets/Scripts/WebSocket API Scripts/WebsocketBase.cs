@@ -174,7 +174,7 @@ namespace Rebound
             player.GetComponent<Player>().m_webAPI = gameObject.GetComponent<WebsocketBase>();
 
             string spriteBase = Constants.PLAYER_NAMES[playerSlot];
-            //string spriteBase = "Frog";
+            //string spriteBase = "Blob";
             string spriteName = spriteBase;
             string animatorName = spriteBase + "_Animation_Controller";
             var sprite = Resources.Load<Sprite>(spriteName);
