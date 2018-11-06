@@ -65,6 +65,7 @@ namespace Rebound
                     }
                     if (method == "newuser"){
                         int playerSlot = replyJSON["slot"].AsInt;
+                        Debug.Log("Got newuser in " + playerSlot.ToString());
                         InstantiatePlayer(playerSlot, Constants.ENEMY_TAG);
                     }
                     if (method == "action" && (replyJSON["slot"].AsInt != m_curPlayerSlot))
@@ -135,7 +136,7 @@ namespace Rebound
         }
 
         public IEnumerator KillUserPlayer(){
-            m_playerList[m_curPlayerSlot].SetActive(false); // TODO - Despawn the user object if required, just deactivates it for now
+            //m_playerList[m_curPlayerSlot].SetActive(false); // TODO - Despawn the user object if required, just deactivates it for now
             Instantiate(Resources.Load("GameOverText"));
             yield return 0;
         }
@@ -173,7 +174,7 @@ namespace Rebound
             player.tag = playerTag;
             player.GetComponent<Player>().m_webAPI = gameObject.GetComponent<WebsocketBase>();
 
-            string spriteBase = Constants.PLAYER_NAMES[playerSlot];
+            string spriteBase = Constants.PLAYER_NAMES[playerSlot % Constants.PLAYER_NAMES.Length];
             //string spriteBase = "Blob";
             string spriteName = spriteBase;
             string animatorName = spriteBase + "_Animation_Controller";
