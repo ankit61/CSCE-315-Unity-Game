@@ -6,7 +6,7 @@ namespace Rebound {
     public static class Constants {
         
         //limits on latency
-        public static readonly float SPEED_LIMIT = 100f;
+        public static readonly float SPEED_LIMIT = 90f;
         public static readonly float JUMP_SPEED = 45f;
         public static readonly float MOVEMENT_SPEED = 20f;
         public static readonly float PUNCH_SPEED = 30f;
@@ -20,7 +20,7 @@ namespace Rebound {
         public static readonly string JUMP_SPRITE_PATH = "Jump";
 
         //player names
-        public static readonly string[] PLAYER_NAMES = {"Frog", "Blob", "Ball", "Meanie"};
+        public static readonly string[] PLAYER_NAMES = {"Frog", "Blob"}; // , "Ball", "Meanie"
 
         //codes of different animation states
         public static readonly int EMPTY_STATE_CODE = 0;
