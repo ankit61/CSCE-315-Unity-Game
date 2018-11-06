@@ -233,13 +233,14 @@ namespace Rebound
             if (m_isUserControllable)
                 StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name));
             float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
+            float xDirection = gameObject.GetComponent<Rigidbody2D>().velocity.x;
             float yCorrection = 0;
             if(yDirection < 0)
             {
                 yCorrection = -yDirection;
             }
 
-            AddVelocity(new Vector2(0, yCorrection + Constants.MISSILE_SPEED));
+            AddVelocity(new Vector2(-xDirection, yCorrection + Constants.MISSILE_SPEED));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
