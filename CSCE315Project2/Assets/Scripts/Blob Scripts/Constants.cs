@@ -6,7 +6,7 @@ namespace Rebound {
     public static class Constants {
         
         //limits on latency
-        public static readonly float SPEED_LIMIT = 70f;
+        public static readonly float SPEED_LIMIT = 100f;
         public static readonly float JUMP_SPEED = 45f;
         public static readonly float MOVEMENT_SPEED = 20f;
         public static readonly float PUNCH_SPEED = 30f;

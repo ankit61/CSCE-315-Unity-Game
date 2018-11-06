@@ -330,6 +330,7 @@ namespace Rebound
         {
             m_inAir = !IsStanding();
             ManageState();
+            ControlVelocity();
             if (Math.Abs(gameObject.GetComponent<Rigidbody2D>().velocity.x) > Constants.EPSILON) {
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
             }
@@ -374,6 +375,12 @@ namespace Rebound
             bool diagLeftStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_1.position, 1 << LayerMask.NameToLayer(Constants.MAP_LAYER));
             bool diagRightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_2.position, 1 << LayerMask.NameToLayer(Constants.MAP_LAYER));
             return straightStanding || diagLeftStanding || diagRightStanding;
+        }
+
+        private void ControlVelocity(){
+            float vx = gameObject.GetComponent<Rigidbody2D>().velocity.x;
+            float vy = gameObject.GetComponent<Rigidbody2D>().velocity.y;
+            gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Min(vx, Constants.SPEED_LIMIT), Mathf.Min(vy, Constants.SPEED_LIMIT));
         }
 
         public void Die(){
