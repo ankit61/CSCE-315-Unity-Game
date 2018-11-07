@@ -271,13 +271,14 @@ namespace Rebound
             switch (m_currentState)
             {
                 case State.IDLE:
+                    Debug.Log("Switchting to IDLE");
                     m_animator.enabled = true;
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
-                    gameObject.AddComponent<PolygonCollider2D>();
+                    m_animator.SetInteger("Animation State", Constants.IDLE_STATE_CODE);
                     gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                     gameObject.GetComponent<Rigidbody2D>().mass = Constants.PLAYER_MASS;
-                    m_animator.SetInteger("Animation State", Constants.IDLE_STATE_CODE);
+                    gameObject.AddComponent<PolygonCollider2D>();
                     break;
                 case State.MOVING:
                     m_animator.enabled = true;
@@ -398,7 +399,7 @@ namespace Rebound
         {
             //m_inAir = false;
 
-            if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && (m_currentState == State.PUNCHING || m_currentState == State.KICKING)) {
+            if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && (m_currentState == State.PUNCHING || m_currentState == State.KICKING || m_currentState == State.MISSILE || m_currentState == State.ROCK)) {
                 Debug.Log(gameObject.tag + " hits " + _col.collider.tag);
                 _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
                 //gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
