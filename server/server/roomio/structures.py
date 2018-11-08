@@ -72,7 +72,7 @@ class Server():
     
     @staticmethod
     async def dispatcher(websocket, path):
-        path = path[1:]
+        path = path[-8:]
         
         check = await Server.default_register(websocket, path)
         if check:
@@ -83,9 +83,11 @@ class Server():
                     # however this is not necessary right now
                     json_message = json.loads(message)
                     for purpose in json_message['method']:
-                        await Server.route(purpose, websocket, path, json_message)           
+                        await Server.route(purpose, websocket, path, json_message)
+                await Server.default_unregister(websocket, path)   
             finally:    
                 await Server.default_unregister(websocket, path)
+
 
     @staticmethod
     def start(host, port):
@@ -164,19 +166,27 @@ class Server():
     async def responseToAll(websocket, path, message):
         ready = json.dumps(message)
         for ws in Server._rooms[Room.player, path]:
-            await ws.send(ready)
-    
+            try:
+                await ws.send(ready)
+            except:
+                Server.default_unregister(ws, path)
+                
     @staticmethod
     async def responseToSelf(websocket, path, message):
         ready = json.dumps(message)
-        await websocket.send(ready)
-
+        try:
+            await websocket.send(ready)
+        except:
+            Server.default_unregister(websocket, path)
     @staticmethod
     async def responseToOthers(websocket, path, message):
         ready = json.dumps(message)
         for ws in Server._rooms[Room.player, path]:
             if ws != websocket:
-                await ws.send(ready)
+                try:
+                    await ws.send(ready)
+                except:
+                    Server.default_unregister(websocket, path)
 
     ########################decorators##############################
 
