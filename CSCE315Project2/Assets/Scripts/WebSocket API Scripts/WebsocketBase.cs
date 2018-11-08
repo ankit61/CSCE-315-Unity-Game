@@ -51,10 +51,9 @@ namespace Rebound
                         var playerStates = replyJSON.AsArray;
                         for (int i = 0; i < playerStates.Count; i++)
                         {
-                            var playerState = playerStates[i];
-                            if ((playerState == null) || (i == m_curPlayerSlot))
+                            var playerStateJSON = playerStates[i];
+                            if ((playerStateJSON == null) || (i == m_curPlayerSlot))
                                 continue;
-                            var playerStateJSON = JSON.Parse(playerState); 
                             GameObject player = m_playerList[i];
                             BroadcastPayload data = new BroadcastPayload
                             {
