@@ -43,11 +43,8 @@ namespace Rebound
             {
                 HandleXMovement();
             }
-            if (Input.GetKeyDown(Constants.MISSILE_KEY)) //Missile
-            {
-                m_player.Missile();
-            }
-            else if (Input.GetKeyDown(Constants.ROCK_KEY))
+
+            if (Input.GetKeyDown(Constants.ROCK_KEY))
             {
                 //m_player.Move(Player.Direction.DOWN);
                 m_player.Rock();
@@ -57,6 +54,12 @@ namespace Rebound
             {
                 m_player.Jump();
             }
+
+
+            /*if (Input.GetKeyDown(Constants.MISSILE_KEY)) //Missile
+            {
+                m_player.Missile();
+            }*/
         }
 
         void CheckPlayerAlive(){
