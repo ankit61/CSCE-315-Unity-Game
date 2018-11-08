@@ -47,3 +47,5 @@ Class names and member function names begin with capital letter
 Horizontal spaces include regular indentation
 
 Similar sets of lines are isolated by vertical spacing.  All lines that have no vertical spaces perform similar actions.
+
+#### Thank you to kenney.nl for the map sprites
