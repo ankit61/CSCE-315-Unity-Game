@@ -11,7 +11,7 @@ namespace Rebound {
         public static readonly float MOVEMENT_SPEED = 20f;
         public static readonly float PUNCH_SPEED = 30f;
         public static readonly float KICK_SPEED = 30f;
-        public static readonly float MISSILE_SPEED = 50f;
+        public static readonly float MISSILE_SPEED = 70f;
         public static readonly float ROCK_SPEED = 50f;
         public static readonly float GRAVITY_SCALE = 5f;
 

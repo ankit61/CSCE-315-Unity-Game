@@ -271,7 +271,6 @@ namespace Rebound
             switch (m_currentState)
             {
                 case State.IDLE:
-                    Debug.Log("Switchting to IDLE");
                     m_animator.enabled = true;
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     m_animator.SetInteger("Animation State", Constants.IDLE_STATE_CODE);
