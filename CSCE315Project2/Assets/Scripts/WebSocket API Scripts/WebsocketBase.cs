@@ -58,10 +58,10 @@ namespace Rebound
                             GameObject player = m_playerList[i];
                             BroadcastPayload data = new BroadcastPayload
                             {
-                                position = new Vector2(playerStateJSON["data"]["position"]["x"].AsFloat, playerStateJSON["data"]["position"]["y"].AsFloat),
-                                velocity = new Vector2(playerStateJSON["data"]["velocity"]["x"].AsFloat, playerStateJSON["data"]["velocity"]["y"].AsFloat),
-                                state = (Player.State)playerStateJSON["data"]["state"].AsInt,
-                                action = playerStateJSON["data"]["action"]
+                                position = new Vector2(playerStateJSON["position"]["x"].AsFloat, playerStateJSON["position"]["y"].AsFloat),
+                                velocity = new Vector2(playerStateJSON["velocity"]["x"].AsFloat, playerStateJSON["velocity"]["y"].AsFloat),
+                                state = (Player.State)playerStateJSON["state"].AsInt,
+                                action = playerStateJSON["action"]
                             }; 
                             player.GetComponent<WebController>().UpdateTransform(data);
                         }
