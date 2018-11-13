@@ -50,6 +50,7 @@ namespace Rebound
                                                             {Player.State.KICKING, Constants.KICK_TIME},
                                                             {Player.State.RAGDOLLING, Constants.RAGDOLL_TIME},
                                                             {Player.State.MISSILE, Constants.MISSILE_TIME },
+                                                            {Player.State.ROCK, Constants.ROCK_TIME },
                                                         };
 
         private Dictionary<Player.State, HashSet<State> > m_STATE_TRANSITIONS = new Dictionary<State, HashSet<State>>(); //state transition graph
@@ -304,8 +305,8 @@ namespace Rebound
                 case State.MISSILE:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.MISSILE_SPRITE_PATH);
-                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
+                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.GetComponent<Rigidbody2D>().mass = Constants.MISSILE_MASS;
                     break;
                 case State.ROCK:
