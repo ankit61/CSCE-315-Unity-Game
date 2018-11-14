@@ -1,9 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-# WS server that sends messages at random intervals
-
-from queue import Queue
-from app import start
+import threading
+import wsapp
+import httpapp
 
 if __name__ == "__main__":
-    start()
+    http_server = threading.Thread(target=httpapp.start)
+    http_server.start()
+    wsapp.start()
+    http_server.join()

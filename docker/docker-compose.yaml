@@ -7,9 +7,9 @@ volumes:
   webglbuild:
 
 services:
-  websocket:
+  roomio:
     build:
-      context: ./websocket-server
+      context: ./roomio-server
       dockerfile: ./dockerfile
     volumes:
       - ../server/server:/usr/src/app/server
@@ -27,7 +27,7 @@ services:
     networks:
       - pysock
     depends_on:
-      - websocket
+      - roomio
 
   unity:
     image: gableroux/unity3d:latest
