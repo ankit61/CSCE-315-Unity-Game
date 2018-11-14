@@ -58,12 +58,12 @@
                 plus = document.querySelector('.plus'),
                 value = document.querySelector('.value'),
                 users = document.querySelector('.users'),
-                websocket = new WebSocket("ws://0.0.0.0:80/AAAAA");
+                websocket = new WebSocket("ws://206.189.78.132:80/room/aa55335a"); //206.189.78.132
             minus.onclick = function (event) {
                 websocket.send(JSON.stringify({method: ['decrement']}));
             }
             plus.onclick = function (event) {
-                websocket.send(JSON.stringify({method: ['increment'], data: {'actionID' : "fake"}}));
+                websocket.send(JSON.stringify({method: ['pos_update'], data: {'actionID' : "fake"}}));
             }
             websocket.onmessage = function (event) {
                 data = JSON.parse(event.data);

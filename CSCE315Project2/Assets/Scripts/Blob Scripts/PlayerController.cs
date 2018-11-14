@@ -10,6 +10,7 @@ namespace Rebound
     public class PlayerController : MonoBehaviour
     {
         private Player m_player;
+        private bool m_playerAlive = true;
 
         // Use this for initialfization
         void Start()
@@ -43,14 +44,35 @@ namespace Rebound
                 HandleXMovement();
             }
 
-            if (Input.GetKeyDown(Constants.DOWN_KEY))
+            if (Input.GetKeyDown(Constants.ROCK_KEY))
             {
-                m_player.Move(Player.Direction.DOWN);
+                //m_player.Move(Player.Direction.DOWN);
+                m_player.Rock();
             }
 
             if (Input.GetKeyDown(Constants.JUMP_KEY))
             {
                 m_player.Jump();
+            }
+
+
+            /*if (Input.GetKeyDown(Constants.MISSILE_KEY)) //Missile
+            {
+                m_player.Missile();
+            }*/
+        }
+
+        void CheckPlayerAlive(){
+            if (!m_playerAlive)
+                return;
+            float thresholdHeight = Camera.main.orthographicSize * 1f + 1;
+            float thresholdWidth = Camera.main.aspect * thresholdHeight + 1;
+            float curX = m_player.GetComponent<Rigidbody2D>().position.x;
+            float curY = m_player.GetComponent<Rigidbody2D>().position.y;
+            if( (curX > thresholdWidth) || (curX < -thresholdWidth) || (curY < -thresholdHeight)){
+                m_player.Die();
+                Debug.Log("Killing Player");
+                m_playerAlive = false;
             }
         }
 
@@ -58,6 +80,7 @@ namespace Rebound
         void Update()
         {
             HandleMovementAndAction();
+            CheckPlayerAlive();
         }
     }
 }

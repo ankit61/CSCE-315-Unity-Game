@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4543865290939580}
   m_Layer: 8
-  m_Name: PlayerCenter
+  m_Name: m_playerCenter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

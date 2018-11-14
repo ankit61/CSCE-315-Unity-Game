@@ -29,7 +29,6 @@ namespace Rebound
         public void Correct(Vector2 _pos, Vector2 _vel) {
             if((m_player.GetPosition() - _pos).magnitude < Constants.CORRECTION_THRESHOLD)
                 m_player.SetPosition(_pos);
-
             //FIXME: use state and veclocity
 
         }

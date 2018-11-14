@@ -25,7 +25,9 @@ namespace Rebound
 
         public enum Direction { LEFT, RIGHT, DOWN, UP }
 
-        public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING }
+        public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING, MISSILE, ROCK }
+
+        private bool m_isUserControllable;
 
         private State m_currentState;
 
@@ -37,6 +39,8 @@ namespace Rebound
 
         private bool m_inAir = false;
 
+        private bool m_alive = true;
+
         private float m_stateStartTime;
 
         public WebsocketBase m_webAPI;
@@ -45,6 +49,7 @@ namespace Rebound
                                                             {Player.State.PUNCHING, Constants.PUNCH_TIME},
                                                             {Player.State.KICKING, Constants.KICK_TIME},
                                                             {Player.State.RAGDOLLING, Constants.RAGDOLL_TIME},
+                                                            {Player.State.MISSILE, Constants.MISSILE_TIME },
                                                         };
 
         private Dictionary<Player.State, HashSet<State> > m_STATE_TRANSITIONS = new Dictionary<State, HashSet<State>>(); //state transition graph
@@ -75,9 +80,10 @@ namespace Rebound
             return curInfo;
         }
 
-        public void InitializePlayer(string _name)
+        public void InitializePlayer(string _name, bool _isUserControllable)
         {
             bool isFound = false;
+            m_isUserControllable = _isUserControllable;
             gameObject.AddComponent<PolygonCollider2D>();
             for (int i = 0; i < Constants.PLAYER_NAMES.Length; i++)
                 if(_name == Constants.PLAYER_NAMES[i]) {
@@ -96,16 +102,14 @@ namespace Rebound
         {
             m_animator = gameObject.GetComponent<Animator>();
 
-            m_webAPI = new WebsocketBase();
-
             m_STATE_TRANSITIONS[State.IDLE] = new HashSet<State>()
             {
-                State.JUMPING, State.KICKING, State.MOVING, State.PUNCHING, State.RAGDOLLING, State.IDLE
+                State.JUMPING, State.KICKING, State.MOVING, State.PUNCHING, State.RAGDOLLING, State.IDLE, State.MISSILE, State.ROCK
             };
 
             m_STATE_TRANSITIONS[State.MOVING] = new HashSet<State>()
             {
-                State.MOVING, State.JUMPING, State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING
+                State.MOVING, State.JUMPING, State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MISSILE, State.ROCK
             };
 
             m_STATE_TRANSITIONS[State.PUNCHING] = new HashSet<State>()
@@ -118,9 +122,19 @@ namespace Rebound
                 State.IDLE
             };
 
+            m_STATE_TRANSITIONS[State.MISSILE] = new HashSet<State>()
+            {
+                State.IDLE
+            };
+
+            m_STATE_TRANSITIONS[State.ROCK] = new HashSet<State>()
+            {
+                State.IDLE
+            };
+
             m_STATE_TRANSITIONS[State.JUMPING] = new HashSet<State>()
             {
-                State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MOVING
+                State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MOVING, State.MISSILE, State.ROCK
             };
 
             m_STATE_TRANSITIONS[State.RAGDOLLING] = new HashSet<State>()
@@ -159,7 +173,8 @@ namespace Rebound
             //Debug.Log(m_inAir);
             if (!ChangeState(State.JUMPING) || m_inAir)
                 return;
-            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
+            if(m_isUserControllable)
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             AddVelocity(new Vector2(0, Constants.JUMP_SPEED));
         }
 
@@ -167,8 +182,9 @@ namespace Rebound
         {
             if (!ChangeState(State.PUNCHING))
                 return;
-            
-            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
+
+            if (m_isUserControllable)
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             float sign = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
 
             if (sign == 0) {
@@ -187,8 +203,15 @@ namespace Rebound
             if (!ChangeState(State.KICKING))
                 return;
 
-            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
+            if (m_isUserControllable)
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
             float xDirection = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
+            float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
+            float yCorrection = 0;
+            if(yDirection < 0)
+            {
+                yCorrection = -yDirection;
+            }
 
             if (xDirection == 0)
             {
@@ -198,14 +221,48 @@ namespace Rebound
                     xDirection++;
             }
             
-            AddVelocity(new Vector2(xDirection * Constants.KICK_SPEED, 0));
+            AddVelocity(new Vector2(xDirection * Constants.KICK_SPEED, yCorrection + Constants.KICK_SPEED));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void Missile()
         {
-            StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
+            if (!ChangeState(State.MISSILE))
+                return;
+
+            if (m_isUserControllable)
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name));
+            float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
+            float xDirection = gameObject.GetComponent<Rigidbody2D>().velocity.x;
+            float yCorrection = 0;
+            if(yDirection < 0)
+            {
+                yCorrection = -yDirection;
+            }
+
+            AddVelocity(new Vector2(-xDirection, yCorrection + Constants.MISSILE_SPEED));
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public void Rock()
+        {
+            if (!ChangeState(State.ROCK))
+                return;
+
+            if (m_isUserControllable)
+                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name));
+            float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
+            float xDirection = gameObject.GetComponent<Rigidbody2D>().velocity.x;
+            float yCorrection = 0;
+            if (yDirection > 0)
+            {
+                yCorrection = -yDirection;
+            }
+
+            AddVelocity(new Vector2(-xDirection, yCorrection - Constants.ROCK_SPEED));
+        }
+
+
 
         private void Draw()
         {
@@ -216,11 +273,11 @@ namespace Rebound
                 case State.IDLE:
                     m_animator.enabled = true;
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
-                    gameObject.AddComponent<PolygonCollider2D>();
+                    m_animator.SetInteger("Animation State", Constants.IDLE_STATE_CODE);
                     gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                     gameObject.GetComponent<Rigidbody2D>().mass = Constants.PLAYER_MASS;
-                    m_animator.SetInteger("Animation State", Constants.IDLE_STATE_CODE);
+                    gameObject.AddComponent<PolygonCollider2D>();
                     break;
                 case State.MOVING:
                     m_animator.enabled = true;
@@ -243,6 +300,20 @@ namespace Rebound
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
                     gameObject.GetComponent<Rigidbody2D>().mass = Constants.KICK_MASS;
+                    break;
+                case State.MISSILE:
+                    m_animator.enabled = false;
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.MISSILE_SPRITE_PATH);
+                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
+                    gameObject.AddComponent<PolygonCollider2D>();
+                    gameObject.GetComponent<Rigidbody2D>().mass = Constants.MISSILE_MASS;
+                    break;
+                case State.ROCK:
+                    m_animator.enabled = false;
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.ROCK_SPRITE_PATH);
+                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
+                    gameObject.AddComponent<PolygonCollider2D>();
+                    gameObject.GetComponent<Rigidbody2D>().mass = Constants.ROCK_MASS;
                     break;
                 case State.RAGDOLLING:
                     //gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.RAGDOLL_SPRITE_PATH);
@@ -286,28 +357,24 @@ namespace Rebound
             float vx = gameObject.GetComponent<Rigidbody2D>().velocity.x;
             float vy = gameObject.GetComponent<Rigidbody2D>().velocity.y;
 
-            float limit = 0;
+            float xlimit = Constants.MOVEMENT_SPEED;
+            float ylimit = Constants.JUMP_SPEED;
 
             switch(m_currentState)
             {
-                case State.JUMPING:
-                    limit = Constants.JUMP_SPEED;
-                    break;
-                case State.MOVING:
-                    limit = Constants.MOVEMENT_SPEED;
-                    break;
-                case State.IDLE:
+               
                 case State.PUNCHING:
+                    xlimit = Constants.PUNCH_SPEED;
+                    break;
                 case State.KICKING:
-                default:
-                    limit = Constants.SPEED_LIMIT;
+                    xlimit = Constants.KICK_SPEED;
                     break;
             }
 
             vx += _velocity.x;
             vy += _velocity.y;
-            vx = Math.Sign(vx) * Math.Min(limit, Math.Abs(vx));
-            vy = Math.Sign(vy) * Math.Min(limit, Math.Abs(vy));
+            vx = Math.Sign(vx) * Math.Min(xlimit, Math.Abs(vx));
+            vy = Math.Sign(vy) * Math.Min(ylimit, Math.Abs(vy));
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(vx, vy);
         }
 
@@ -319,8 +386,9 @@ namespace Rebound
 
         void Update() 
         {
-            m_inAir = !GetStanding();
+            m_inAir = !IsStanding();
             ManageState();
+            ControlVelocity();
             if (Math.Abs(gameObject.GetComponent<Rigidbody2D>().velocity.x) > Constants.EPSILON) {
                 m_isFacingLeft = gameObject.GetComponent<SpriteRenderer>().flipX = gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f;
             }
@@ -330,10 +398,10 @@ namespace Rebound
         {
             //m_inAir = false;
 
-            if (_col.collider.CompareTag("Enemy") || _col.collider.CompareTag("Player")) {
+            if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && (m_currentState == State.PUNCHING || m_currentState == State.KICKING || m_currentState == State.MISSILE || m_currentState == State.ROCK)) {
+                Debug.Log(gameObject.tag + " hits " + _col.collider.tag);
                 _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
-                if (m_currentState == State.PUNCHING || m_currentState == State.KICKING)
-                    gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                //gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             }
         }
 
@@ -353,17 +421,29 @@ namespace Rebound
                 return;
 
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(1.5f * _colInfo.velocity.x, 1.5f * _colInfo.velocity.y);
+            Debug.Log(gameObject.tag + " got velocity of " + gameObject.GetComponent<Rigidbody2D>().velocity);
             ChangeState(State.RAGDOLLING);
         }
 
-        private bool GetStanding(){
+        private bool IsStanding(){
             Debug.DrawLine(m_playerCenter.position, m_standingTag.position);
             Debug.DrawLine(m_playerCenter.position, m_standingTag_1.position);
             Debug.DrawLine(m_playerCenter.position, m_standingTag_2.position);
-            bool straightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag.position, 1 << LayerMask.NameToLayer("Solid"));
-            bool diagLeftStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_1.position, 1 << LayerMask.NameToLayer("Solid"));
-            bool diagRightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_2.position, 1 << LayerMask.NameToLayer("Solid"));
+            bool straightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag.position, 1 << LayerMask.NameToLayer(Constants.MAP_LAYER));
+            bool diagLeftStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_1.position, 1 << LayerMask.NameToLayer(Constants.MAP_LAYER));
+            bool diagRightStanding = Physics2D.Linecast(m_playerCenter.position, m_standingTag_2.position, 1 << LayerMask.NameToLayer(Constants.MAP_LAYER));
             return straightStanding || diagLeftStanding || diagRightStanding;
+        }
+
+        private void ControlVelocity(){
+            float vx = gameObject.GetComponent<Rigidbody2D>().velocity.x;
+            float vy = gameObject.GetComponent<Rigidbody2D>().velocity.y;
+            gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Min(vx, Constants.SPEED_LIMIT), Mathf.Min(vy, Constants.SPEED_LIMIT));
+        }
+
+        public void Die(){
+            m_alive = false;
+            StartCoroutine(m_webAPI.KillUserPlayer());
         }
 
     }
