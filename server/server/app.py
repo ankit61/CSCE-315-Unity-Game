@@ -3,14 +3,17 @@ from collections import deque
 import functools
 import json
 
+DEFAULT_SIZE = 4
+
 #data that is shared between all users
 @Server.shareddata
 class Shared():
     def __init__(self):
         self.count = 0
         self.queueCount = 0
-        self.queue = deque(range(4))
+        self.queue = deque(range(DEFAULT_SIZE))
         self.players = set()
+        self.states = [None for _ in range(DEFAULT_SIZE)]
 
     def addUser(self):
         num = self.queue.popleft()
@@ -53,8 +56,9 @@ def register_user_others(websocket, path):
 def unregister_user(websocket, path):
 
     num = Server.fetch_player_data(websocket, path).slot
+    Server.fetch_room_data(path).states[num] = None
     Server.fetch_room_data(path).removeUser(num)
-
+    
     return {
         "method": "deaduser", 
         "deaduser": num
@@ -92,6 +96,15 @@ def action(websocket, path, message):
         "slot": Server.fetch_player_data(websocket, path).slot,
         "data" : data
     }
+
+@Server.message("pos_update", Server.TOSELF)
+def pos_update(websocket, path, message):
+    data = message["data"]
+    slot = Server.fetch_player_data(websocket, path).slot
+    Server.fetch_room_data(path).states[slot] = data
+
+    return Server.fetch_room_data(path).states
+
 
 def start():
     Server.start("0.0.0.0", 8080)

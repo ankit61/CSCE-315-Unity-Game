@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 using Rebound;
 using SimpleJSON;
 
@@ -15,6 +16,9 @@ namespace Rebound
         private int m_curPlayerSlot = 0; 
         private List<GameObject> m_playerList;
 
+        public string m_logFileName = "Log_File.json";
+        private StreamWriter m_logFileWriter;
+
         public GameObject m_curPlayer = null;
 
         // Test Server IP : 206.189.214.224
@@ -22,6 +26,9 @@ namespace Rebound
         // Use this for initialization
         IEnumerator Start()
         {
+            m_logFileWriter = new StreamWriter(m_logFileName, false);
+            m_logFileWriter.Write("[");
+
             m_playerList = new List<GameObject>();
             for (int i = 0; i < Constants.MAX_PLAYERS; i++){ // Instantiate all players
                 GameObject playerObj = (GameObject)Instantiate(Resources.Load("Character"));
@@ -47,7 +54,7 @@ namespace Rebound
                 {
                     var replyJSON = JSON.Parse(reply);
                     string method = replyJSON["method"];
-                    if(method == null){
+                    /*if(method == null){
                         var playerStates = replyJSON.AsArray;
                         for (int i = 0; i < playerStates.Count; i++)
                         {
@@ -64,7 +71,7 @@ namespace Rebound
                             }; 
                             player.GetComponent<WebController>().UpdateTransform(data);
                         }
-                    }
+                    }*/
                     if (method == "joininfo")
                     {
                         m_curPlayerSlot = replyJSON["slot"].AsInt;
@@ -101,7 +108,12 @@ namespace Rebound
                         {
                             player = InstantiatePlayer(playerSlot, Constants.ENEMY_TAG);
                         }
-                        player.GetComponent<WebController>().Act(data);
+                        if (data.action == "null"){
+                            player.GetComponent<WebController>().UpdateTransform(data);
+                        }
+                        else{
+                            player.GetComponent<WebController>().Act(data);
+                        }
                     }
                     if(method == "deaduser"){
                         Debug.Log("Got deaduser request");
@@ -131,7 +143,7 @@ namespace Rebound
                 if ((Time.frameCount % Constants.UPDATE_FREQUENCY) == 0)
                 {
                     BroadcastPayload payloadData = m_curPlayer.GetComponent<Player>().GetInfo();
-                    string payloadJSON = "{ \"method\" : [\"pos_update\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
+                    string payloadJSON = "{ \"method\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
                     m_socket.SendString(payloadJSON);
                 }
                 yield return 0;
@@ -156,12 +168,16 @@ namespace Rebound
             BroadcastPayload payloadData = m_curPlayer.GetComponent<Player>().GetInfo();
             payloadData.action = actionID;
             //Debug.Log("Sending Action : " + actionID);
+            string logJSON = "{ \n\"data\" : " + JsonUtility.ToJson(payloadData) + ", \n\"timestamp\" : " + Time.time.ToString() + "\n},";
             string payloadJSON = "{ \"method\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
+            m_logFileWriter.WriteLine(logJSON);
             m_socket.SendString(payloadJSON);
             yield return 0;
         }
 
         public void OnDestroy(){
+            m_logFileWriter.Write("]");
+            m_logFileWriter.Close();
             StopCoroutine(StartListener());
             StopCoroutine(StartServerUpdator());
             m_socket.Close();

@@ -297,7 +297,6 @@ namespace Rebound
                 case State.MISSILE:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.MISSILE_SPRITE_PATH);
-                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
                     break;
                 case State.ROCK:
