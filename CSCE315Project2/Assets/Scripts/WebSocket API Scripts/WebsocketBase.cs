@@ -28,7 +28,7 @@ namespace Rebound
                 playerObj.SetActive(false);
                 m_playerList.Add(playerObj);
             }
-            m_socket = new WebSocket(new Uri("ws://206.189.78.132:80/room/aa55335a"));
+            m_socket = new WebSocket(new Uri("ws://206.189.78.132:80/room/aaaaaaaa"));
 
             yield return StartCoroutine(m_socket.Connect());
             string connectStr = "{\"method\" : [], \"data\" : {}}";

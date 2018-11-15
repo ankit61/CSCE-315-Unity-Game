@@ -30,13 +30,6 @@ namespace Rebound {
         public static readonly int EMPTY_STATE_CODE = 0;
         public static readonly int IDLE_STATE_CODE = 1;
 
-        //masses
-        public static readonly float PLAYER_MASS = 5.0f;
-        public static readonly float PUNCH_MASS = 1000.0f;
-        public static readonly float KICK_MASS = 12.0f;
-        public static readonly float MISSILE_MASS = 20.0f;
-        public static readonly float ROCK_MASS = 20.0f;
-
         //controls
         public static readonly string RIGHT_KEY = "d";
         public static readonly string LEFT_KEY = "a";
@@ -47,17 +40,20 @@ namespace Rebound {
         public static readonly string JUMP_KEY = "space";
 
         //state retention timings in secs
-        public static readonly float PUNCH_TIME = 1.0f; 
-        public static readonly float KICK_TIME = 1.0f; 
-        public static readonly float RAGDOLL_TIME = 3.0f;
-        public static readonly float MISSILE_TIME = 1.0f;
-        public static readonly float ROCK_TIME = 1.0f;
+        public static readonly Dictionary<Player.State, float> STATE_TIMES = new Dictionary<Player.State, float>() {
+                                                            {Player.State.PUNCHING, 1.0f},
+                                                            {Player.State.KICKING, 1.0f},
+                                                            {Player.State.RAGDOLLING, 3.0f},
+                                                            {Player.State.MISSILE, 1.0f },
+                                                            {Player.State.ROCK, 1.0f },
+                                                        };
+
 
         //corrections
         public static readonly float CORRECTION_THRESHOLD = 2;
 
         //server-client communication
-        public static readonly int UPDATE_FREQUENCY = 2;
+        public static readonly int UPDATE_FREQUENCY = 3;
 
         public static readonly List<Vector2> SPAWN_POINTS =
             new List<Vector2>(new[]
