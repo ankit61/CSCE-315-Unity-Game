@@ -66,6 +66,8 @@ namespace Rebound {
             new Vector2(-35.0f, -3.5f)
         });
 
+        public static readonly float CORRECTION_THRESHOLD = 4;
+        
         //miscellaneous
         public static readonly float EPSILON = 0.001f;
         public static readonly int MAX_PLAYERS = 4;
