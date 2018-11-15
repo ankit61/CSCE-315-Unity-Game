@@ -32,7 +32,7 @@ namespace Rebound
 
         private State m_currentState;
 
-        public string m_name;
+        private string m_name;
 
         private Animator m_animator;
 
@@ -44,7 +44,7 @@ namespace Rebound
 
         private float m_stateStartTime;
 
-        public WebsocketBase m_webAPI;
+        private WebsocketBase m_webAPI;
 
         private Dictionary<Player.State, HashSet<State> > m_STATE_TRANSITIONS = new Dictionary<State, HashSet<State>>(); //state transition graph
 
@@ -74,10 +74,13 @@ namespace Rebound
             return curInfo;
         }
 
-        public void InitializePlayer(string _name, bool _isUserControllable)
+        public void InitializePlayer(string _name, bool _isUserControllable, WebsocketBase _webAPI)
         {
-            bool isFound = false;
+            
             m_isUserControllable = _isUserControllable;
+            m_webAPI = _webAPI;
+            
+            bool isFound = false;
             gameObject.AddComponent<PolygonCollider2D>();
             for (int i = 0; i < Constants.PLAYER_NAMES.Length; i++)
                 if(_name == Constants.PLAYER_NAMES[i]) {
@@ -228,6 +231,7 @@ namespace Rebound
 
             if (m_isUserControllable)
                 StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name));
+            
             float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
             float xDirection = gameObject.GetComponent<Rigidbody2D>().velocity.x;
             float yCorrection = 0;

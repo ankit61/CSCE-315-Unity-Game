@@ -13,7 +13,7 @@ namespace Rebound
         private bool m_playerAlive = true;
 
         // Use this for initialfization
-        void Start()
+        void Awake()
         {
             m_player = gameObject.GetComponent<Player>();
         }
@@ -49,17 +49,11 @@ namespace Rebound
                 //m_player.Move(Player.Direction.DOWN);
                 m_player.Rock();
             }
-
-            if (Input.GetKeyDown(Constants.JUMP_KEY))
-            {
-                m_player.Jump();
-            }
-
-
-            /*if (Input.GetKeyDown(Constants.MISSILE_KEY)) //Missile
-            {
+            else if(Input.GetKeyDown(Constants.MISSILE_KEY))
                 m_player.Missile();
-            }*/
+            else if (Input.GetKeyDown(Constants.JUMP_KEY))
+                m_player.Jump();
+
         }
 
         void CheckPlayerAlive(){

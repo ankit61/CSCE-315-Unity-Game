@@ -198,7 +198,7 @@ namespace Rebound
             player.transform.position = Constants.SPAWN_POINTS[playerSlot];
             player.name = playerSlot.ToString();
             player.tag = playerTag;
-            player.GetComponent<Player>().m_webAPI = gameObject.GetComponent<WebsocketBase>();
+            
 
             string spriteBase = Constants.PLAYER_NAMES[playerSlot % Constants.PLAYER_NAMES.Length];
             //string spriteBase = "Blob";
@@ -208,7 +208,7 @@ namespace Rebound
             player.GetComponent<SpriteRenderer>().sprite = sprite;
             player.GetComponent<Animator>().runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(animatorName);
 
-            player.GetComponent<Player>().InitializePlayer(Constants.PLAYER_NAMES[playerSlot % Constants.PLAYER_NAMES.Length], userControllable);
+            player.GetComponent<Player>().InitializePlayer(Constants.PLAYER_NAMES[playerSlot % Constants.PLAYER_NAMES.Length], userControllable, gameObject.GetComponent<WebsocketBase>());
             player.SetActive(true);
             return player;
         }
