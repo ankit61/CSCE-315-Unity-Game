@@ -16,7 +16,6 @@ namespace Rebound
 
         public void Act(BroadcastPayload _data)
         {
-            Correct(_data.position, _data.velocity);
             m_player.SendMessage(_data.action, 0);
         }
 
@@ -24,13 +23,6 @@ namespace Rebound
         {
             m_player.SetPosition(_data.position);
             gameObject.GetComponent<Rigidbody2D>().velocity = _data.velocity;
-        }
-
-        public void Correct(Vector2 _pos, Vector2 _vel) {
-            if((m_player.GetPosition() - _pos).magnitude < Constants.CORRECTION_THRESHOLD)
-                m_player.SetPosition(_pos);
-            //FIXME: use state and veclocity
-
         }
     }
 }
