@@ -20,9 +20,9 @@ namespace Rebound
 
         void HandleXMovement()
         {
-            if (Input.GetKey(Constants.RIGHT_KEY))
+            if (Input.GetKey(Constants.RIGHT_KEY1) || Input.GetKey(Constants.RIGHT_KEY2))
                 m_player.Move(Player.Direction.RIGHT);
-            else if (Input.GetKey(Constants.LEFT_KEY))
+            else if (Input.GetKey(Constants.LEFT_KEY1) || Input.GetKey(Constants.LEFT_KEY2))
                 m_player.Move(Player.Direction.LEFT);
 
         }
@@ -44,12 +44,12 @@ namespace Rebound
                 HandleXMovement();
             }
 
-            if (Input.GetKeyDown(Constants.ROCK_KEY))
+            if (Input.GetKeyDown(Constants.ROCK_KEY1) || Input.GetKeyDown(Constants.ROCK_KEY2))
             {
                 //m_player.Move(Player.Direction.DOWN);
                 m_player.Rock();
             }
-            else if(Input.GetKeyDown(Constants.MISSILE_KEY))
+            else if(Input.GetKeyDown(Constants.MISSILE_KEY1) || Input.GetKeyDown(Constants.MISSILE_KEY2))
                 m_player.Missile();
             else if (Input.GetKeyDown(Constants.JUMP_KEY))
                 m_player.Jump();

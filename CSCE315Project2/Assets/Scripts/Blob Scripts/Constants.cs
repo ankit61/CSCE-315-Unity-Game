@@ -31,10 +31,14 @@ namespace Rebound {
         public static readonly int IDLE_STATE_CODE = 1;
 
         //controls
-        public static readonly string RIGHT_KEY = "d";
-        public static readonly string LEFT_KEY = "a";
-        public static readonly string MISSILE_KEY = "w";
-        public static readonly string ROCK_KEY = "s";
+        public static readonly string RIGHT_KEY1 = "d";
+        public static readonly string RIGHT_KEY2 = "right";
+        public static readonly string LEFT_KEY1 = "a";
+        public static readonly string LEFT_KEY2 = "left";
+        public static readonly string MISSILE_KEY1 = "w";
+        public static readonly string MISSILE_KEY2 = "up";
+        public static readonly string ROCK_KEY1 = "s";
+        public static readonly string ROCK_KEY2 = "down";
         public static readonly string PUNCH_KEY = "j";
         public static readonly string KICK_KEY = "k";
         public static readonly string JUMP_KEY = "space";
@@ -48,9 +52,6 @@ namespace Rebound {
                                                             {Player.State.ROCK, 1.0f },
                                                         };
 
-
-        //corrections
-        public static readonly float CORRECTION_THRESHOLD = 2;
 
         //server-client communication
         public static readonly int UPDATE_FREQUENCY = 3;

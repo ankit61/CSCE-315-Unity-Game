@@ -271,7 +271,6 @@ namespace Rebound
                     m_animator.enabled = true;
                     m_animator.SetInteger("Animation State", Constants.IDLE_STATE_CODE);
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name);
-                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
@@ -302,6 +301,7 @@ namespace Rebound
                 case State.MISSILE:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.MISSILE_SPRITE_PATH);
+                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
                     break;
                 case State.ROCK:
