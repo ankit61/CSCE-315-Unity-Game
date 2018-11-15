@@ -275,12 +275,13 @@ namespace Rebound
                     Debug.Log("Polygon collider changed");
                     break;
                 case State.MOVING:
-                    m_animator.enabled = true;
+                    if(!m_inAir)
+                        m_animator.enabled = true;
                     m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
                     break;
                 case State.JUMPING:
                     m_animator.enabled = false;
-                    //gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.JUMP_SPRITE_PATH);
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.JUMP_SPRITE_PATH);
                     break;
                 case State.PUNCHING:
                     m_animator.enabled = false;
@@ -306,7 +307,7 @@ namespace Rebound
                     gameObject.AddComponent<PolygonCollider2D>();
                     break;
                 case State.RAGDOLLING:
-                    //gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.RAGDOLL_SPRITE_PATH);
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.RAGDOLL_SPRITE_PATH);
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
                     break;
                 default:

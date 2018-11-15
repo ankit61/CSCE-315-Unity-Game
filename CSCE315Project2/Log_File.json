@@ -1,1 +1,105 @@
-[]
+[{ 
+"data" : {"position":{"x":-2.6443071365356447,"y":26.769996643066408},"velocity":{"x":-20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 1.004243
+},
+{ 
+"data" : {"position":{"x":-6.810366153717041,"y":26.769996643066408},"velocity":{"x":20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 3.379904
+},
+{ 
+"data" : {"position":{"x":33.96106719970703,"y":10.769998550415039},"velocity":{"x":-20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 6.045497
+},
+{ 
+"data" : {"position":{"x":-3.820303440093994,"y":26.769996643066408},"velocity":{"x":-20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 9.135725
+},
+{ 
+"data" : {"position":{"x":-36.36555099487305,"y":10.769998550415039},"velocity":{"x":20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 11.34736
+},
+{ 
+"data" : {"position":{"x":18.738636016845704,"y":-5.229428768157959},"velocity":{"x":-20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 16.61636
+},
+{ 
+"data" : {"position":{"x":-16.90412712097168,"y":-21.230003356933595},"velocity":{"x":0.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 19.77061
+},
+{ 
+"data" : {"position":{"x":-22.104122161865236,"y":-5.242331504821777},"velocity":{"x":20.0,"y":-3.5063986778259279},"state":2,"action":"Jump"}, 
+"timestamp" : 21.29721
+},
+{ 
+"data" : {"position":{"x":-30.168991088867189,"y":10.769998550415039},"velocity":{"x":2.746805191040039,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 22.57434
+},
+{ 
+"data" : {"position":{"x":-13.091529846191407,"y":26.769996643066408},"velocity":{"x":0.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 25.63234
+},
+{ 
+"data" : {"position":{"x":-13.091529846191407,"y":45.142601013183597},"velocity":{"x":0.0,"y":-12.879000663757325},"state":7,"action":"Rock"}, 
+"timestamp" : 26.81085
+},
+{ 
+"data" : {"position":{"x":0.47163310647010805,"y":26.769996643066408},"velocity":{"x":0.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 28.61763
+},
+{ 
+"data" : {"position":{"x":0.47163310647010805,"y":36.03963851928711},"velocity":{"x":0.0,"y":33.22801208496094},"state":7,"action":"Rock"}, 
+"timestamp" : 28.84675
+},
+{ 
+"data" : {"position":{"x":-3.168239116668701,"y":26.769996643066408},"velocity":{"x":-20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 29.49559
+},
+{ 
+"data" : {"position":{"x":-9.568238258361817,"y":38.501678466796878},"velocity":{"x":-20.0,"y":29.30401039123535},"state":7,"action":"Rock"}, 
+"timestamp" : 29.80545
+},
+{ 
+"data" : {"position":{"x":-11.921149253845215,"y":26.769996643066408},"velocity":{"x":-20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 30.42621
+},
+{ 
+"data" : {"position":{"x":-21.12114143371582,"y":42.05488204956055},"velocity":{"x":-20.0,"y":22.43700408935547},"state":7,"action":"Rock"}, 
+"timestamp" : 30.8905
+},
+{ 
+"data" : {"position":{"x":-21.12114143371582,"y":-5.230000972747803},"velocity":{"x":20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 32.73924
+},
+{ 
+"data" : {"position":{"x":-8.72115421295166,"y":12.938483238220215},"velocity":{"x":20.0,"y":14.588998794555664},"state":7,"action":"Rock"}, 
+"timestamp" : 33.3541
+},
+{ 
+"data" : {"position":{"x":-9.117230415344239,"y":-21.230003356933595},"velocity":{"x":-20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 34.38242
+},
+{ 
+"data" : {"position":{"x":-23.054563522338868,"y":-5.2300004959106449},"velocity":{"x":20.0,"y":-2.3841863594498137e-8},"state":2,"action":"Jump"}, 
+"timestamp" : 36.37099
+},
+{ 
+"data" : {"position":{"x":-6.654577732086182,"y":14.777181625366211},"velocity":{"x":20.0,"y":4.778999328613281},"state":7,"action":"Rock"}, 
+"timestamp" : 37.19795
+},
+{ 
+"data" : {"position":{"x":-7.442805767059326,"y":-21.230003356933595},"velocity":{"x":-20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 38.14038
+},
+{ 
+"data" : {"position":{"x":-22.813661575317384,"y":-5.230000972747803},"velocity":{"x":20.0,"y":0.0},"state":2,"action":"Jump"}, 
+"timestamp" : 40.00606
+},
+{ 
+"data" : {"position":{"x":-5.213675498962402,"y":14.946202278137207},"velocity":{"x":20.0,"y":1.8359993696212769},"state":7,"action":"Rock"}, 
+"timestamp" : 40.89523
+},
+{ 
+"data" : {"position":{"x":12.266985893249512,"y":-21.230003356933595},"velocity":{"x":-19.803800582885743,"y":0.0},"state":3,"action":"Punch"}, 
+"timestamp" : 44.89603
+},
+]
