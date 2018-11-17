@@ -40,13 +40,15 @@ namespace Rebound
 
         private bool m_inAir = false;
 
-        private float m_stateStartTime;
-
         private WebsocketBase m_webAPI;
+
+        private Dictionary<Player.State, int > m_availableMoves = new Dictionary<Player.State, int>() {
+                                                                    { Player.State.KICKING, Constants.NUM_AVAILABLE_ACTIONS[Player.State.KICKING] } ,
+                                                                    { Player.State.MISSILE, Constants.NUM_AVAILABLE_ACTIONS[Player.State.MISSILE] }
+                                                                };
 
         private Dictionary<Player.State, HashSet<State> > m_STATE_TRANSITIONS = new Dictionary<State, HashSet<State>>(); //state transition graph
 
-        
         //Getters and Setters
         public Vector2 GetPosition() {
             return gameObject.GetComponent<Rigidbody2D>().position;
@@ -206,9 +208,7 @@ namespace Rebound
             float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
             float yCorrection = 0;
             if(yDirection < 0)
-            {
                 yCorrection = -yDirection;
-            }
 
             if (xDirection == 0)
             {
@@ -312,16 +312,24 @@ namespace Rebound
             return ChangeState(State.IDLE);
         }
 
+        private IEnumerator IncrementAvailableMoves(Player.State _state) {
+            yield return new WaitForSeconds(Constants.COOLDOWNS[_state]);
+            m_availableMoves[_state]++;
+        }
+        
         private bool ChangeState(State _state)
         {
-            if (!m_STATE_TRANSITIONS[m_currentState].Contains(_state))
+            if (!m_STATE_TRANSITIONS[m_currentState].Contains(_state) || (m_availableMoves.ContainsKey(_state) && m_availableMoves[_state] <= 0))
                 return false;
             m_currentState = _state;
             if (Constants.STATE_TIMES.ContainsKey(_state))
-            {
                 Invoke("ChangeState", Constants.STATE_TIMES[_state]);
+            if(m_availableMoves.ContainsKey(_state)) {
+                m_availableMoves[_state]--;
+                StartCoroutine(IncrementAvailableMoves(_state));
             }
             Draw();
+            
             return true;
         }
 

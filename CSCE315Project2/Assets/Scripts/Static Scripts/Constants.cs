@@ -15,6 +15,18 @@ namespace Rebound {
         public static readonly float MISSILE_SPEED = 70f;
         public static readonly float GRAVITY_SCALE = 5f;
 
+        //cooldowns
+        public static readonly Dictionary<Player.State, float> COOLDOWNS = new Dictionary<Player.State, float>() {
+                                                                                {Player.State.MISSILE, 2f},
+                                                                                {Player.State.KICKING, 3f},
+                                                                            };
+
+        //available actions
+        public static readonly Dictionary<Player.State, int> NUM_AVAILABLE_ACTIONS = new Dictionary<Player.State, int>() {
+                                                                                {Player.State.MISSILE, 1},
+                                                                                {Player.State.KICKING, 2},
+                                                                            };
+
         //paths to sprites (relative to Resources)
         public static readonly string PUNCH_SPRITE_PATH = "Punch";
         public static readonly string KICK_SPRITE_PATH = "Kick";
