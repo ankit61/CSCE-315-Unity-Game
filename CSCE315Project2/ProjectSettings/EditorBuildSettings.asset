@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Login Menu.unity
     guid: 8d0256c50071c4f4fabe9ed35404173b
   - enabled: 1
-    path: Assets/Scenes/Join Game Menu.unity
+    path: Assets/Scenes/Main Menu.unity
     guid: 57eea87df96b348f29dd4a929cf78745
   - enabled: 1
     path: Assets/Scenes/Map1.unity
