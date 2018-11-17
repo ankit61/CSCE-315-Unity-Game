@@ -378,17 +378,14 @@ namespace Rebound
         void OnCollisionEnter2D(Collision2D _col) 
         {
             if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && m_isAttacking) {
-                Debug.Log("Transfering " + gameObject.GetComponent<Rigidbody2D>().velocity + " to " + _col.collider.tag);
                 _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
             }
         }
 
         public void Hit(ColInfo _colInfo)
         {
-            if (_colInfo.state != State.PUNCHING && _colInfo.state != State.KICKING)
-                return;
-
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(1.5f * _colInfo.velocity.x, 1.5f * _colInfo.velocity.y);
+            Debug.Log("Transferred " + gameObject.GetComponent<Rigidbody2D>().velocity + " to " + gameObject.tag);
             ChangeState(State.RAGDOLLING);
         }
 
