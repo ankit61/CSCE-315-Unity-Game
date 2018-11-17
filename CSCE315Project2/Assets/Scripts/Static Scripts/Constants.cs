@@ -33,7 +33,6 @@ namespace Rebound {
         public static readonly string RAGDOLL_SPRITE_PATH = "Ragdoll";
         public static readonly string JUMP_SPRITE_PATH = "Jump";
         public static readonly string MISSILE_SPRITE_PATH = "Rocket";
-        public static readonly string ROCK_SPRITE_PATH = "Rock";
 
         //player names
         public static readonly string[] PLAYER_NAMES = {"Frog", "Blob"}; // , "Ball", "Meanie"
@@ -61,7 +60,6 @@ namespace Rebound {
                                                             {Player.State.KICKING, 1.0f},
                                                             {Player.State.RAGDOLLING, 3.0f},
                                                             {Player.State.MISSILE, 1.0f },
-                                                            {Player.State.ROCK, 1.0f },
                                                         };
 
 

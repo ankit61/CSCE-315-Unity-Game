@@ -26,7 +26,7 @@ namespace Rebound
 
         public enum Direction { LEFT, RIGHT, DOWN, UP }
 
-        public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING, MISSILE, ROCK }
+        public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING, MISSILE }
 
         private bool m_isUserControllable;
 
@@ -101,12 +101,12 @@ namespace Rebound
 
             m_STATE_TRANSITIONS[State.IDLE] = new HashSet<State>()
             {
-                State.JUMPING, State.KICKING, State.MOVING, State.PUNCHING, State.RAGDOLLING, State.MISSILE, State.ROCK
+                State.JUMPING, State.KICKING, State.MOVING, State.PUNCHING, State.RAGDOLLING, State.MISSILE
             };
 
             m_STATE_TRANSITIONS[State.MOVING] = new HashSet<State>()
             {
-                State.MOVING, State.JUMPING, State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MISSILE, State.ROCK
+                State.MOVING, State.JUMPING, State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MISSILE
             };
 
             m_STATE_TRANSITIONS[State.PUNCHING] = new HashSet<State>()
@@ -124,14 +124,9 @@ namespace Rebound
                 State.IDLE
             };
 
-            m_STATE_TRANSITIONS[State.ROCK] = new HashSet<State>()
-            {
-                State.IDLE
-            };
-
             m_STATE_TRANSITIONS[State.JUMPING] = new HashSet<State>()
             {
-                State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MOVING, State.MISSILE, State.ROCK
+                State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MOVING, State.MISSILE
             };
 
             m_STATE_TRANSITIONS[State.RAGDOLLING] = new HashSet<State>()
@@ -253,7 +248,6 @@ namespace Rebound
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
-                    Debug.Log("Polygon collider changed");
                     break;
                 case State.MOVING:
                     if(!m_inAir)
@@ -279,12 +273,6 @@ namespace Rebound
                 case State.MISSILE:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.MISSILE_SPRITE_PATH);
-                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
-                    gameObject.AddComponent<PolygonCollider2D>();
-                    break;
-                case State.ROCK:
-                    m_animator.enabled = false;
-                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.ROCK_SPRITE_PATH);
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
                     break;
@@ -380,11 +368,9 @@ namespace Rebound
 
         void OnCollisionEnter2D(Collision2D _col) 
         {
-            //m_inAir = false;
-
-            if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && (m_currentState == State.PUNCHING || m_currentState == State.KICKING || m_currentState == State.MISSILE || m_currentState == State.ROCK)) {
+            if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && (m_currentState == State.PUNCHING || m_currentState == State.KICKING || m_currentState == State.MISSILE) {
+                Debug.Log("Transfering " + gameObject.GetComponent<Rigidbody2D>().velocity + " to " + _col.collider.tag)
                 _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
-                //gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             }
         }
 
