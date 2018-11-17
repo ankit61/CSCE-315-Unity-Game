@@ -361,7 +361,6 @@ namespace Rebound
         {
             m_inAir = !IsStanding();
             ManageState();
-            Debug.Log(m_currentState);
             ControlVelocity();
             if (Math.Abs(gameObject.GetComponent<Rigidbody2D>().velocity.x) > Constants.EPSILON) {
                 int xDirection = (gameObject.GetComponent<Rigidbody2D>().velocity.x < 0.0f) ? -1 : 1;

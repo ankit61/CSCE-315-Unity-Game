@@ -76,5 +76,11 @@ namespace Rebound {
         public static readonly string PLAYER_TAG = "Player";
         public static readonly string ENEMY_TAG = "Enemy";
         public static readonly string MAP_LAYER = "Solid";
+
+        //Scene Names
+        public static readonly string LOGIN_MENU_SCENE_NAME = "Login Menu";
+        public static readonly string MAIN_MENU_SCENE_NAME = "Main Menu";
+        public static readonly string MAP_1_SCENE_NAME = "Map1";
+
     }
 }

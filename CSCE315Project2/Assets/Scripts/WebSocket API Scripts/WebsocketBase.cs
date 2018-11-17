@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.IO;
 using Rebound;
@@ -15,27 +16,28 @@ namespace Rebound
         private WebSocket m_socket;
         private int m_curPlayerSlot = 0; 
         private List<GameObject> m_playerList;
+        private string m_wsUrlBase = "ws://206.189.78.132:80/room/";
+        private GameObject m_curPlayer = null;
 
-        public string m_logFileName = "Log_File.json";
-        private StreamWriter m_logFileWriter;
-
-        public GameObject m_curPlayer = null;
+        public Text m_accessCodeText;
 
         // Test Server IP : 206.189.214.224
         // Server IP : 206.189.78.132
         // Use this for initialization
         IEnumerator Start()
         {
-            m_logFileWriter = new StreamWriter(m_logFileName, false);
-            m_logFileWriter.Write("[");
-
             m_playerList = new List<GameObject>();
             for (int i = 0; i < Constants.MAX_PLAYERS; i++){ // Instantiate all players
                 GameObject playerObj = (GameObject)Instantiate(Resources.Load("Character"));
                 playerObj.SetActive(false);
                 m_playerList.Add(playerObj);
             }
-            m_socket = new WebSocket(new Uri("ws://206.189.78.132:80/room/aaaaaaaa"));
+
+            string roomId = SharedData.RoomID;
+            Debug.Log("Connecting to room: " + roomId);
+            m_socket = new WebSocket(new Uri(m_wsUrlBase + roomId));
+
+            InitializeText(roomId);
 
             yield return StartCoroutine(m_socket.Connect());
             string connectStr = "{\"method\" : [], \"data\" : {}}";
@@ -170,14 +172,11 @@ namespace Rebound
             //Debug.Log("Sending Action : " + actionID);
             string logJSON = "{ \n\"data\" : " + JsonUtility.ToJson(payloadData) + ", \n\"timestamp\" : " + Time.time.ToString() + "\n},";
             string payloadJSON = "{ \"method\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
-            m_logFileWriter.WriteLine(logJSON);
             m_socket.SendString(payloadJSON);
             yield return 0;
         }
 
         public void OnDestroy(){
-            m_logFileWriter.Write("]");
-            m_logFileWriter.Close();
             StopCoroutine(StartListener());
             StopCoroutine(StartServerUpdator());
             m_socket.Close();
@@ -211,6 +210,10 @@ namespace Rebound
             player.GetComponent<Player>().InitializePlayer(Constants.PLAYER_NAMES[playerSlot % Constants.PLAYER_NAMES.Length], userControllable, gameObject.GetComponent<WebsocketBase>());
             player.SetActive(true);
             return player;
+        }
+    
+        void InitializeText(string _accessCode){
+            m_accessCodeText.text = "Access Code: " + _accessCode;
         }
     }
 }
