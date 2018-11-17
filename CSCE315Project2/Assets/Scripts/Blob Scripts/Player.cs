@@ -38,6 +38,8 @@ namespace Rebound
 
         private bool m_isFacingLeft = false;
 
+        private bool m_isAttacking = false;
+
         private bool m_inAir = false;
 
         private WebsocketBase m_webAPI;
@@ -248,37 +250,44 @@ namespace Rebound
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
+                    m_isAttacking = false;
                     break;
                 case State.MOVING:
                     if(!m_inAir)
                         m_animator.enabled = true;
                     m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
+                    m_isAttacking = false;
                     break;
                 case State.JUMPING:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.JUMP_SPRITE_PATH);
+                    m_isAttacking = false;
                     break;
                 case State.PUNCHING:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.PUNCH_SPRITE_PATH);
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
+                    m_isAttacking = true;
                     break;
                 case State.KICKING:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.KICK_SPRITE_PATH);
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
+                    m_isAttacking = true;
                     break;
                 case State.MISSILE:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.MISSILE_SPRITE_PATH);
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
+                    m_isAttacking = true;
                     break;
                 case State.RAGDOLLING:
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.RAGDOLL_SPRITE_PATH);
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+                    m_isAttacking = false;
                     break;
                 default:
                     break;
@@ -368,8 +377,8 @@ namespace Rebound
 
         void OnCollisionEnter2D(Collision2D _col) 
         {
-            if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && (m_currentState == State.PUNCHING || m_currentState == State.KICKING || m_currentState == State.MISSILE) {
-                Debug.Log("Transfering " + gameObject.GetComponent<Rigidbody2D>().velocity + " to " + _col.collider.tag)
+            if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && m_isAttacking) {
+                Debug.Log("Transfering " + gameObject.GetComponent<Rigidbody2D>().velocity + " to " + _col.collider.tag);
                 _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
             }
         }
