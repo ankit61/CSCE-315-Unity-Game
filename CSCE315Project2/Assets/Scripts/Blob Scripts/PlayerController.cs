@@ -31,25 +31,15 @@ namespace Rebound
         {
         
             if (Input.GetKeyDown(Constants.PUNCH_KEY)) // Punch
-            {
-
                 m_player.Punch();
-            }
             else if (Input.GetKeyDown(Constants.KICK_KEY)) // Kick
-            {
                 m_player.Kick();
-            }
             else
-            {
                 HandleXMovement();
-            }
 
-            if (Input.GetKeyDown(Constants.ROCK_KEY1) || Input.GetKeyDown(Constants.ROCK_KEY2))
-            {
-                //m_player.Move(Player.Direction.DOWN);
-                m_player.Rock();
-            }
-            else if(Input.GetKeyDown(Constants.MISSILE_KEY1) || Input.GetKeyDown(Constants.MISSILE_KEY2))
+            if (Input.GetKey(Constants.DOWN_KEY1) || Input.GetKey(Constants.DOWN_KEY2))
+                m_player.Move(Player.Direction.DOWN);
+            else if (Input.GetKeyDown(Constants.MISSILE_KEY1) || Input.GetKeyDown(Constants.MISSILE_KEY2))
                 m_player.Missile();
             else if (Input.GetKeyDown(Constants.JUMP_KEY))
                 m_player.Jump();

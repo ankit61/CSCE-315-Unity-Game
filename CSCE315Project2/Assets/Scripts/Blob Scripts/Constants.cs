@@ -8,11 +8,11 @@ namespace Rebound {
         //limits on latency
         public static readonly float SPEED_LIMIT = 90f;
         public static readonly float JUMP_SPEED = 45f;
-        public static readonly float MOVEMENT_SPEED = 20f;
-        public static readonly float PUNCH_SPEED = 30f;
-        public static readonly float KICK_SPEED = 30f;
+        public static readonly float MOVEMENT_SPEED = 30f;
+        public static readonly float PUNCH_SPEED = 40f;
+        public static readonly float KICK_SPEED = 40f;
+        public static readonly float DOWN_SPEED = 40f;
         public static readonly float MISSILE_SPEED = 70f;
-        public static readonly float ROCK_SPEED = 50f;
         public static readonly float GRAVITY_SCALE = 5f;
 
         //paths to sprites (relative to Resources)
@@ -35,10 +35,10 @@ namespace Rebound {
         public static readonly string RIGHT_KEY2 = "right";
         public static readonly string LEFT_KEY1 = "a";
         public static readonly string LEFT_KEY2 = "left";
+        public static readonly string DOWN_KEY1 = "s";
+        public static readonly string DOWN_KEY2 = "down";
         public static readonly string MISSILE_KEY1 = "w";
         public static readonly string MISSILE_KEY2 = "up";
-        public static readonly string ROCK_KEY1 = "s";
-        public static readonly string ROCK_KEY2 = "down";
         public static readonly string PUNCH_KEY = "j";
         public static readonly string KICK_KEY = "k";
         public static readonly string JUMP_KEY = "space";

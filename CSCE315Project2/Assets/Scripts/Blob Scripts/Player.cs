@@ -40,8 +40,6 @@ namespace Rebound
 
         private bool m_inAir = false;
 
-        private bool m_alive = true;
-
         private float m_stateStartTime;
 
         private WebsocketBase m_webAPI;
@@ -157,7 +155,7 @@ namespace Rebound
                     Jump();
                     return;
                 case Direction.DOWN:
-                    AddVelocity(new Vector2(0, -Constants.MOVEMENT_SPEED));
+                    AddVelocity(new Vector2(0, -Constants.DOWN_SPEED));
                     break;
                 default:
                     throw new ArgumentException("Invalid direction", "_direction");
@@ -231,7 +229,6 @@ namespace Rebound
 
             if (m_isUserControllable)
                 StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name));
-            
             float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
             float xDirection = gameObject.GetComponent<Rigidbody2D>().velocity.x;
             float yCorrection = 0;
@@ -241,25 +238,6 @@ namespace Rebound
             }
 
             AddVelocity(new Vector2(-xDirection, yCorrection + Constants.MISSILE_SPEED));
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public void Rock()
-        {
-            if (!ChangeState(State.ROCK))
-                return;
-
-            if (m_isUserControllable)
-                StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name));
-            float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
-            float xDirection = gameObject.GetComponent<Rigidbody2D>().velocity.x;
-            float yCorrection = 0;
-            if (yDirection > 0)
-            {
-                yCorrection = -yDirection;
-            }
-
-            AddVelocity(new Vector2(-xDirection, yCorrection - Constants.ROCK_SPEED));
         }
 
         private void Draw()
@@ -357,12 +335,12 @@ namespace Rebound
 
             switch(m_currentState)
             {
-               
                 case State.PUNCHING:
                     xlimit = Constants.PUNCH_SPEED;
                     break;
                 case State.KICKING:
                     xlimit = Constants.KICK_SPEED;
+                    ylimit = Constants.KICK_SPEED;
                     break;
             }
 
@@ -428,8 +406,7 @@ namespace Rebound
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Min(vx, Constants.SPEED_LIMIT), Mathf.Min(vy, Constants.SPEED_LIMIT));
         }
 
-        public void Die(){
-            m_alive = false;
+        public void Die() {
             StartCoroutine(m_webAPI.KillUserPlayer());
         }
 
