@@ -31,37 +31,43 @@ class Shared():
 class Personal():
     def __init__(self):
         self.slot = None
+        self.username = None
 
 @Server.register(Server.TOSELF)
 def register_user_self(websocket, path):
 
     userNum = Server.fetch_room_data(path).addUser()
     Server.fetch_player_data(websocket, path).slot = userNum
+    player_list = Server.fetch_player_list(path)
+    players = [[player_list[player].slot, player_list[player].username] for player in player_list]
 
     return {
         "method": "joininfo", 
         "slot": userNum, 
-        "players": list(Server.fetch_room_data(path).players)
+        "players": players
     }
 
-@Server.register(Server.TOOTHERS)
-def register_user_others(websocket, path):
+@Server.message("join", Server.TOOTHERS)
+def register_user_others(websocket, path, message):
+    Server.fetch_player_data(websocket, path).username = message["data"]["username"]
+    print("Joined")
 
     return {
         "method": "newuser", 
-        "slot": Server.fetch_player_data(websocket, path).slot
+        "slot": Server.fetch_player_data(websocket, path).slot,
+        "username": message["data"]["username"]
     }
 
 @Server.unregister(Server.TOOTHERS)
 def unregister_user(websocket, path):
 
-    num = Server.fetch_player_data(websocket, path).slot
+    num, name = Server.fetch_player_data(websocket, path).slot, Server.fetch_player_data(websocket, path).username
     Server.fetch_room_data(path).states[num] = None
     Server.fetch_room_data(path).removeUser(num)
     
     return {
         "method": "deaduser", 
-        "deaduser": num
+        "deaduser": [num, name]
     }
 
 @Server.message("increment", Server.TOALL)
@@ -104,6 +110,8 @@ def pos_update(websocket, path, message):
     Server.fetch_room_data(path).states[slot] = data
 
     return Server.fetch_room_data(path).states
+
+
 
 
 def start():

@@ -14,8 +14,6 @@ class getroom_HTTPHandler(http.server.BaseHTTPRequestHandler):
             if not Server.checkRoom(path):
                 break
         return path 
-        
-
 
     def do_GET(self):
 
@@ -31,8 +29,6 @@ class getroom_HTTPHandler(http.server.BaseHTTPRequestHandler):
         message = json.dumps({"room": path})
         # Write content as utf-8 data
         self.wfile.write(bytes(message, "utf8"))
-
-
 
 port = 8081
 host = "0.0.0.0"
