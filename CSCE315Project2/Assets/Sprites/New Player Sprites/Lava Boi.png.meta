@@ -1,13 +1,17 @@
 fileFormatVersion: 2
-guid: 612d5d36749f45c4db6be6b32bbf4297
+guid: b6b8bb07ae9294edbac9da16e2ce8f48
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Meanie_0
-    21300002: Meanie_1
-    21300004: Meanie_2
-    21300006: Meanie_3
-    21300008: Meanie_4
-    21300010: Meanie_5
+    21300000: Lava Boi_0
+    21300002: Lava Boi_1
+    21300004: Lava Boi_2
+    21300006: Lava Boi_3
+    21300008: Lava Boi_4
+    21300010: Lava Boi_5
+    21300012: Lava Boi_6
+    21300014: Lava Boi_7
+    21300016: Lava Boi_8
+    21300018: Lava Boi_9
   externalObjects: {}
   serializedVersion: 7
   mipmaps:
@@ -51,7 +55,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 180
+  spritePixelsToUnits: 140
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -101,12 +105,92 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Meanie_0
+      name: Lava Boi_0
       rect:
         serializedVersion: 2
-        x: 62
-        y: 2270
-        width: 900
+        x: 2686
+        y: 2782
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e48ca1fb605649a3b1f0d0e6572808c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Lava Boi_1
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 2143
+        width: 835
+        height: 579
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab00aa7e937a44af7b69a890723f82ff
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Lava Boi_2
+      rect:
+        serializedVersion: 2
+        x: 1118
+        y: 2143
+        width: 836
+        height: 579
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 937468cf6e7a546d9902a0fa26ec8875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Lava Boi_3
+      rect:
+        serializedVersion: 2
+        x: 2143
+        y: 2143
+        width: 835
+        height: 579
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef6e2e7f76d984bf2a03f511c3c20937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Lava Boi_4
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 1118
+        width: 835
         height: 612
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -115,19 +199,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f3ba618b6c71943cf955936ef7458fcf
+      spriteID: cc4c903118a214f0198e6038d748a824
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Meanie_1
+      name: Lava Boi_5
       rect:
         serializedVersion: 2
-        x: 1086
-        y: 2270
-        width: 900
-        height: 612
+        x: 670
+        y: 1726
+        width: 36
+        height: 36
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -135,19 +219,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3064ce01966ce4c83aedcdf3e442caeb
+      spriteID: 5c750e5a49b324d3fb4488a218714459
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Meanie_2
+      name: Lava Boi_6
       rect:
         serializedVersion: 2
-        x: 62
-        y: 1246
-        width: 900
-        height: 612
+        x: 1438
+        y: 1726
+        width: 67
+        height: 36
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -155,19 +239,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bdcce52d884aa4558842bf6b0ba24bbc
+      spriteID: 39ff6d8cda34447f78f6bdab75cf6bcf
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Meanie_3
+      name: Lava Boi_7
       rect:
         serializedVersion: 2
-        x: 1086
-        y: 1246
-        width: 900
-        height: 612
+        x: 1118
+        y: 1118
+        width: 836
+        height: 579
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -175,19 +259,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b32f29f6db5f740ee84e65e2f4d9f21c
+      spriteID: ae84601eec4fd4610b2183302c827d22
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Meanie_4
+      name: Lava Boi_8
       rect:
         serializedVersion: 2
-        x: 62
-        y: 223
-        width: 900
-        height: 610
+        x: 2143
+        y: 1118
+        width: 835
+        height: 579
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -195,19 +279,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e4901148e05234271996939dfe5a4ddd
+      spriteID: 080d7beffcc404e6b80e451e8614c7b1
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Meanie_5
+      name: Lava Boi_9
       rect:
         serializedVersion: 2
-        x: 1086
-        y: 223
-        width: 900
-        height: 610
+        x: 94
+        y: 94
+        width: 835
+        height: 580
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -215,7 +299,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 44a81c9e4a4304f0c9045ac5dc2bbd3e
+      spriteID: 4c0a726397a0541c6a251506a270896d
       vertices: []
       indices: 
       edges: []
@@ -223,7 +307,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 2b3f7cc157e0a0d4ba340f5d1d653a96
+    spriteID: 826120ccd2b4a4f47a806b0bc6c97fa5
     vertices: []
     indices: 
     edges: []

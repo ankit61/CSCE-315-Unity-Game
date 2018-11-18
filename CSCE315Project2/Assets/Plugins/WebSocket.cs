@@ -7,6 +7,7 @@ using System.Text;
 using System.Collections;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using UnityEngine.Events;
 
 public class WebSocket
 {
@@ -105,16 +106,25 @@ public class WebSocket
 	bool m_IsConnected = false;
 	string m_Error = null;
 
+    public IEnumerator Init(){
+        m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
+        m_Socket.OnMessage += (sender, e) => m_Messages.Enqueue (e.RawData);
+        m_Socket.OnOpen += (sender, e) => m_IsConnected = true;
+        m_Socket.OnError += (sender, e) => m_Error = e.Message;
+
+        yield return 0;
+    }
+
 	public IEnumerator Connect()
 	{
-		m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
-		m_Socket.OnMessage += (sender, e) => m_Messages.Enqueue (e.RawData);
-		m_Socket.OnOpen += (sender, e) => m_IsConnected = true;
-		m_Socket.OnError += (sender, e) => m_Error = e.Message;
 		m_Socket.ConnectAsync();
 		while (!m_IsConnected && m_Error == null)
 			yield return 0;
 	}
+
+    public void AddMessageListener(Action<string> _listener){
+        m_Socket.OnMessage += (sender, e) => _listener(Encoding.UTF8.GetString(e.RawData));
+    }
 
 	public void Send(byte[] buffer)
 	{

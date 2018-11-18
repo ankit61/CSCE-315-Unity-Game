@@ -21,6 +21,10 @@ namespace Rebound
 
             // Variable initialization
             m_webAPI = gameObject.GetComponent<MainMenu_WebAPI>();
+
+            if(SharedData.RoomID != Constants.DEFAULT_ROOM_ID){
+                m_accessCodeFld.text = SharedData.RoomID;
+            }
         }
 
         // Use this for initialization

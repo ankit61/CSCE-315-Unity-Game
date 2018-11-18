@@ -36,7 +36,7 @@ namespace Rebound {
         public static readonly string ROCK_SPRITE_PATH = "Rock";
 
         //player names
-        public static readonly string[] PLAYER_NAMES = {"Frog", "Blob"}; // , "Ball", "Meanie"
+        public static readonly string[] PLAYER_NAMES = {"Frog", "Blob", "Meanie", "LavaBoi"};
 
         //codes of different animation states
         public static readonly int EMPTY_STATE_CODE = 0;
@@ -93,6 +93,9 @@ namespace Rebound {
         public static readonly string LOGIN_MENU_SCENE_NAME = "Login Menu";
         public static readonly string MAIN_MENU_SCENE_NAME = "Main Menu";
         public static readonly string MAP_1_SCENE_NAME = "Map1";
+
+        //Room IDs
+        public static readonly string DEFAULT_ROOM_ID = "00000000";
 
     }
 }
