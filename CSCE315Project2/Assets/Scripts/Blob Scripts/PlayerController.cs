@@ -49,11 +49,11 @@ namespace Rebound
         void CheckPlayerAlive(){
             if (!m_playerAlive)
                 return;
-            float thresholdHeight = Camera.main.orthographicSize * 1f + 1;
-            float thresholdWidth = Camera.main.aspect * thresholdHeight + 1;
+            float thresholdHeight = Camera.main.orthographicSize * 1f + Constants.KILL_THRESHOLD;
+            float thresholdWidth = Camera.main.aspect * thresholdHeight + Constants.KILL_THRESHOLD;
             float curX = m_player.GetComponent<Rigidbody2D>().position.x;
             float curY = m_player.GetComponent<Rigidbody2D>().position.y;
-            if( (curX > thresholdWidth) || (curX < -thresholdWidth) || (curY < -thresholdHeight)){
+            if( (curX > thresholdWidth) || (curX < -thresholdWidth) || (curY < -thresholdHeight) || (curY > thresholdHeight)){
                 m_player.Die();
                 Debug.Log("Killing Player");
                 m_playerAlive = false;

@@ -81,6 +81,7 @@ namespace Rebound {
         //miscellaneous
         public static readonly float EPSILON = 0.001f;
         public static readonly int MAX_PLAYERS = 4;
+        public static readonly float KILL_THRESHOLD = 5.0f;
 
         //tags & layers
         public static readonly string PLAYER_TAG = "Player";

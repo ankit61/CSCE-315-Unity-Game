@@ -8,10 +8,12 @@ namespace Rebound
     public class WebController : MonoBehaviour
     {
 
-        Player m_player;
+        private Player m_player;
+        private bool m_playerAlive;
 
         void Awake() {
             m_player = gameObject.GetComponent<Player>();
+            m_playerAlive = true;
         }
 
         public void Act(BroadcastPayload _data)
@@ -30,6 +32,13 @@ namespace Rebound
             if((m_player.GetPosition() - _pos).magnitude < Constants.CORRECTION_THRESHOLD)
                 m_player.SetPosition(_pos);
             //FIXME: use state and veclocity
+        }
+
+        public void KillPlayer(){
+            m_player.Die();
+            Debug.Log("Killing Player");
+            m_player.gameObject.SetActive(false);
+            m_playerAlive = false;
         }
     }
 }

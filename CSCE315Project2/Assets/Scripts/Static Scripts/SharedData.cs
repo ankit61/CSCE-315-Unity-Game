@@ -22,7 +22,7 @@ namespace Rebound
             }
         }
 
-        private static string m_username;
+        private static string m_username = "CurrentPlayer";
 
         public static string Username
         {
