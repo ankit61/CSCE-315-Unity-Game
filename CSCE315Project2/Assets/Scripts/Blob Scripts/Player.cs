@@ -26,7 +26,7 @@ namespace Rebound
 
         public enum Direction { LEFT, RIGHT, DOWN, UP }
 
-        public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING, MISSILE, ROCK }
+        public enum State { IDLE, MOVING, JUMPING, PUNCHING, KICKING, RAGDOLLING, MISSILE }
 
         private bool m_isUserControllable;
 
@@ -37,6 +37,8 @@ namespace Rebound
         private Animator m_animator;
 
         private bool m_isFacingLeft = false;
+
+        private bool m_isAttacking = false;
 
         private bool m_inAir = false;
 
@@ -101,12 +103,12 @@ namespace Rebound
 
             m_STATE_TRANSITIONS[State.IDLE] = new HashSet<State>()
             {
-                State.JUMPING, State.KICKING, State.MOVING, State.PUNCHING, State.RAGDOLLING, State.MISSILE, State.ROCK
+                State.JUMPING, State.KICKING, State.MOVING, State.PUNCHING, State.RAGDOLLING, State.MISSILE
             };
 
             m_STATE_TRANSITIONS[State.MOVING] = new HashSet<State>()
             {
-                State.MOVING, State.JUMPING, State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MISSILE, State.ROCK
+                State.MOVING, State.JUMPING, State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MISSILE
             };
 
             m_STATE_TRANSITIONS[State.PUNCHING] = new HashSet<State>()
@@ -124,14 +126,9 @@ namespace Rebound
                 State.IDLE
             };
 
-            m_STATE_TRANSITIONS[State.ROCK] = new HashSet<State>()
-            {
-                State.IDLE
-            };
-
             m_STATE_TRANSITIONS[State.JUMPING] = new HashSet<State>()
             {
-                State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MOVING, State.MISSILE, State.ROCK
+                State.KICKING, State.PUNCHING, State.IDLE, State.RAGDOLLING, State.MOVING, State.MISSILE
             };
 
             m_STATE_TRANSITIONS[State.RAGDOLLING] = new HashSet<State>()
@@ -253,44 +250,44 @@ namespace Rebound
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
-                    Debug.Log("Polygon collider changed");
+                    m_isAttacking = false;
                     break;
                 case State.MOVING:
                     if(!m_inAir)
                         m_animator.enabled = true;
                     m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
+                    m_isAttacking = false;
                     break;
                 case State.JUMPING:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.JUMP_SPRITE_PATH);
+                    m_isAttacking = false;
                     break;
                 case State.PUNCHING:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.PUNCH_SPRITE_PATH);
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
+                    m_isAttacking = true;
                     break;
                 case State.KICKING:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.KICK_SPRITE_PATH);
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
+                    m_isAttacking = true;
                     break;
                 case State.MISSILE:
                     m_animator.enabled = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.MISSILE_SPRITE_PATH);
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
-                    break;
-                case State.ROCK:
-                    m_animator.enabled = false;
-                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.ROCK_SPRITE_PATH);
-                    Destroy(gameObject.GetComponent<PolygonCollider2D>());
-                    gameObject.AddComponent<PolygonCollider2D>();
+                    m_isAttacking = true;
                     break;
                 case State.RAGDOLLING:
                     gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.RAGDOLL_SPRITE_PATH);
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+                    m_isAttacking = false;
                     break;
                 default:
                     break;
@@ -380,20 +377,15 @@ namespace Rebound
 
         void OnCollisionEnter2D(Collision2D _col) 
         {
-            //m_inAir = false;
-
-            if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && (m_currentState == State.PUNCHING || m_currentState == State.KICKING || m_currentState == State.MISSILE || m_currentState == State.ROCK)) {
+            if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && m_isAttacking) {
                 _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
-                //gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             }
         }
 
         public void Hit(ColInfo _colInfo)
         {
-            if (_colInfo.state != State.PUNCHING && _colInfo.state != State.KICKING)
-                return;
-
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(1.5f * _colInfo.velocity.x, 1.5f * _colInfo.velocity.y);
+            Debug.Log("Transferred " + gameObject.GetComponent<Rigidbody2D>().velocity + " to " + gameObject.tag);
             ChangeState(State.RAGDOLLING);
         }
 

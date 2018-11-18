@@ -16,7 +16,7 @@ namespace Rebound
         private WebSocket m_socket;
         private int m_curPlayerSlot = 0; 
         private List<GameObject> m_playerList;
-        private string m_wsUrlBase = "ws://206.189.78.132:80/room/";
+        private string m_wsUrlBase = "ws://206.189.214.224:80/room/";
         private GameObject m_curPlayer = null;
 
         public Text m_accessCodeText;
