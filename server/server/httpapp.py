@@ -63,14 +63,31 @@ class getscore_HTTPHandler(http.server.BaseHTTPRequestHandler):
 class incscore_HTTPHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         content_len = int(self.headers.get('content-length', 0))
-        #try:
-        post_json = json.loads(self.rfile.read(content_len))
-        incrementscore(post_json["username"])
-        self.send_response(200)
-    #except:
-        #self.send_response(400)
-    #finally:
-        self.end_headers()
+        try:
+            post_json = json.loads(self.rfile.read(content_len))
+            incrementscore(post_json["username"])
+            self.send_response(200)
+        except:
+            self.send_response(400)
+        finally:
+            self.end_headers()
+
+class checkroom_HTTPHandler(http.server.BaseHTTPRequestHandler):
+    def do_POST(self):
+        content_len = int(self.headers.get('content-length', 0))
+        message = ''
+        try:
+            post_json = json.loads(self.rfile.read(content_len))
+            check = Server.checkRoom(post_json["room"])
+            message = json.dumps({"exists": check})
+            self.send_response(200)
+            self.send_header('Content-type','application/json')
+            self.send_header('Content-length', len(message))
+        except:
+            self.send_response(400)
+        finally:
+            self.end_headers()
+            self.wfile.write(bytes(message, "utf8"))
 
 def start(host, port, handler):
     with socketserver.TCPServer((host, port), handler) as httpd:  
