@@ -2,11 +2,24 @@ version : "2"
 
 networks:
   pysock:
+  db:
 
 volumes: 
   webglbuild:
+  mariadata:
 
 services:
+  maria:
+    image: mariadb:10.4 
+    ports:
+      - 3306:3306 # !!!!!!!!!!!!!!!!! Do not expose this in production (i.e. dont change this unless testing db) !!!!!!!!!!!!!!!!!!!!!!
+    env_file:
+      - ./maria/default.env
+    networks:
+      - db
+    volumes:
+      - ./maria/sqlscripts/:/docker-entrypoint-initdb.d/
+      - mariadata:/var/lib/mysql
   roomio:
     build:
       context: ./roomio-server
@@ -14,6 +27,7 @@ services:
     volumes:
       - ../server/server:/usr/src/app/server
     networks:
+      - db
       - pysock
 
   nginx:
