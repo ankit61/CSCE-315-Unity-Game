@@ -32,7 +32,7 @@ namespace Rebound
 
         private State m_currentState;
 
-        private InfoPanel m_infoPanel;
+        private PlayerInfo m_playerInfo;
 
         private string m_name;
 
@@ -78,13 +78,13 @@ namespace Rebound
             return curInfo;
         }
 
-        public void InitializePlayer(string _name, bool _isUserControllable, WebsocketBase _webAPI, InfoPanel _infoPanel)
+        public void InitializePlayer(string _name, bool _isUserControllable, WebsocketBase _webAPI, PlayerInfo _playerInfo)
         {
             
             m_isUserControllable = _isUserControllable;
             m_webAPI = _webAPI;
             if(m_isUserControllable)
-                m_infoPanel = _infoPanel;
+                m_playerInfo = _playerInfo;
             
             bool isFound = false;
             gameObject.AddComponent<PolygonCollider2D>();
@@ -318,7 +318,7 @@ namespace Rebound
         private IEnumerator IncrementAvailableMoves(Player.State _state) {
             yield return new WaitForSeconds(Constants.COOLDOWNS[_state]);
             m_availableMoves[_state]++;
-            m_infoPanel.UpdateAction(_state, m_availableMoves[_state]);
+            m_playerInfo.UpdateAction(_state, m_availableMoves[_state]);
         }
         
         private bool ChangeState(State _state)
@@ -331,7 +331,7 @@ namespace Rebound
             if(m_availableMoves.ContainsKey(_state)) {
                 m_availableMoves[_state]--;
                 StartCoroutine(IncrementAvailableMoves(_state));
-                StartCoroutine(m_infoPanel.UpdateAction(_state, m_availableMoves[_state]));
+                StartCoroutine(m_playerInfo.UpdateAction(_state, m_availableMoves[_state]));
             }
             Draw();
             
