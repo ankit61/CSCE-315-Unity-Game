@@ -8,7 +8,7 @@ namespace Rebound
     public static class SharedData : object
     {
 
-        private static string m_roomID = "00000000";
+        private static string m_roomID = Constants.DEFAULT_ROOM_ID;
 
         public static string RoomID
         {
@@ -22,7 +22,7 @@ namespace Rebound
             }
         }
 
-        private static string m_username = "CurrentPlayer";
+        private static string m_username = Constants.PLAYER_USERNAME;
 
         public static string Username
         {

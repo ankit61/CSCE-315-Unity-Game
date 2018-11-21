@@ -28,12 +28,14 @@ namespace Rebound {
                                                                             };
 
         //paths to sprites (relative to Resources)
-        public static readonly string PUNCH_SPRITE_PATH = "Punch";
-        public static readonly string KICK_SPRITE_PATH = "Kick";
-        public static readonly string RAGDOLL_SPRITE_PATH = "Ragdoll";
-        public static readonly string JUMP_SPRITE_PATH = "Jump";
-        public static readonly string MISSILE_SPRITE_PATH = "Rocket";
-
+        public static readonly Dictionary<Player.State, string> SPRITE_PATHS =  new Dictionary<Player.State, string>() {
+                                                                                    {Player.State.PUNCHING, "Punch"}, 
+                                                                                    {Player.State.KICKING, "Kick"}, 
+                                                                                    {Player.State.RAGDOLLING, "Ragdoll"}, 
+                                                                                    {Player.State.JUMPING, "Jump"}, 
+                                                                                    {Player.State.MISSILE, "Rocket"}, 
+                                                                                };
+                                                                                
         //player names
         public static readonly string[] PLAYER_NAMES = {"Frog", "Blob", "Meanie", "LavaBoi"};
 
@@ -95,6 +97,9 @@ namespace Rebound {
 
         //Room IDs
         public static readonly string DEFAULT_ROOM_ID = "00000000";
+
+        //
+        public static readonly string PLAYER_USERNAME = "You";
 
     }
 }

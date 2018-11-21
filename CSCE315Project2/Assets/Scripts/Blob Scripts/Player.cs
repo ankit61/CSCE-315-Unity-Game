@@ -32,6 +32,8 @@ namespace Rebound
 
         private State m_currentState;
 
+        private InfoPanel m_infoPanel;
+
         private string m_name;
 
         private Animator m_animator;
@@ -76,11 +78,13 @@ namespace Rebound
             return curInfo;
         }
 
-        public void InitializePlayer(string _name, bool _isUserControllable, WebsocketBase _webAPI)
+        public void InitializePlayer(string _name, bool _isUserControllable, WebsocketBase _webAPI, InfoPanel _infoPanel)
         {
             
             m_isUserControllable = _isUserControllable;
             m_webAPI = _webAPI;
+            if(m_isUserControllable)
+                m_infoPanel = _infoPanel;
             
             bool isFound = false;
             gameObject.AddComponent<PolygonCollider2D>();
@@ -201,6 +205,7 @@ namespace Rebound
 
             if (m_isUserControllable)
                 StartCoroutine(m_webAPI.BroadcastAction(System.Reflection.MethodBase.GetCurrentMethod().Name)); 
+
             float xDirection = Math.Sign(gameObject.GetComponent<Rigidbody2D>().velocity.x);
             float yDirection = gameObject.GetComponent<Rigidbody2D>().velocity.y;
             float yCorrection = 0;
@@ -240,6 +245,7 @@ namespace Rebound
         private void Draw()
         {
             m_animator.SetInteger("Animation State", Constants.EMPTY_STATE_CODE);
+            
             switch (m_currentState)
             {
                 case State.IDLE:
@@ -260,32 +266,32 @@ namespace Rebound
                     break;
                 case State.JUMPING:
                     m_animator.enabled = false;
-                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.JUMP_SPRITE_PATH);
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.SPRITE_PATHS[m_currentState]);
                     m_isAttacking = false;
                     break;
                 case State.PUNCHING:
                     m_animator.enabled = false;
-                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.PUNCH_SPRITE_PATH);
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.SPRITE_PATHS[m_currentState]);
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
                     m_isAttacking = true;
                     break;
                 case State.KICKING:
                     m_animator.enabled = false;
-                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.KICK_SPRITE_PATH);
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.SPRITE_PATHS[m_currentState]);
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
                     m_isAttacking = true;
                     break;
                 case State.MISSILE:
                     m_animator.enabled = false;
-                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.MISSILE_SPRITE_PATH);
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Constants.SPRITE_PATHS[m_currentState]);
                     Destroy(gameObject.GetComponent<PolygonCollider2D>());
                     gameObject.AddComponent<PolygonCollider2D>();
                     m_isAttacking = true;
                     break;
                 case State.RAGDOLLING:
-                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.RAGDOLL_SPRITE_PATH);
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(m_name + Constants.SPRITE_PATHS[m_currentState]);
                     gameObject.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
                     m_isAttacking = false;
                     break;
@@ -312,6 +318,7 @@ namespace Rebound
         private IEnumerator IncrementAvailableMoves(Player.State _state) {
             yield return new WaitForSeconds(Constants.COOLDOWNS[_state]);
             m_availableMoves[_state]++;
+            m_infoPanel.UpdateAction(_state, m_availableMoves[_state]);
         }
         
         private bool ChangeState(State _state)
@@ -324,6 +331,7 @@ namespace Rebound
             if(m_availableMoves.ContainsKey(_state)) {
                 m_availableMoves[_state]--;
                 StartCoroutine(IncrementAvailableMoves(_state));
+                StartCoroutine(m_infoPanel.UpdateAction(_state, m_availableMoves[_state]));
             }
             Draw();
             
@@ -385,7 +393,6 @@ namespace Rebound
         public void Hit(ColInfo _colInfo)
         {
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(1.5f * _colInfo.velocity.x, 1.5f * _colInfo.velocity.y);
-            Debug.Log("Transferred " + gameObject.GetComponent<Rigidbody2D>().velocity + " to " + gameObject.tag);
             ChangeState(State.RAGDOLLING);
         }
 

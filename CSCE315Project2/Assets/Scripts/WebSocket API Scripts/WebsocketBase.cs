@@ -18,7 +18,7 @@ namespace Rebound
         private List<GameObject> m_playerList;
         private string m_wsUrlBase = "ws://206.189.214.224:80/room/";
         private GameObject m_curPlayer = null;
-        private UsernamePanel m_usernamePanel;
+        private InfoPanel m_infoPanel;
 
         public Text m_accessCodeText;
 
@@ -160,7 +160,7 @@ namespace Rebound
 
         public IEnumerator KillUserPlayer(){
             m_playerList[m_curPlayerSlot].SetActive(false); // TODO - Despawn the user object if required, just deactivates it for now
-            m_usernamePanel.KillUser(m_curPlayerSlot);
+            m_infoPanel.KillUser(m_curPlayerSlot);
             Instantiate(Resources.Load("GameOverText"));
             StartCoroutine(BroadcastAction("player_death"));
             yield return 0;
@@ -206,10 +206,10 @@ namespace Rebound
             player.GetComponent<SpriteRenderer>().sprite = sprite;
             player.GetComponent<Animator>().runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(animatorName);
 
-            player.GetComponent<Player>().InitializePlayer(spriteBase, userControllable, gameObject.GetComponent<WebsocketBase>());
+            player.GetComponent<Player>().InitializePlayer(spriteBase, userControllable, gameObject.GetComponent<WebsocketBase>(), m_infoPanel);
             player.SetActive(true);
 
-            m_usernamePanel.InitializeUser(_playerSlot, _username); // Initialize user on panel
+            m_infoPanel.InitializeUser(_playerSlot, _username); // Initialize user on panel
 
             return player;
         }
@@ -217,8 +217,8 @@ namespace Rebound
         private void InitializeScene(string _accessCode){
             m_accessCodeText.text = "Access Code: " + _accessCode;
 
-            GameObject usernamePanel = (GameObject)Instantiate(Resources.Load("UsernamePanel"));
-            m_usernamePanel = usernamePanel.GetComponent<UsernamePanel>();
+            GameObject InfoPanel = (GameObject)Instantiate(Resources.Load("InfoPanel"));
+            m_infoPanel = InfoPanel.GetComponent<InfoPanel>();
         }
     }
 }
