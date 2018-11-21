@@ -88,8 +88,7 @@ class Server():
                     # however this is not necessary right now
                     json_message = json.loads(message)
                     for purpose in json_message['method']:
-                        await Server.route(purpose, websocket, path, json_message)
-                await Server.default_unregister(websocket, path)   
+                        await Server.route(purpose, websocket, path, json_message)  
             finally:    
                 await Server.default_unregister(websocket, path)
 

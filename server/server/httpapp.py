@@ -4,7 +4,7 @@ import socketserver
 import json
 import random
 from roomio.structures import Server
-from sqlfunctions import upsertuser, getscore, incrementscore
+from sqlfunctions import upsertuser, getscore, incrementscore, statususer
 
 class getroom_HTTPHandler(http.server.BaseHTTPRequestHandler):
     def generateRoom(self):
@@ -88,6 +88,23 @@ class checkroom_HTTPHandler(http.server.BaseHTTPRequestHandler):
         finally:
             self.end_headers()
             self.wfile.write(bytes(message, "utf8"))
+
+class statususer_HTTPHandler(http.server.BaseHTTPRequestHandler):
+    def do_POST(self):
+        content_len = int(self.headers.get('content-length', 0))
+        message = ''
+    #try:
+        post_json = json.loads(self.rfile.read(content_len))
+        message = statususer(post_json["username"])
+        message = json.dumps(message)
+        self.send_response(200)
+        self.send_header('Content-type','application/json')
+        self.send_header('Content-length', len(message))
+    #except:
+     #   self.send_response(400)
+    #finally:
+        self.end_headers()
+        self.wfile.write(bytes(message, "utf8"))
 
 def start(host, port, handler):
     with socketserver.TCPServer((host, port), handler) as httpd:  

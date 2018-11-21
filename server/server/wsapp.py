@@ -1,5 +1,6 @@
 from roomio.structures import Server
 from collections import deque
+from sqlfunctions import loginuser, logoutuser
 import functools
 import json
 
@@ -51,6 +52,8 @@ def register_user_self(websocket, path):
 def register_user_others(websocket, path, message):
     Server.fetch_player_data(websocket, path).username = message["data"]["username"]
     print("Joined")
+    
+    loginuser(message["data"]["username"], path, websocket.__hash__())
 
     return {
         "method": "newuser", 
@@ -60,6 +63,8 @@ def register_user_others(websocket, path, message):
 
 @Server.unregister(Server.TOOTHERS)
 def unregister_user(websocket, path):
+
+    logoutuser(Server.fetch_player_data(websocket, path).username)
 
     num, name = Server.fetch_player_data(websocket, path).slot, Server.fetch_player_data(websocket, path).username
     Server.fetch_room_data(path).states[num] = None

@@ -34,7 +34,8 @@ incscore_sql = [
     """PREPARE `inc_stmt` FROM
         'UPDATE `rebounddb`.`users`
         SET score = score + 1
-        WHERE username=?;';
+        WHERE username=?
+        LIMIT 1;';
     """,
     "SET @name := \"{name}\";",
     "EXECUTE `inc_stmt` USING @name;"
@@ -44,10 +45,46 @@ getscore_sql = [
     """PREPARE `get_stmt` FROM
         'SELECT (score) 
         FROM `rebounddb`.`users`
-        WHERE username=?;';
+        WHERE username=?
+        LIMIT 1;';
     """,
     "SET @name := \"{name}\";",
     "EXECUTE `get_stmt` USING @name;"
+]
+
+loginuser_sql = [
+    """PREPARE `login_stmt` FROM
+        'INSERT 
+        INTO `rebounddb`.`currentplayers` (username, room, socket_hash)
+        VALUES (?,?,?)
+        ON DUPLICATE KEY UPDATE
+        room=?, socket_hash=?;';
+    """,
+    "SET @name := \"{name}\";",
+    "SET @room := \"{room}\";",
+    "SET @hash := \"{hash}\";",
+    "EXECUTE `login_stmt` USING @name, @room, @hash, @room, @hash;"
+]
+
+logoutuser_sql = [
+    """PREPARE `logout_stmt` FROM
+        'DELETE FROM `rebounddb`.`currentplayers`
+        WHERE username=?
+        LIMIT 1;';
+    """,
+    "SET @name := \"{name}\"",
+    "EXECUTE `logout_stmt` USING @name;"
+]
+
+statususer_sql = [
+    """PREPARE `status_stmt` FROM
+        'SELECT * 
+        FROM `rebounddb`.`currentplayers`
+        WHERE username=?
+        LIMIT 1;';
+    """,
+    "SET @name := \"{name}\";",
+    "EXECUTE `status_stmt` USING @name;"
 ]
 
 
@@ -64,8 +101,28 @@ def incrementscore(name):
     with conn("maria", 3306, "bot", "csce315kerne") as cursor:
         sendquery(cursor, {"name" : name}, incscore_sql)
     return
+
 def getscore(name):
     with conn("maria", 3306, "bot", "csce315kerne") as cursor:
         sendquery(cursor, {"name" : name}, getscore_sql)
         score = cursor.fetchone()
     return score[0]
+
+def loginuser(name, room, websocket_hash):
+    with conn("maria", 3306, "bot", "csce315kerne") as cursor:
+        sendquery(cursor, {"name":name,"room":room,"hash":websocket_hash}, loginuser_sql)
+    return 
+
+def logoutuser(name):
+    with conn("maria", 3306, "bot", "csce315kerne") as cursor:
+        sendquery(cursor, {"name":name}, logoutuser_sql)
+    return 
+
+def statususer(name):
+    with conn("maria", 3306, "bot", "csce315kerne") as cursor:
+        sendquery(cursor, {"name":name}, statususer_sql)
+        score = cursor.fetchone()
+        if score:
+            return {"exists": True, "room": score[1], "socket_hash": score[2]}
+        else:
+            return {"exists": False}
