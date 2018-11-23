@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 222965481800984892}
   - component: {fileID: 114044045058571940}
   m_Layer: 0
-  m_Name: Frog
+  m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -143,7 +143,7 @@ GameObject:
   - component: {fileID: 114325465852486084}
   - component: {fileID: 114551054789496900}
   m_Layer: 0
-  m_Name: PlayerInfo
+  m_Name: PlayerInfo_Old
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -595,7 +595,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.34, y: -3.12}
+  m_AnchoredPosition: {x: -0.34, y: 1}
   m_SizeDelta: {x: 16.118, y: 12.895}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224215651533795068
@@ -613,7 +613,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.62, y: -8.45}
+  m_AnchoredPosition: {x: -0.62, y: 6.8}
   m_SizeDelta: {x: 23.33, y: 2.235}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224225935844059858
@@ -730,8 +730,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -25.01, y: -47.59}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -46.5, y: -47.4}
+  m_SizeDelta: {x: 12.94, y: 19.55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224875721112990162
 RectTransform:

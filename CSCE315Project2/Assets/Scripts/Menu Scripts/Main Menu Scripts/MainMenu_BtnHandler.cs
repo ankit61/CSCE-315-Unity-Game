@@ -46,28 +46,13 @@ namespace Rebound
         void JoinGameBtnClicked()
         {
             string accessCode = m_accessCodeFld.text;
-            if (AuthenticateRoomID(accessCode))
-            {
-                Debug.Log("Attempting to join room: " + accessCode);
-                StartCoroutine(m_webAPI.JoinGame(accessCode, Constants.MAP_1_SCENE_NAME));
-            }
-            else
-            {
-                Debug.Log("The access code entered was incorrect.");
-            }
+            StartCoroutine(m_webAPI.JoinGame(accessCode, Constants.MAP_1_SCENE_NAME));
         }
 
         void LogoutBtnClicked(){
             Debug.Log("Logging out");
             SharedData.Username = "";
             SceneManager.LoadScene(Constants.LOGIN_MENU_SCENE_NAME);
-        }
-
-        bool AuthenticateRoomID(string _roomID)
-        {
-            if (_roomID.Length != 8)
-                return false;
-            return true;
         }
     }
 }

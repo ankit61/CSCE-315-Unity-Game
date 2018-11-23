@@ -16,14 +16,12 @@ namespace Rebound
         private WebSocket m_socket;
         private int m_curPlayerSlot = 0; 
         private List<GameObject> m_playerList;
-        private string m_wsUrlBase = "ws://206.189.214.224:80/room/";
+        private string m_wsUrlBase = "ws://" + Constants.SERVER_IP + "/room/";
         private GameObject m_curPlayer = null;
-        private InfoPanel m_infoPanel;
+        private PlayerInfoPanel m_infoPanel; 
 
         public Text m_accessCodeText;
-
-        // Test Server IP : 206.189.214.224
-        // Server IP : 206.189.78.132
+        
         // Use this for initialization
         IEnumerator Start()
         {
@@ -44,11 +42,20 @@ namespace Rebound
             InitializeScene(roomId);
 
             yield return StartCoroutine(m_socket.Connect());
-            string connectStr = "{\"method\" : [], \"data\" : {}}";
-            m_socket.SendString(connectStr);
 
+            StartCoroutine(SendJoinRequest());
             StartCoroutine(StartListener()); // Comment this out when testing desync issues
             StartCoroutine(StartServerUpdator());
+        }
+
+        IEnumerator SendJoinRequest()
+        {
+            var dataJSON = JSON.Parse("{}");
+            dataJSON["username"] = SharedData.Username;
+            string payloadJSON = "{ \"method\" : [\"join\"], \"data\" : {\"username\" : \"" + SharedData.Username + "\"}}";
+            Debug.Log(payloadJSON);
+            m_socket.SendString(payloadJSON);
+            yield return 0;
         }
 
 
@@ -70,6 +77,8 @@ namespace Rebound
         }
 
         private void HandleMessage(string _msg){
+            Debug.Log("GOT MESSAGE");
+            Debug.Log(_msg);
             var replyJSON = JSON.Parse(_msg);
             string method = replyJSON["method"];
 
@@ -80,12 +89,14 @@ namespace Rebound
                 var registeredPlayerSlots = replyJSON["players"].AsArray;
                 for (int i = 0; i < registeredPlayerSlots.Count; i++)
                 {
-                    int index = registeredPlayerSlots[i];
+                    var infoTuple = registeredPlayerSlots[i].AsArray;
+                    int index = (int)infoTuple[0];
+                    string playerUsername = (string)infoTuple[1];
                     GameObject selectedPlayer = m_playerList[index];
                     if (selectedPlayer.activeSelf == false)
                     {
-                        Debug.Log("Instantiating enemy in slot: " + index.ToString());
-                        InstantiatePlayer(index, Constants.ENEMY_TAG, index.ToString()); // TODO : Switch to username once implemented
+                        Debug.Log("Instantiating enemy in slot: " + playerUsername);
+                        InstantiatePlayer(index, Constants.ENEMY_TAG, playerUsername); // TODO : Switch to username once implemented
                     }
                 }
             }
@@ -206,10 +217,18 @@ namespace Rebound
             player.GetComponent<SpriteRenderer>().sprite = sprite;
             player.GetComponent<Animator>().runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(animatorName);
 
-            player.GetComponent<Player>().InitializePlayer(spriteBase, userControllable, gameObject.GetComponent<WebsocketBase>(), m_infoPanel);
-            player.SetActive(true);
+            PlayerInfo curPlayerInfo;
+            if(_playerTag == Constants.PLAYER_TAG)
+            {
+                curPlayerInfo = m_infoPanel.InitializePlayerInfo(_playerSlot, _username, spriteBase);
+            }
+            else
+            {
+                curPlayerInfo = m_infoPanel.InitializeOpponentInfo(_playerSlot, _username, spriteBase);
+            }
 
-            m_infoPanel.InitializeUser(_playerSlot, _username); // Initialize user on panel
+            player.GetComponent<Player>().InitializePlayer(spriteBase, userControllable, gameObject.GetComponent<WebsocketBase>(), curPlayerInfo);
+            player.SetActive(true);
 
             return player;
         }
@@ -217,8 +236,8 @@ namespace Rebound
         private void InitializeScene(string _accessCode){
             m_accessCodeText.text = "Access Code: " + _accessCode;
 
-            GameObject InfoPanel = (GameObject)Instantiate(Resources.Load("InfoPanel"));
-            m_infoPanel = InfoPanel.GetComponent<InfoPanel>();
+            GameObject InfoPanel = (GameObject)Instantiate(Resources.Load("PlayerInfoPanel"));
+            m_infoPanel = InfoPanel.GetComponent<PlayerInfoPanel>();
         }
     }
 }

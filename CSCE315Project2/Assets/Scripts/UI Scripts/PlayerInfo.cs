@@ -31,14 +31,24 @@ namespace Rebound {
 																	};
 		}
 
-		public void InitializePlayer(string _username, string _spritePath) {
+		public void InitializePlayerInfo(string _username, string _spritePath) {
 			m_img.sprite = Resources.Load<Sprite>(_spritePath);
 			m_username.text = _username;
-			foreach(KeyValuePair<Player.State, int> entry in Constants.NUM_AVAILABLE_ACTIONS)
+            m_username.gameObject.SetActive(true);
+            m_img.gameObject.SetActive(true);
+            foreach (KeyValuePair<Player.State, int> entry in Constants.NUM_AVAILABLE_ACTIONS)
 				MakeVisible(entry.Value, m_availableMoves[entry.Key]);
 		}
 
-		public void Die() {
+        public void InitializeOpponentInfo(string _username, string _spritePath)
+        {
+            m_img.sprite = Resources.Load<Sprite>(_spritePath);
+            m_username.text = _username;
+            m_username.gameObject.SetActive(true);
+            m_img.gameObject.SetActive(true);
+        }
+
+        public void Die() {
 			m_cross.gameObject.SetActive(true);
 		}
 		

@@ -37,7 +37,7 @@ namespace Rebound {
                                                                                 };
                                                                                 
         //player names
-        public static readonly string[] PLAYER_NAMES = {"Frog", "Blob", "Meanie", "LavaBoi"};
+        public static readonly string[] PLAYER_NAMES = {"Frog", "Blob", "IceBoi", "LavaBoi"};
 
         //codes of different animation states
         public static readonly int EMPTY_STATE_CODE = 0;
@@ -100,6 +100,13 @@ namespace Rebound {
 
         //
         public static readonly string PLAYER_USERNAME = "You";
+
+        // Webserver Constants
+        // Test Server IP : 206.189.214.224
+        // Server IP : 206.189.78.132
+        public static readonly string MAIN_SERVER_IP = "206.189.78.132:80";
+        public static readonly string TEST_SERVER_IP = "206.189.214.224:80";
+        public static readonly string SERVER_IP = MAIN_SERVER_IP; // Just change this when switching from one server to another
 
     }
 }
