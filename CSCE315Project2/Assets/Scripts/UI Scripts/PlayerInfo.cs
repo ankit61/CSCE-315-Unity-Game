@@ -53,6 +53,8 @@ namespace Rebound {
 		}
 		
 		public IEnumerator UpdateAction(Player.State _state, int numActions) {
+			Debug.Log(_state);
+			Debug.Log(numActions);
 			if(m_availableMoves.ContainsKey(_state) && numActions <= m_availableMoves[_state].Count) {
 				MakeVisible(numActions, m_availableMoves[_state]);
 				yield return null;

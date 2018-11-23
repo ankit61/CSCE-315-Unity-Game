@@ -318,7 +318,8 @@ namespace Rebound
         private IEnumerator IncrementAvailableMoves(Player.State _state) {
             yield return new WaitForSeconds(Constants.COOLDOWNS[_state]);
             m_availableMoves[_state]++;
-            m_playerInfo.UpdateAction(_state, m_availableMoves[_state]);
+            StartCoroutine(m_playerInfo.UpdateAction(_state, m_availableMoves[_state]));
+            Debug.Log("here");
         }
         
         private bool ChangeState(State _state)
