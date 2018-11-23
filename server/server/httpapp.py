@@ -4,6 +4,7 @@ import socketserver
 import json
 import random
 from roomio.structures import Server
+from sqlfunctions import upsertuser, getscore, incrementscore, statususer
 
 class getroom_HTTPHandler(http.server.BaseHTTPRequestHandler):
     def generateRoom(self):
@@ -14,8 +15,6 @@ class getroom_HTTPHandler(http.server.BaseHTTPRequestHandler):
             if not Server.checkRoom(path):
                 break
         return path 
-        
-
 
     def do_GET(self):
 
@@ -32,12 +31,82 @@ class getroom_HTTPHandler(http.server.BaseHTTPRequestHandler):
         # Write content as utf-8 data
         self.wfile.write(bytes(message, "utf8"))
 
+class makeuser_HTTPHandler(http.server.BaseHTTPRequestHandler):
+    def do_POST(self):
+        content_len = int(self.headers.get('content-length', 0))
+        try:
+            post_json = json.loads(self.rfile.read(content_len))
+            upsertuser(post_json["username"])
+            self.send_response(200)
+        except:      
+            self.send_response(400)
+        finally:
+            self.end_headers()
 
+class getscore_HTTPHandler(http.server.BaseHTTPRequestHandler):
+    def do_POST(self):
+        content_len = int(self.headers.get('content-length', 0))
+        message = ""
+        try:
+            post_json = json.loads(self.rfile.read(content_len))
+            score = getscore(post_json["username"])
+            message = json.dumps({"score": score})
+            self.send_response(200)
+            self.send_header('Content-type','application/json')
+            self.send_header('Content-length', len(message))
+        except:
+            self.send_response(400)
+        finally:
+            self.end_headers()
+            self.wfile.write(bytes(message, "utf8"))
 
-port = 8081
-host = "0.0.0.0"
+class incscore_HTTPHandler(http.server.BaseHTTPRequestHandler):
+    def do_POST(self):
+        content_len = int(self.headers.get('content-length', 0))
+        try:
+            post_json = json.loads(self.rfile.read(content_len))
+            incrementscore(post_json["username"])
+            self.send_response(200)
+        except:
+            self.send_response(400)
+        finally:
+            self.end_headers()
 
-def start():
-    with socketserver.TCPServer((host, port), getroom_HTTPHandler) as httpd:
+class checkroom_HTTPHandler(http.server.BaseHTTPRequestHandler):
+    def do_POST(self):
+        content_len = int(self.headers.get('content-length', 0))
+        message = ''
+        try:
+            post_json = json.loads(self.rfile.read(content_len))
+            check = Server.checkRoom(post_json["room"])
+            message = json.dumps({"exists": check})
+            self.send_response(200)
+            self.send_header('Content-type','application/json')
+            self.send_header('Content-length', len(message))
+        except:
+            self.send_response(400)
+        finally:
+            self.end_headers()
+            self.wfile.write(bytes(message, "utf8"))
+
+class statususer_HTTPHandler(http.server.BaseHTTPRequestHandler):
+    def do_POST(self):
+        content_len = int(self.headers.get('content-length', 0))
+        message = ''
+    #try:
+        post_json = json.loads(self.rfile.read(content_len))
+        message = statususer(post_json["username"])
+        message = json.dumps(message)
+        self.send_response(200)
+        self.send_header('Content-type','application/json')
+        self.send_header('Content-length', len(message))
+    #except:
+     #   self.send_response(400)
+    #finally:
+        self.end_headers()
+        self.wfile.write(bytes(message, "utf8"))
+
+def start(host, port, handler):
+    with socketserver.TCPServer((host, port), handler) as httpd:  
         print("HTTP serving {host}:{port}".format(host=host, port=port))
         httpd.serve_forever()
