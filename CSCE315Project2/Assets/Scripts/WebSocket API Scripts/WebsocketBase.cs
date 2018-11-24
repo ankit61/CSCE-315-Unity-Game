@@ -36,7 +36,6 @@ namespace Rebound
             string roomId = SharedData.RoomID;
             Debug.Log("Connecting to room: " + roomId);
             m_socket = new WebSocket(new Uri(m_wsUrlBase + roomId));
-            StartCoroutine(m_socket.Init());
             //m_socket.AddMessageListener(HandleMessage); // FIXME : This is used to fix the desync issues, but cannot be added due to threading in Unity
 
             InitializeScene(roomId);

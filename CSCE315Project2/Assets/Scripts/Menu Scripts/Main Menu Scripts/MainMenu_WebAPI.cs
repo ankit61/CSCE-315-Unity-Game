@@ -8,8 +8,6 @@ using SimpleJSON;
 
 namespace Rebound
 {
-    // Test Server IP : 206.189.214.224
-    // Server IP : 206.189.78.132
     public class MainMenu_WebAPI : MonoBehaviour
     {
         private string m_roomReqUrl = "http://" + Constants.SERVER_IP + "/requestroom";
@@ -26,18 +24,18 @@ namespace Rebound
 
         public IEnumerator GetNewRoom()
         {
-            UnityWebRequest roomReq = UnityWebRequest.Get(m_roomReqUrl);
-            yield return roomReq.SendWebRequest();
+            WWW roomReq = WebHelper.CreateGetRequest_WWW(m_roomReqUrl);
+            yield return roomReq;
 
-            if (roomReq.isNetworkError || roomReq.isHttpError)
+            if (roomReq.error != null)
             {
                 Debug.Log(roomReq.error);
                 StartCoroutine(ShowErrorMessage(m_createErrorMessage));
             }
             else
             {
-                var replyJSON = JSON.Parse(roomReq.downloadHandler.text);
-                Debug.Log(roomReq.downloadHandler.text);
+                var replyJSON = JSON.Parse(roomReq.text);
+                Debug.Log(roomReq.text);
                 string roomId = replyJSON["room"];
                 yield return StartCoroutine(JoinGame(roomId, Constants.MAP_1_SCENE_NAME, false));
             }
@@ -81,19 +79,29 @@ namespace Rebound
             {
                 return false;
             }
-            WWWForm form = new WWWForm();
-            form.AddField("room", _roomID);
-            UnityWebRequest roomCheckReq = UnityWebRequest.Post(m_roomCheckUrl, form);
-            roomCheckReq.SendWebRequest();
+            
+            string postData = "{\"room\" : \"" + _roomID + "\"}";
+            WWW roomCheckReq = WebHelper.CreatePostJsonRequest_WWW(m_roomCheckUrl, postData);
+            while (!roomCheckReq.isDone)
+            {
+                // Wait for request to finish
+            }
 
-            if (roomCheckReq.isNetworkError || roomCheckReq.isHttpError)
+            if (roomCheckReq.error != null)
             {
                 Debug.Log(roomCheckReq.error);
                 return false;
             }
             else
             {
-                return false;
+                Debug.Log("Authenticate room response: " + roomCheckReq.text);
+                var roomCheckResponseJSON = JSON.Parse(roomCheckReq.text);
+                bool roomExists = roomCheckResponseJSON["exists"].AsBool;
+
+                if (roomExists)
+                    return true;
+                else
+                    return false;
             }
             
         }

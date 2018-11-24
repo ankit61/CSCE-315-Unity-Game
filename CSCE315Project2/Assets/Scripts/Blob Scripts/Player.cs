@@ -168,8 +168,6 @@ namespace Rebound
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void Jump()
         {
-            //Debug.Log(m_currentState);
-            //Debug.Log(m_inAir);
             if (!ChangeState(State.JUMPING) || m_inAir)
                 return;
             if(m_isUserControllable)
@@ -319,7 +317,6 @@ namespace Rebound
             yield return new WaitForSeconds(Constants.COOLDOWNS[_state]);
             m_availableMoves[_state]++;
             StartCoroutine(m_playerInfo.UpdateAction(_state, m_availableMoves[_state]));
-            Debug.Log("here");
         }
         
         private bool ChangeState(State _state)

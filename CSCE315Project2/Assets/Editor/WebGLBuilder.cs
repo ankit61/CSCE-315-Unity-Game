@@ -13,7 +13,9 @@ public class WebGLBuilder : MonoBehaviour {
         buildPlayerOptions.scenes = new[] 
 		
 		{ 
-			"Assets/Scenes/Ragdoll.unity" 
+			"Assets/Scenes/Login_Menu.unity",
+			"Assets/Scenes/Main_Menu.unity",
+			"Assets/Scenes/Map1.unity"
 		};
 
         buildPlayerOptions.locationPathName = "build";
