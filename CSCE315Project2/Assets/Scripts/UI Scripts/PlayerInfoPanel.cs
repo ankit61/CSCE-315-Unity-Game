@@ -30,6 +30,11 @@ namespace Rebound
             return m_playerInfos[_playerSlot];
         }
 
+        public void DisableInfoSlot(int _slot)
+        {
+            m_playerInfos[_slot].DisableInfo();
+        }
+
         public void KillUser(int _playerSlot)
         {
             m_playerInfos[_playerSlot].Die();

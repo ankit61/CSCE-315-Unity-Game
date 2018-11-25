@@ -342,7 +342,7 @@ Camera:
   m_GameObject: {fileID: 918293671}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 3
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
@@ -426,21 +426,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2113883506509378794, guid: 12cee934bd09a7a46a2f112f8734f128,
-        type: 2}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 6200000, guid: c7646bc4be984441ba2aebc3973a7b5b, type: 2}
-    - target: {fileID: 2113883504604293270, guid: 12cee934bd09a7a46a2f112f8734f128,
-        type: 2}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 6200000, guid: 8dee635b59a974f11ada747c607848fd, type: 2}
-    - target: {fileID: 2113883507103255434, guid: 12cee934bd09a7a46a2f112f8734f128,
-        type: 2}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 6200000, guid: 2dfd13439930f46008e167ce1959dbe8, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 12cee934bd09a7a46a2f112f8734f128, type: 2}
   m_IsPrefabAsset: 0

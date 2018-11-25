@@ -108,5 +108,11 @@ namespace Rebound {
         public static readonly string TEST_SERVER_IP = "206.189.214.224:80";
         public static readonly string SERVER_IP = MAIN_SERVER_IP; // Just change this when switching from one server to another
 
+        // Endpoints
+        public static readonly string ADD_USER_ENDPONT = "/adduser";
+        public static readonly string USER_STATUS_ENDPONT = "/statususer";
+        public static readonly string ROOM_REQUEST_ENDPONT = "/requestroom";
+        public static readonly string ROOM_CHECK_ENDPONT = "/checkroom";
+        public static readonly string INCREASE_SCORE_ENDPONT = "/incscore";
     }
 }

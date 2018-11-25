@@ -36,5 +36,18 @@ namespace Rebound
             }
         }
 
+        private static string m_previousRoomID = null;
+
+        public static string PreviousRoomID
+        {
+            get
+            {
+                return m_previousRoomID;
+            }
+            set
+            {
+                m_previousRoomID = value;
+            }
+        }
     }
 }

@@ -16,7 +16,9 @@ namespace Rebound
         private WebSocket m_socket;
         private int m_curPlayerSlot = 0; 
         private List<GameObject> m_playerList;
+        private string m_roomId;
         private string m_wsUrlBase = "ws://" + Constants.SERVER_IP + "/room/";
+        private string m_incScoreUrl = "http://" + Constants.SERVER_IP + Constants.INCREASE_SCORE_ENDPONT;
         private GameObject m_curPlayer = null;
         private PlayerInfoPanel m_infoPanel; 
 
@@ -35,6 +37,7 @@ namespace Rebound
 
             string roomId = SharedData.RoomID;
             Debug.Log("Connecting to room: " + roomId);
+            m_roomId = roomId;
             m_socket = new WebSocket(new Uri(m_wsUrlBase + roomId));
             //m_socket.AddMessageListener(HandleMessage); // FIXME : This is used to fix the desync issues, but cannot be added due to threading in Unity
 
@@ -76,8 +79,6 @@ namespace Rebound
         }
 
         private void HandleMessage(string _msg){
-            Debug.Log("GOT MESSAGE");
-            Debug.Log(_msg);
             var replyJSON = JSON.Parse(_msg);
             string method = replyJSON["method"];
 
@@ -102,8 +103,11 @@ namespace Rebound
             if (method == "newuser")
             {
                 int playerSlot = replyJSON["slot"].AsInt;
-                Debug.Log("Got newuser in " + playerSlot.ToString());
-                InstantiatePlayer(playerSlot, Constants.ENEMY_TAG , playerSlot.ToString()); // TODO : Switch to username once implemented
+                string playerUsername = replyJSON["username"].Value;
+                if (playerUsername == "")
+                    playerUsername = playerSlot.ToString();
+                Debug.Log("Got newuser in " + playerSlot.ToString() + "with username: " + playerUsername);
+                InstantiatePlayer(playerSlot, Constants.ENEMY_TAG , playerUsername); // TODO : Switch to username once implemented
             }
             if (method == "action" && (replyJSON["slot"].AsInt != m_curPlayerSlot))
             {
@@ -140,6 +144,7 @@ namespace Rebound
                 Destroy(deadPlayer);
                 m_playerList[playerSlot] = (GameObject)Instantiate(Resources.Load("Character"));
                 m_playerList[playerSlot].SetActive(false);
+                m_infoPanel.DisableInfoSlot(playerSlot);
             }
         }
 
@@ -168,11 +173,19 @@ namespace Rebound
             yield return 0;
         }
 
-        public IEnumerator KillUserPlayer(){
+        public IEnumerator KillUserPlayer(string _lastHitByPlayer){
             m_playerList[m_curPlayerSlot].SetActive(false); // TODO - Despawn the user object if required, just deactivates it for now
             m_infoPanel.KillUser(m_curPlayerSlot);
             Instantiate(Resources.Load("GameOverText"));
             StartCoroutine(BroadcastAction("player_death"));
+
+            if(_lastHitByPlayer != null)
+            {
+                string postData = "{\"username\" : \"" + _lastHitByPlayer + "\"}";
+                WWW increaseScoreReq = WebHelper.CreatePostJsonRequest_WWW(m_incScoreUrl, postData);
+                yield return increaseScoreReq;
+            }
+
             yield return 0;
         }
 
@@ -189,6 +202,7 @@ namespace Rebound
         public void OnDestroy(){
             StopCoroutine(StartListener());
             StopCoroutine(StartServerUpdator());
+            SharedData.PreviousRoomID = m_roomId;
             m_socket.Close();
         }
 
@@ -226,7 +240,7 @@ namespace Rebound
                 curPlayerInfo = m_infoPanel.InitializeOpponentInfo(_playerSlot, _username, spriteBase);
             }
 
-            player.GetComponent<Player>().InitializePlayer(spriteBase, userControllable, gameObject.GetComponent<WebsocketBase>(), curPlayerInfo);
+            player.GetComponent<Player>().InitializePlayer(spriteBase, userControllable, gameObject.GetComponent<WebsocketBase>(), curPlayerInfo, _username);
             player.SetActive(true);
 
             return player;

@@ -12,8 +12,10 @@ namespace Rebound
     {
         public Vector2 velocity;
         public Player.State state;
-        public ColInfo(Vector2 _vel, Player.State _state)
+        public string hitBy; // Username of the player the hit came from 
+        public ColInfo(Vector2 _vel, Player.State _state, string _username)
         {
+            hitBy = _username;
             velocity = _vel;
             state = _state;
         }
@@ -34,7 +36,11 @@ namespace Rebound
 
         private PlayerInfo m_playerInfo;
 
-        private string m_name;
+        private string m_name; // Sprite Base Name
+
+        private string m_username;
+
+        private string m_previouslyHitBy = null;
 
         private Animator m_animator;
 
@@ -78,7 +84,7 @@ namespace Rebound
             return curInfo;
         }
 
-        public void InitializePlayer(string _name, bool _isUserControllable, WebsocketBase _webAPI, PlayerInfo _playerInfo)
+        public void InitializePlayer(string _name, bool _isUserControllable, WebsocketBase _webAPI, PlayerInfo _playerInfo, string _username)
         {
             
             m_isUserControllable = _isUserControllable;
@@ -98,7 +104,7 @@ namespace Rebound
                 throw new ArgumentException("Incorrect name passed", "_name");
 
             m_name = _name;
-
+            m_username = _username;
         }
 
         void Awake()
@@ -384,12 +390,13 @@ namespace Rebound
         void OnCollisionEnter2D(Collision2D _col) 
         {
             if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && m_isAttacking) {
-                _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState));
+                _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState, _col.gameObject.GetComponent<Player>().m_username));
             }
         }
 
         public void Hit(ColInfo _colInfo)
         {
+            m_previouslyHitBy = _colInfo.hitBy; // Add some sort of timeout to this
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(1.5f * _colInfo.velocity.x, 1.5f * _colInfo.velocity.y);
             ChangeState(State.RAGDOLLING);
         }
@@ -411,7 +418,7 @@ namespace Rebound
         }
 
         public void Die() {
-            StartCoroutine(m_webAPI.KillUserPlayer());
+            StartCoroutine(m_webAPI.KillUserPlayer(m_previouslyHitBy));
         }
 
     }

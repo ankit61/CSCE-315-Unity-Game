@@ -9,8 +9,8 @@ namespace Rebound
 {
     public class LoginMenu_WebAPI : MonoBehaviour
     {
-        private string m_userLoginURL = "http://" + Constants.SERVER_IP + "/adduser";
-        private string m_userStatusURL = "http://" + Constants.SERVER_IP + "/statususer";
+        private string m_userLoginURL = "http://" + Constants.SERVER_IP + Constants.ADD_USER_ENDPONT;
+        private string m_userStatusURL = "http://" + Constants.SERVER_IP + Constants.USER_STATUS_ENDPONT;
 
         public Text m_errorMessage;
 
@@ -21,7 +21,6 @@ namespace Rebound
 
         public IEnumerator LoginUser(string _username)
         {
-            Debug.Log("Logging in user");
             SharedData.Username = _username;
 
             if(_username == "Debug")
@@ -38,7 +37,7 @@ namespace Rebound
                 if (loginUserReq.error != null)//(loginUserReq.isNetworkError || loginUserReq.isHttpError)
                 {
                     Debug.Log(loginUserReq.error);
-                    StartCoroutine(ShowErrorMessage(m_errorMessage, loginUserReq.error));
+                    StartCoroutine(ShowErrorMessage(m_errorMessage));
                 }
                 else
                 {
@@ -50,9 +49,8 @@ namespace Rebound
         }
 
 
-        public IEnumerator ShowErrorMessage(Text _message, string _errorMessage)
+        public IEnumerator ShowErrorMessage(Text _message)
         {
-            _message.text = _errorMessage;
             StartCoroutine(TextFunctions.FadeTextToFullAlpha(1, _message));
             yield return new WaitForSecondsRealtime(3.0f);
             StartCoroutine(TextFunctions.FadeTextToZeroAlpha(1, _message));
