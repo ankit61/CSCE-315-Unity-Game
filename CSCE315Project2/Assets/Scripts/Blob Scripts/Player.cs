@@ -335,7 +335,8 @@ namespace Rebound
             if(m_availableMoves.ContainsKey(_state)) {
                 m_availableMoves[_state]--;
                 StartCoroutine(IncrementAvailableMoves(_state));
-                StartCoroutine(m_playerInfo.UpdateAction(_state, m_availableMoves[_state]));
+                if(m_isUserControllable)
+                    StartCoroutine(m_playerInfo.UpdateAction(_state, m_availableMoves[_state]));
             }
             Draw();
             
