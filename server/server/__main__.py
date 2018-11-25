@@ -1,9 +1,21 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-# WS server that sends messages at random intervals
+import threading
+import wsapp
+import httpapp
 
-from queue import Queue
-from app import start
+http_servers = [
+    threading.Thread(target=httpapp.start, args=("0.0.0.0", 8081, httpapp.getroom_HTTPHandler,)),
+    threading.Thread(target=httpapp.start, args=("0.0.0.0", 8082, httpapp.makeuser_HTTPHandler,)),
+    threading.Thread(target=httpapp.start, args=("0.0.0.0", 8083, httpapp.getscore_HTTPHandler,)),
+    threading.Thread(target=httpapp.start, args=("0.0.0.0", 8084, httpapp.incscore_HTTPHandler,)),
+    threading.Thread(target=httpapp.start, args=("0.0.0.0", 8085, httpapp.checkroom_HTTPHandler,)),
+    threading.Thread(target=httpapp.start, args=("0.0.0.0", 8086, httpapp.statususer_HTTPHandler,)),
+]
 
 if __name__ == "__main__":
-    start()
+    for server in http_servers:
+        server.start()
+    wsapp.start()
+    for server in http_servers:
+        server.join()
