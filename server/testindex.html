@@ -60,7 +60,7 @@
                 users = document.querySelector('.users'),
                 websocket = new WebSocket("ws://0.0.0.0:80/room/aa55335a"); //206.189.78.132
             minus.onclick = function (event) {
-                websocket.send(JSON.stringify({method: ['join'], data: {"username":"name"}}));
+                websocket.send(JSON.stringify({method: ['join'], data: {"username":"benton"}}));
             }
             plus.onclick = function (event) {
                 websocket.send(JSON.stringify({method: ['pos_update'], data: {'actionID' : "fake"}}));
