@@ -69,6 +69,11 @@ class Server():
     _SharedClass = object
     _open = []
     _close = []
+
+    @staticmethod
+    def checkRoom(path):
+        return path in Server._rooms
+
     
     @staticmethod
     async def dispatcher(websocket, path):
@@ -83,8 +88,7 @@ class Server():
                     # however this is not necessary right now
                     json_message = json.loads(message)
                     for purpose in json_message['method']:
-                        await Server.route(purpose, websocket, path, json_message)
-                await Server.default_unregister(websocket, path)   
+                        await Server.route(purpose, websocket, path, json_message)  
             finally:    
                 await Server.default_unregister(websocket, path)
 
@@ -100,7 +104,7 @@ class Server():
             port
         )
         
-        print("Server started on {addr}:{port}".format(addr=addr, port=port))
+        print("WS serving {addr}:{port}".format(addr=addr, port=port))
         asyncio.get_event_loop().run_until_complete(start_server)
         asyncio.get_event_loop().run_forever()
         return
