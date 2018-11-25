@@ -13,16 +13,16 @@ namespace Rebound
         private bool m_playerAlive = true;
 
         // Use this for initialfization
-        void Start()
+        void Awake()
         {
             m_player = gameObject.GetComponent<Player>();
         }
 
         void HandleXMovement()
         {
-            if (Input.GetKey(Constants.RIGHT_KEY))
+            if (Input.GetKey(Constants.RIGHT_KEY1) || Input.GetKey(Constants.RIGHT_KEY2))
                 m_player.Move(Player.Direction.RIGHT);
-            else if (Input.GetKey(Constants.LEFT_KEY))
+            else if (Input.GetKey(Constants.LEFT_KEY1) || Input.GetKey(Constants.LEFT_KEY2))
                 m_player.Move(Player.Direction.LEFT);
 
         }
@@ -31,45 +31,29 @@ namespace Rebound
         {
         
             if (Input.GetKeyDown(Constants.PUNCH_KEY)) // Punch
-            {
-
                 m_player.Punch();
-            }
             else if (Input.GetKeyDown(Constants.KICK_KEY)) // Kick
-            {
                 m_player.Kick();
-            }
             else
-            {
                 HandleXMovement();
-            }
 
-            if (Input.GetKeyDown(Constants.ROCK_KEY))
-            {
-                //m_player.Move(Player.Direction.DOWN);
-                m_player.Rock();
-            }
-
-            if (Input.GetKeyDown(Constants.JUMP_KEY))
-            {
-                m_player.Jump();
-            }
-
-
-            /*if (Input.GetKeyDown(Constants.MISSILE_KEY)) //Missile
-            {
+            if (Input.GetKey(Constants.DOWN_KEY1) || Input.GetKey(Constants.DOWN_KEY2))
+                m_player.Move(Player.Direction.DOWN);
+            else if (Input.GetKeyDown(Constants.MISSILE_KEY1) || Input.GetKeyDown(Constants.MISSILE_KEY2))
                 m_player.Missile();
-            }*/
+            else if (Input.GetKeyDown(Constants.JUMP_KEY))
+                m_player.Jump();
+
         }
 
         void CheckPlayerAlive(){
             if (!m_playerAlive)
                 return;
-            float thresholdHeight = Camera.main.orthographicSize * 1f + 1;
-            float thresholdWidth = Camera.main.aspect * thresholdHeight + 1;
+            float thresholdHeight = Camera.main.orthographicSize * 1f + Constants.KILL_THRESHOLD;
+            float thresholdWidth = Camera.main.aspect * thresholdHeight + Constants.KILL_THRESHOLD;
             float curX = m_player.GetComponent<Rigidbody2D>().position.x;
             float curY = m_player.GetComponent<Rigidbody2D>().position.y;
-            if( (curX > thresholdWidth) || (curX < -thresholdWidth) || (curY < -thresholdHeight)){
+            if( (curX > thresholdWidth) || (curX < -thresholdWidth) || (curY < -thresholdHeight) || (curY > thresholdHeight)){
                 m_player.Die();
                 Debug.Log("Killing Player");
                 m_playerAlive = false;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.IO;
 using Rebound;
@@ -15,35 +16,47 @@ namespace Rebound
         private WebSocket m_socket;
         private int m_curPlayerSlot = 0; 
         private List<GameObject> m_playerList;
+        private string m_wsUrlBase = "ws://" + Constants.SERVER_IP + "/room/";
+        private GameObject m_curPlayer = null;
+        private PlayerInfoPanel m_infoPanel; 
 
-        public string m_logFileName = "Log_File.json";
-        private StreamWriter m_logFileWriter;
-
-        public GameObject m_curPlayer = null;
-
-        // Test Server IP : 206.189.214.224
-        // Server IP : 206.189.78.132
+        public Text m_accessCodeText;
+        
         // Use this for initialization
         IEnumerator Start()
         {
-            m_logFileWriter = new StreamWriter(m_logFileName, false);
-            m_logFileWriter.Write("[");
-
+            // Init player prefabs
             m_playerList = new List<GameObject>();
             for (int i = 0; i < Constants.MAX_PLAYERS; i++){ // Instantiate all players
                 GameObject playerObj = (GameObject)Instantiate(Resources.Load("Character"));
                 playerObj.SetActive(false);
                 m_playerList.Add(playerObj);
             }
-            m_socket = new WebSocket(new Uri("ws://206.189.78.132:80/room/aa55335a"));
+
+            string roomId = SharedData.RoomID;
+            Debug.Log("Connecting to room: " + roomId);
+            m_socket = new WebSocket(new Uri(m_wsUrlBase + roomId));
+            //m_socket.AddMessageListener(HandleMessage); // FIXME : This is used to fix the desync issues, but cannot be added due to threading in Unity
+
+            InitializeScene(roomId);
 
             yield return StartCoroutine(m_socket.Connect());
-            string connectStr = "{\"method\" : [], \"data\" : {}}";
-            m_socket.SendString(connectStr);
 
-            StartCoroutine(StartListener());
+            StartCoroutine(SendJoinRequest());
+            StartCoroutine(StartListener()); // Comment this out when testing desync issues
             StartCoroutine(StartServerUpdator());
         }
+
+        IEnumerator SendJoinRequest()
+        {
+            var dataJSON = JSON.Parse("{}");
+            dataJSON["username"] = SharedData.Username;
+            string payloadJSON = "{ \"method\" : [\"join\"], \"data\" : {\"username\" : \"" + SharedData.Username + "\"}}";
+            Debug.Log(payloadJSON);
+            m_socket.SendString(payloadJSON);
+            yield return 0;
+        }
+
 
         IEnumerator StartListener()
         {
@@ -52,83 +65,81 @@ namespace Rebound
                 string reply = m_socket.RecvString();
                 if (reply != null)
                 {
-                    var replyJSON = JSON.Parse(reply);
-                    string method = replyJSON["method"];
-                    /*if(method == null){
-                        var playerStates = replyJSON.AsArray;
-                        for (int i = 0; i < playerStates.Count; i++)
-                        {
-                            var playerStateJSON = playerStates[i];
-                            if ((playerStateJSON == null) || (i == m_curPlayerSlot))
-                                continue;
-                            GameObject player = m_playerList[i];
-                            BroadcastPayload data = new BroadcastPayload
-                            {
-                                position = new Vector2(playerStateJSON["position"]["x"].AsFloat, playerStateJSON["position"]["y"].AsFloat),
-                                velocity = new Vector2(playerStateJSON["velocity"]["x"].AsFloat, playerStateJSON["velocity"]["y"].AsFloat),
-                                state = (Player.State)playerStateJSON["state"].AsInt,
-                                action = playerStateJSON["action"]
-                            }; 
-                            player.GetComponent<WebController>().UpdateTransform(data);
-                        }
-                    }*/
-                    if (method == "joininfo")
-                    {
-                        m_curPlayerSlot = replyJSON["slot"].AsInt;
-                        m_curPlayer = InstantiatePlayer(m_curPlayerSlot, Constants.PLAYER_TAG);
-                        var registeredPlayerSlots = replyJSON["players"].AsArray;
-                        for (int i = 0; i < registeredPlayerSlots.Count; i++)
-                        {
-                            int index = registeredPlayerSlots[i];
-                            GameObject selectedPlayer = m_playerList[index];
-                            if (selectedPlayer.activeSelf == false)
-                            {
-                                Debug.Log("Instantiating enemy in slot: " + index.ToString());
-                                InstantiatePlayer(index, Constants.ENEMY_TAG);
-                            }
-                        }
-                    }
-                    if (method == "newuser"){
-                        int playerSlot = replyJSON["slot"].AsInt;
-                        Debug.Log("Got newuser in " + playerSlot.ToString());
-                        InstantiatePlayer(playerSlot, Constants.ENEMY_TAG);
-                    }
-                    if (method == "action" && (replyJSON["slot"].AsInt != m_curPlayerSlot))
-                    {
-                        int playerSlot = replyJSON["slot"].AsInt;
-                        BroadcastPayload data = new BroadcastPayload
-                        {
-                            position = new Vector2(replyJSON["data"]["position"]["x"].AsFloat, replyJSON["data"]["position"]["y"].AsFloat),
-                            velocity = new Vector2(replyJSON["data"]["velocity"]["x"].AsFloat, replyJSON["data"]["velocity"]["y"].AsFloat),
-                            state = (Player.State)replyJSON["data"]["state"].AsInt,
-                            action = replyJSON["data"]["action"]
-                        };
-                        GameObject player = m_playerList[playerSlot];
-                        if (player.activeSelf == false)
-                        {
-                            player = InstantiatePlayer(playerSlot, Constants.ENEMY_TAG);
-                        }
-                        if (data.action == "null"){
-                            player.GetComponent<WebController>().UpdateTransform(data);
-                        }
-                        else{
-                            player.GetComponent<WebController>().Act(data);
-                        }
-                    }
-                    if(method == "deaduser"){
-                        Debug.Log("Got deaduser request");
-                        int playerSlot = replyJSON["deaduser"].AsInt;
-                        GameObject deadPlayer = m_playerList[playerSlot];
-                        Destroy(deadPlayer);
-                        m_playerList[playerSlot] = (GameObject)Instantiate(Resources.Load("Character"));
-                        m_playerList[playerSlot].SetActive(false);
-                    }
+                    HandleMessage(reply);
                 }
                 if (m_socket.error != null)
                 {
                     Debug.LogError(m_socket.error);
                 }
                 yield return 0;
+            }
+        }
+
+        private void HandleMessage(string _msg){
+            Debug.Log("GOT MESSAGE");
+            Debug.Log(_msg);
+            var replyJSON = JSON.Parse(_msg);
+            string method = replyJSON["method"];
+
+            if (method == "joininfo")
+            {
+                m_curPlayerSlot = replyJSON["slot"].AsInt;
+                m_curPlayer = InstantiatePlayer(m_curPlayerSlot, Constants.PLAYER_TAG, SharedData.Username);
+                var registeredPlayerSlots = replyJSON["players"].AsArray;
+                for (int i = 0; i < registeredPlayerSlots.Count; i++)
+                {
+                    var infoTuple = registeredPlayerSlots[i].AsArray;
+                    int index = (int)infoTuple[0];
+                    string playerUsername = (string)infoTuple[1];
+                    GameObject selectedPlayer = m_playerList[index];
+                    if (selectedPlayer.activeSelf == false)
+                    {
+                        Debug.Log("Instantiating enemy in slot: " + playerUsername);
+                        InstantiatePlayer(index, Constants.ENEMY_TAG, playerUsername); // TODO : Switch to username once implemented
+                    }
+                }
+            }
+            if (method == "newuser")
+            {
+                int playerSlot = replyJSON["slot"].AsInt;
+                Debug.Log("Got newuser in " + playerSlot.ToString());
+                InstantiatePlayer(playerSlot, Constants.ENEMY_TAG , playerSlot.ToString()); // TODO : Switch to username once implemented
+            }
+            if (method == "action" && (replyJSON["slot"].AsInt != m_curPlayerSlot))
+            {
+                int playerSlot = replyJSON["slot"].AsInt;
+                BroadcastPayload data = new BroadcastPayload
+                {
+                    position = new Vector2(replyJSON["data"]["position"]["x"].AsFloat, replyJSON["data"]["position"]["y"].AsFloat),
+                    velocity = new Vector2(replyJSON["data"]["velocity"]["x"].AsFloat, replyJSON["data"]["velocity"]["y"].AsFloat),
+                    state = (Player.State)replyJSON["data"]["state"].AsInt,
+                    action = replyJSON["data"]["action"]
+                };
+                GameObject player = m_playerList[playerSlot];
+                if (player.activeSelf == false)
+                {
+                    player = InstantiatePlayer(playerSlot, Constants.ENEMY_TAG, playerSlot.ToString());// TODO : Switch to username once implemented
+                }
+                if (data.action == "null")
+                {
+                    player.GetComponent<WebController>().UpdateTransform(data);
+                }
+                else if(data.action == "player_death"){
+                    player.GetComponent<WebController>().KillPlayer();
+                }
+                else
+                {
+                    player.GetComponent<WebController>().Act(data);
+                }
+            }
+            if (method == "deaduser")
+            {
+                Debug.Log("Got deaduser request");
+                int playerSlot = replyJSON["deaduser"].AsInt;
+                GameObject deadPlayer = m_playerList[playerSlot];
+                Destroy(deadPlayer);
+                m_playerList[playerSlot] = (GameObject)Instantiate(Resources.Load("Character"));
+                m_playerList[playerSlot].SetActive(false);
             }
         }
 
@@ -158,8 +169,10 @@ namespace Rebound
         }
 
         public IEnumerator KillUserPlayer(){
-            //m_playerList[m_curPlayerSlot].SetActive(false); // TODO - Despawn the user object if required, just deactivates it for now
+            m_playerList[m_curPlayerSlot].SetActive(false); // TODO - Despawn the user object if required, just deactivates it for now
+            m_infoPanel.KillUser(m_curPlayerSlot);
             Instantiate(Resources.Load("GameOverText"));
+            StartCoroutine(BroadcastAction("player_death"));
             yield return 0;
         }
 
@@ -167,26 +180,22 @@ namespace Rebound
         {
             BroadcastPayload payloadData = m_curPlayer.GetComponent<Player>().GetInfo();
             payloadData.action = actionID;
-            //Debug.Log("Sending Action : " + actionID);
             string logJSON = "{ \n\"data\" : " + JsonUtility.ToJson(payloadData) + ", \n\"timestamp\" : " + Time.time.ToString() + "\n},";
             string payloadJSON = "{ \"method\" : [\"action\"], \"data\" : " + JsonUtility.ToJson(payloadData) + "}";
-            m_logFileWriter.WriteLine(logJSON);
             m_socket.SendString(payloadJSON);
             yield return 0;
         }
 
         public void OnDestroy(){
-            m_logFileWriter.Write("]");
-            m_logFileWriter.Close();
             StopCoroutine(StartListener());
             StopCoroutine(StartServerUpdator());
             m_socket.Close();
         }
 
-        private GameObject InstantiatePlayer(int playerSlot, string playerTag){
-            GameObject player = m_playerList[playerSlot];
+        private GameObject InstantiatePlayer(int _playerSlot, string _playerTag, string _username){
+            GameObject player = m_playerList[_playerSlot];
             bool userControllable = false;
-            if (playerTag == Constants.PLAYER_TAG)
+            if (_playerTag == Constants.PLAYER_TAG)
             {
                 Debug.Log("Instantiating main player");
                 player.AddComponent<PlayerController>();
@@ -195,22 +204,39 @@ namespace Rebound
             else{
                 player.AddComponent<WebController>();
             }
-            player.transform.position = Constants.SPAWN_POINTS[playerSlot];
-            player.name = playerSlot.ToString();
-            player.tag = playerTag;
-            player.GetComponent<Player>().m_webAPI = gameObject.GetComponent<WebsocketBase>();
+            player.transform.position = Constants.SPAWN_POINTS[_playerSlot];
+            player.name = _playerSlot.ToString();
+            player.tag = _playerTag;
+            
 
-            string spriteBase = Constants.PLAYER_NAMES[playerSlot % Constants.PLAYER_NAMES.Length];
-            //string spriteBase = "Blob";
+            string spriteBase = Constants.PLAYER_NAMES[_playerSlot % Constants.PLAYER_NAMES.Length];
             string spriteName = spriteBase;
             string animatorName = spriteBase + "_Animation_Controller";
             var sprite = Resources.Load<Sprite>(spriteName);
             player.GetComponent<SpriteRenderer>().sprite = sprite;
             player.GetComponent<Animator>().runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(animatorName);
 
-            player.GetComponent<Player>().InitializePlayer(Constants.PLAYER_NAMES[playerSlot % Constants.PLAYER_NAMES.Length], userControllable);
+            PlayerInfo curPlayerInfo;
+            if(_playerTag == Constants.PLAYER_TAG)
+            {
+                curPlayerInfo = m_infoPanel.InitializePlayerInfo(_playerSlot, _username, spriteBase);
+            }
+            else
+            {
+                curPlayerInfo = m_infoPanel.InitializeOpponentInfo(_playerSlot, _username, spriteBase);
+            }
+
+            player.GetComponent<Player>().InitializePlayer(spriteBase, userControllable, gameObject.GetComponent<WebsocketBase>(), curPlayerInfo);
             player.SetActive(true);
+
             return player;
+        }
+
+        private void InitializeScene(string _accessCode){
+            m_accessCodeText.text = "Access Code: " + _accessCode;
+
+            GameObject InfoPanel = (GameObject)Instantiate(Resources.Load("PlayerInfoPanel"));
+            m_infoPanel = InfoPanel.GetComponent<PlayerInfoPanel>();
         }
     }
 }
