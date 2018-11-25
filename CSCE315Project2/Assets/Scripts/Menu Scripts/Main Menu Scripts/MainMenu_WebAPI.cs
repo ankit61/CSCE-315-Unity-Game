@@ -10,8 +10,8 @@ namespace Rebound
 {
     public class MainMenu_WebAPI : MonoBehaviour
     {
-        private string m_roomReqUrl = "http://" + Constants.SERVER_IP + "/requestroom";
-        private string m_roomCheckUrl = "http://" + Constants.SERVER_IP + "/checkroom";
+        private string m_roomReqUrl = "http://" + Constants.SERVER_IP + Constants.ROOM_REQUEST_ENDPONT;
+        private string m_roomCheckUrl = "http://" + Constants.SERVER_IP + Constants.ROOM_CHECK_ENDPONT;
 
         public Text m_createErrorMessage;
         public Text m_joinErrorMessage;
@@ -52,8 +52,31 @@ namespace Rebound
             }
 
             bool roomAuthResult = AuthenticateRoomID(_roomID);
+            bool roomCheckResult = false;
 
-            if (roomAuthResult)
+            string postData = "{\"room\" : \"" + _roomID + "\"}";
+            WWW roomCheckReq = WebHelper.CreatePostJsonRequest_WWW(m_roomCheckUrl, postData);
+            yield return roomCheckReq;
+
+            if (roomCheckReq.error != null)
+            {
+                Debug.Log(roomCheckReq.error);
+                roomCheckResult = false;
+            }
+            else
+            {
+                Debug.Log("Authenticate room response: " + roomCheckReq.text);
+                var roomCheckResponseJSON = JSON.Parse(roomCheckReq.text);
+                bool roomExists = roomCheckResponseJSON["exists"].AsBool;
+
+                if (roomExists)
+                    roomCheckResult = true;
+                else
+                    roomCheckResult = false;
+            }
+
+
+            if (roomAuthResult && roomCheckResult)
             {
                 SceneTransitionManager.LoadScene(_mapSceneName);
             }
@@ -79,31 +102,14 @@ namespace Rebound
             {
                 return false;
             }
-            
-            string postData = "{\"room\" : \"" + _roomID + "\"}";
-            WWW roomCheckReq = WebHelper.CreatePostJsonRequest_WWW(m_roomCheckUrl, postData);
-            while (!roomCheckReq.isDone)
+
+            if(_roomID == SharedData.PreviousRoomID) // Let the user in if it is the previous room they were in. Workaround for having lobbies
             {
-                // Wait for request to finish
+                Debug.Log("Room ID was of the previous room, letting user in...");
+                return true;
             }
 
-            if (roomCheckReq.error != null)
-            {
-                Debug.Log(roomCheckReq.error);
-                return false;
-            }
-            else
-            {
-                Debug.Log("Authenticate room response: " + roomCheckReq.text);
-                var roomCheckResponseJSON = JSON.Parse(roomCheckReq.text);
-                bool roomExists = roomCheckResponseJSON["exists"].AsBool;
-
-                if (roomExists)
-                    return true;
-                else
-                    return false;
-            }
-            
+            return true;
         }
     }
 }

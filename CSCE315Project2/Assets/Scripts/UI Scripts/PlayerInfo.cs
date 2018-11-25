@@ -48,6 +48,17 @@ namespace Rebound {
             m_img.gameObject.SetActive(true);
         }
 
+        public void DisableInfo()
+        {
+            m_cross.gameObject.SetActive(false);
+            m_username.gameObject.SetActive(false);
+            m_img.gameObject.SetActive(false);
+            for (int i = 0; i < m_kicks.Count; i++)
+                m_kicks[i].gameObject.SetActive(false);
+            for (int i = 0; i < m_missiles.Count; i++)
+                m_missiles[i].gameObject.SetActive(false);
+        }
+
         public void Die() {
 			m_cross.gameObject.SetActive(true);
 		}
