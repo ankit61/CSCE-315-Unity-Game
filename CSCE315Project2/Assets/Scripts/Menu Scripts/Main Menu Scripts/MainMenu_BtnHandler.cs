@@ -8,7 +8,7 @@ namespace Rebound
 {   
     public class MainMenu_BtnHandler : MonoBehaviour {
 
-    	public Button m_createGameBtn, m_joinGameBtn, m_logoutBtn;
+    	public Button m_createGameBtn, m_joinGameBtn, m_logoutBtn, m_controlsMenuBtn;
         public InputField m_accessCodeFld;
         private MainMenu_WebAPI m_webAPI;
 
@@ -18,6 +18,7 @@ namespace Rebound
             m_createGameBtn.onClick.AddListener(CreateBtnClicked);
             m_joinGameBtn.onClick.AddListener(JoinGameBtnClicked);
             m_logoutBtn.onClick.AddListener(LogoutBtnClicked);
+            m_controlsMenuBtn.onClick.AddListener(ControlsMenuBtnClicked);
 
             // Variable initialization
             m_webAPI = gameObject.GetComponent<MainMenu_WebAPI>();
@@ -41,6 +42,11 @@ namespace Rebound
         void CreateBtnClicked()
         {
             StartCoroutine(m_webAPI.GetNewRoom());
+        }
+
+        void ControlsMenuBtnClicked()
+        {
+            SceneTransitionManager.LoadScene(Constants.CONTROLS_SCENE_NAME);
         }
 
         void JoinGameBtnClicked()

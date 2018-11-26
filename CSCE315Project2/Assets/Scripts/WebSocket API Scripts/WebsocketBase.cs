@@ -96,7 +96,7 @@ namespace Rebound
                     if (selectedPlayer.activeSelf == false)
                     {
                         Debug.Log("Instantiating enemy in slot: " + playerUsername);
-                        InstantiatePlayer(index, Constants.ENEMY_TAG, playerUsername); // TODO : Switch to username once implemented
+                        InstantiatePlayer(index, Constants.ENEMY_TAG, playerUsername);
                     }
                 }
             }
@@ -107,7 +107,7 @@ namespace Rebound
                 if (playerUsername == "")
                     playerUsername = playerSlot.ToString();
                 Debug.Log("Got newuser in " + playerSlot.ToString() + "with username: " + playerUsername);
-                InstantiatePlayer(playerSlot, Constants.ENEMY_TAG , playerUsername); // TODO : Switch to username once implemented
+                InstantiatePlayer(playerSlot, Constants.ENEMY_TAG , playerUsername); 
             }
             if (method == "action" && (replyJSON["slot"].AsInt != m_curPlayerSlot))
             {
@@ -120,16 +120,14 @@ namespace Rebound
                     action = replyJSON["data"]["action"]
                 };
                 GameObject player = m_playerList[playerSlot];
-                if (player.activeSelf == false)
-                {
-                    player = InstantiatePlayer(playerSlot, Constants.ENEMY_TAG, playerSlot.ToString());// TODO : Switch to username once implemented
-                }
                 if (data.action == "null")
                 {
                     player.GetComponent<WebController>().UpdateTransform(data);
                 }
                 else if(data.action == "player_death"){
+                    Debug.Log("Killing player: " + playerSlot);
                     player.GetComponent<WebController>().KillPlayer();
+                    m_infoPanel.KillUser(playerSlot);
                 }
                 else
                 {
@@ -139,7 +137,9 @@ namespace Rebound
             if (method == "deaduser")
             {
                 Debug.Log("Got deaduser request");
-                int playerSlot = replyJSON["deaduser"].AsInt;
+                var info = replyJSON["deaduser"].AsArray;
+                int playerSlot = (int)info[0];
+                string playerUsername = (string)info[1];
                 GameObject deadPlayer = m_playerList[playerSlot];
                 Destroy(deadPlayer);
                 m_playerList[playerSlot] = (GameObject)Instantiate(Resources.Load("Character"));
@@ -174,6 +174,7 @@ namespace Rebound
         }
 
         public IEnumerator KillUserPlayer(string _lastHitByPlayer){
+            Debug.Log("Killing user player");
             m_playerList[m_curPlayerSlot].SetActive(false); // TODO - Despawn the user object if required, just deactivates it for now
             m_infoPanel.KillUser(m_curPlayerSlot);
             Instantiate(Resources.Load("GameOverText"));
