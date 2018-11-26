@@ -36,7 +36,6 @@ namespace Rebound
 
         public void KillPlayer(){
             m_player.Die();
-            Debug.Log("Killing Player");
             m_player.gameObject.SetActive(false);
             m_playerAlive = false;
         }

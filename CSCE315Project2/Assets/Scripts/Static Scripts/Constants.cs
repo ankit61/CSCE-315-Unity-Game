@@ -66,7 +66,7 @@ namespace Rebound {
 
 
         //server-client communication
-        public static readonly int UPDATE_FREQUENCY = 3;
+        public static readonly int UPDATE_FREQUENCY = 4;
 
         public static readonly List<Vector2> SPAWN_POINTS =
             new List<Vector2>(new[]
