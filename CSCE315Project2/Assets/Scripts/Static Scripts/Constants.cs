@@ -93,6 +93,7 @@ namespace Rebound {
         //Scene Names
         public static readonly string LOGIN_MENU_SCENE_NAME = "Login_Menu";
         public static readonly string MAIN_MENU_SCENE_NAME = "Main_Menu";
+        public static readonly string CONTROLS_SCENE_NAME = "Control_Screen";
         public static readonly string MAP_1_SCENE_NAME = "Map1";
 
         //Room IDs

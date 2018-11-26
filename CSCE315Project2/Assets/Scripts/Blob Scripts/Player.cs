@@ -89,8 +89,7 @@ namespace Rebound
             
             m_isUserControllable = _isUserControllable;
             m_webAPI = _webAPI;
-            if(m_isUserControllable)
-                m_playerInfo = _playerInfo;
+            m_playerInfo = _playerInfo;
             
             bool isFound = false;
             gameObject.AddComponent<PolygonCollider2D>();
@@ -335,8 +334,7 @@ namespace Rebound
             if(m_availableMoves.ContainsKey(_state)) {
                 m_availableMoves[_state]--;
                 StartCoroutine(IncrementAvailableMoves(_state));
-                if(m_isUserControllable)
-                    StartCoroutine(m_playerInfo.UpdateAction(_state, m_availableMoves[_state]));
+                StartCoroutine(m_playerInfo.UpdateAction(_state, m_availableMoves[_state]));
             }
             Draw();
             
@@ -419,7 +417,8 @@ namespace Rebound
         }
 
         public void Die() {
-            StartCoroutine(m_webAPI.KillUserPlayer(m_previouslyHitBy));
+            if (m_isUserControllable)
+                StartCoroutine(m_webAPI.KillUserPlayer(m_previouslyHitBy));
         }
 
     }

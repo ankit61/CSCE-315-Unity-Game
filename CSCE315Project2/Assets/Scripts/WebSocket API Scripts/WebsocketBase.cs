@@ -129,7 +129,9 @@ namespace Rebound
                     player.GetComponent<WebController>().UpdateTransform(data);
                 }
                 else if(data.action == "player_death"){
+                    Debug.Log("Killing player: " + playerSlot);
                     player.GetComponent<WebController>().KillPlayer();
+                    m_infoPanel.KillUser(playerSlot);
                 }
                 else
                 {
@@ -174,6 +176,7 @@ namespace Rebound
         }
 
         public IEnumerator KillUserPlayer(string _lastHitByPlayer){
+            Debug.Log("Killing user player");
             m_playerList[m_curPlayerSlot].SetActive(false); // TODO - Despawn the user object if required, just deactivates it for now
             m_infoPanel.KillUser(m_curPlayerSlot);
             Instantiate(Resources.Load("GameOverText"));
