@@ -120,10 +120,6 @@ namespace Rebound
                     action = replyJSON["data"]["action"]
                 };
                 GameObject player = m_playerList[playerSlot];
-                if (player.activeSelf == false)
-                {
-                    player = InstantiatePlayer(playerSlot, Constants.ENEMY_TAG, playerSlot.ToString());
-                }
                 if (data.action == "null")
                 {
                     player.GetComponent<WebController>().UpdateTransform(data);
