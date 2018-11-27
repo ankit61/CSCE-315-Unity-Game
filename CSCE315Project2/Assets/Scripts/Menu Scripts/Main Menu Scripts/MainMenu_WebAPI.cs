@@ -44,8 +44,8 @@ namespace Rebound
         public IEnumerator JoinGame(string _roomID, string _mapSceneName, bool verifyRoom = true)
         {
             SharedData.RoomID = _roomID;
-
-            if ((_roomID == "00000000") || (!verifyRoom))
+            
+            if ((_roomID == "00000000") || (!verifyRoom) || (_roomID == SharedData.PreviousRoomID))
             {
                 SceneTransitionManager.LoadScene(_mapSceneName);
                 yield break;
@@ -101,12 +101,6 @@ namespace Rebound
             if (_roomID.Length != 8)
             {
                 return false;
-            }
-
-            if(_roomID == SharedData.PreviousRoomID) // Let the user in if it is the previous room they were in. Workaround for having lobbies
-            {
-                Debug.Log("Room ID was of the previous room, letting user in...");
-                return true;
             }
 
             return true;
