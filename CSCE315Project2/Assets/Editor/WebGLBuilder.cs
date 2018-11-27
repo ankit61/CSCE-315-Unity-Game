@@ -15,8 +15,9 @@ public class WebGLBuilder : MonoBehaviour {
 		{ 
 			"Assets/Scenes/Login_Menu.unity",
 			"Assets/Scenes/Main_Menu.unity",
-			"Assets/Scenes/Map1.unity"
-		};
+			"Assets/Scenes/Map1.unity",
+            "Assets/Scenes/Control_Screen.unity"
+        };
 
         buildPlayerOptions.locationPathName = "build";
         buildPlayerOptions.target = BuildTarget.WebGL;
