@@ -87,6 +87,16 @@ statususer_sql = [
     "EXECUTE `status_stmt` USING @name;"
 ]
 
+leaderboard_sql = [
+    """PREPARE `top_stmt` FROM
+            'SELECT *
+            FROM `rebounddb`.`users`
+            ORDER BY score DESC
+            LIMIT 20;';
+    """,
+    "EXECUTE `top_stmt`;"
+]
+
 
 def sendquery(cursor, subs, query):
     return list(map(lambda val: cursor.execute( val.format(**subs)), query))
@@ -122,7 +132,10 @@ def statususer(name):
     with conn("maria", 3306, "bot", "csce315kerne") as cursor:
         sendquery(cursor, {"name":name}, statususer_sql)
         score = cursor.fetchone()
-        if score:
-            return {"exists": True, "room": score[1], "socket_hash": score[2]}
-        else:
-            return {"exists": False}
+    return score
+
+def getleader():
+    with conn("maria", 3306, "bot", "csce315kerne") as cursor:
+        sendquery(cursor, {}, leaderboard_sql)
+        score = cursor.fetchall()
+    return score

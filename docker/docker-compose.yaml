@@ -11,8 +11,8 @@ volumes:
 services:
   maria:
     image: mariadb:10.4 
-    #ports:
-      #- 3306:3306 # !!!!!!!!!!!!!!!!! Do not expose this in production (i.e. dont change this unless testing db) !!!!!!!!!!!!!!!!!!!!!!
+    ports:
+      - 3306:3306 # !!!!!!!!!!!!!!!!! Do not expose this in production (i.e. dont change this unless testing db) !!!!!!!!!!!!!!!!!!!!!!
     env_file:
       - ./maria/default.env
     networks:
