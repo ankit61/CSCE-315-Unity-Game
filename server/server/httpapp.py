@@ -5,7 +5,7 @@ import json
 import random
 import sys
 from roomio.structures import Server
-from sqlfunctions import upsertuser, getscore, incrementscore, statususer
+from sqlfunctions import upsertuser, getscore, incrementscore, statususer, getleader
 
 class getroom_HTTPHandler(http.server.BaseHTTPRequestHandler):
     def generateRoom(self):
@@ -100,17 +100,37 @@ class statususer_HTTPHandler(http.server.BaseHTTPRequestHandler):
         message = ''
         try:
             post_json = json.loads(self.rfile.read(content_len))
-            message = statususer(post_json["username"])
-            message = json.dumps(message)
+            score = statususer(post_json["username"])
+            if score:
+                message = {"exists": True, "room": score[1], "socket_hash": score[2]}
+            else:
+                message = {"exists": False}
+            response = json.dumps(message)
             self.send_response(200)
             self.send_header('Content-type','application/json')
-            self.send_header('Content-length', len(message))
+            self.send_header('Content-length', len(response))
         except Exception as e:
             print(e, file=sys.stderr)       
             self.send_response(400)
         finally:
             self.end_headers()
-            self.wfile.write(bytes(message, "utf8"))     
+            self.wfile.write(bytes(response, "utf8"))     
+
+class leaderboard_HTTPHandler(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        try:
+            top = getleader()
+            response = json.dumps({"leaders":top})
+            self.send_response(200)
+            self.send_header('Content-type','application/json')
+            self.send_header('Content-length', len(response))
+        except Exception as e:
+            print(e, file=sys.stderr)       
+            self.send_response(400)
+        finally:
+            self.end_headers()
+            self.wfile.write(bytes(response, "utf8"))
+
 
 def start(host, port, handler):
     with socketserver.TCPServer((host, port), handler) as httpd:  
