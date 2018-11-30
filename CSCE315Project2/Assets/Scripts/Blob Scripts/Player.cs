@@ -52,6 +52,8 @@ namespace Rebound
 
         private WebsocketBase m_webAPI;
 
+        private AudioClip m_bounceAudio;
+
         private Dictionary<Player.State, int > m_availableMoves = new Dictionary<Player.State, int>() {
                                                                     { Player.State.KICKING, Constants.NUM_AVAILABLE_ACTIONS[Player.State.KICKING] } ,
                                                                     { Player.State.MISSILE, Constants.NUM_AVAILABLE_ACTIONS[Player.State.MISSILE] }
@@ -144,6 +146,8 @@ namespace Rebound
             {
                 State.IDLE
             };
+
+            m_bounceAudio = (AudioClip)Resources.Load(Constants.BOUNCE_SOUND);
         }
 
         public void Move(Direction _direction)
@@ -391,6 +395,10 @@ namespace Rebound
             if ((_col.collider.CompareTag(Constants.ENEMY_TAG) || _col.collider.CompareTag(Constants.PLAYER_TAG)) && m_isAttacking) {
                 _col.collider.SendMessageUpwards("Hit", new ColInfo(gameObject.GetComponent<Rigidbody2D>().velocity, m_currentState, _col.gameObject.GetComponent<Player>().m_username));
             }
+            else if (_col.collider.CompareTag(Constants.BOUNCE_TAG))
+            {
+                AudioPlayer.PlaySound(gameObject.GetComponent<AudioSource>(), m_bounceAudio);
+            }
         }
 
         public void Hit(ColInfo _colInfo)
@@ -418,7 +426,9 @@ namespace Rebound
 
         public void Die() {
             if (m_isUserControllable)
+            {
                 StartCoroutine(m_webAPI.KillUserPlayer(m_previouslyHitBy));
+            }
         }
 
     }

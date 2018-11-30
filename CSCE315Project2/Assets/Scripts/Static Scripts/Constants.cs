@@ -88,6 +88,7 @@ namespace Rebound {
         //tags & layers
         public static readonly string PLAYER_TAG = "Player";
         public static readonly string ENEMY_TAG = "Enemy";
+        public static readonly string BOUNCE_TAG = "Bouncy";
         public static readonly string MAP_LAYER = "Solid";
 
         //Scene Names
@@ -115,5 +116,16 @@ namespace Rebound {
         public static readonly string ROOM_REQUEST_ENDPONT = "/requestroom";
         public static readonly string ROOM_CHECK_ENDPONT = "/checkroom";
         public static readonly string INCREASE_SCORE_ENDPONT = "/incscore";
+        public static readonly string LEADERBOARD_ENDPONT = "/leaderboard";
+        
+        // Audio Sounds
+        public static readonly List<string> DEATH_AUDIO_CLIPS = new List<string>() { "dark_souls_death", "bloodborne_death", "frank_stop" };
+        public static readonly string BOUNCE_SOUND = "boing_sound";
+
+        // Dummy Leaderboard Data:
+        public static readonly List<string> LEADERBOARD_USERNAMES = new List<string>() { "Bjarne Stroustrup", "LavaBoi", "UKantBeatMe", "XXX_Ken_Thompson_XXX" };
+        public static readonly List<string> LEADERBOARD_SCORES = new List<string>() { "88", "42", "30", "15" };
+
+
     }
 }
