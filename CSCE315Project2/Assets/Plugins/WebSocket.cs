@@ -39,7 +39,6 @@ public class WebSocket
 
 		return returnList;
 	}
-
 #if UNITY_WEBGL && !UNITY_EDITOR
 	[DllImport("__Internal")]
 	private static extern int SocketCreate (string url);
@@ -69,14 +68,17 @@ public class WebSocket
 		SocketSend (m_NativeRef, buffer, buffer.Length);
 	}
 
-	public byte[] Recv()
+    public List<byte[]> Recv(int maxCount = 5)
 	{
+        List<byte[]> returnList = new List<byte[]>();
+		
 		int length = SocketRecvLength (m_NativeRef);
 		if (length == 0)
 			return null;
 		byte[] buffer = new byte[length];
 		SocketRecv (m_NativeRef, buffer, length);
-		return buffer;
+		returnList.Add(buffer);
+		return returnList;
 	}
 
 	public IEnumerator Connect()
@@ -106,7 +108,7 @@ public class WebSocket
 		}
 	}
 #else
-	WebSocketSharp.WebSocket m_Socket;
+    WebSocketSharp.WebSocket m_Socket;
 	Queue<byte[]> m_Messages = new Queue<byte[]>();
 	bool m_IsConnected = false;
 	string m_Error = null;

@@ -65,7 +65,7 @@ namespace Rebound
         {
             while (true)
             {
-                List<string> replies = m_socket.RecvString(5);
+                List<string> replies = m_socket.RecvString(1);
                 for (int i = 0; i < replies.Count; i++)
                 {
                     string reply = replies[i];
@@ -191,6 +191,10 @@ namespace Rebound
                 string postData = "{\"username\" : \"" + _lastHitByPlayer + "\"}";
                 WWW increaseScoreReq = WebHelper.CreatePostJsonRequest_WWW(m_incScoreUrl, postData);
                 yield return increaseScoreReq;
+                if (increaseScoreReq.error != null)//(loginUserReq.isNetworkError || loginUserReq.isHttpError)
+                {
+                    Debug.Log(increaseScoreReq.error);
+                }
             }
 
             yield return 0;
