@@ -29,7 +29,7 @@ namespace Rebound
             if (leaderboardReq.error != null)//(loginUserReq.isNetworkError || loginUserReq.isHttpError)
             {
                 Debug.Log(leaderboardReq.error);
-                PopulateLeaderboardWithConstants();
+                PopulateLeaderboard(Constants.LEADERBOARD_USERNAMES, Constants.LEADERBOARD_SCORES);
                 yield break;
             }
             else
@@ -39,24 +39,32 @@ namespace Rebound
                 var leaderboardList = leaderboardJSON["leaders"].AsArray;
                 if(leaderboardList.Count == 0)
                 {
-                    PopulateLeaderboardWithConstants();
+                    PopulateLeaderboard(Constants.LEADERBOARD_USERNAMES, Constants.LEADERBOARD_SCORES);
                 }
                 else
                 {
-                    PopulateLeaderboardWithConstants(); // TODO : Change this to support the response data
+                    List<string> usernameList = new List<string>();
+                    List<string> scoreList = new List<string>();
+                    int length = Mathf.Min(10, leaderboardList.Count);
+                    for (int i = 0; i < length; i++)
+                    {
+                        usernameList.Add(leaderboardList[i][0]);
+                        scoreList.Add(leaderboardList[i][1].ToString());
+                    }
+                    PopulateLeaderboard(usernameList, scoreList);
                 }
                 yield break;
             }
         }
 
-        public void PopulateLeaderboardWithConstants()
+        public void PopulateLeaderboard(List<string> usernameList, List<string> scoreList)
         {
             string usernames = "";
             string scores = "";
-            for (int i = 0; i < Constants.LEADERBOARD_USERNAMES.Count; i++)
+            for (int i = 0; i < usernameList.Count; i++)
             {
-                usernames += Constants.LEADERBOARD_USERNAMES[i] + "\n";
-                scores += Constants.LEADERBOARD_SCORES[i] + "\n";
+                usernames += usernameList[i] + "\n";
+                scores += scoreList[i] + "\n";
             }
             usernameText.text = usernames;
             scoreText.text = scores;
