@@ -191,6 +191,10 @@ namespace Rebound
                 string postData = "{\"username\" : \"" + _lastHitByPlayer + "\"}";
                 WWW increaseScoreReq = WebHelper.CreatePostJsonRequest_WWW(m_incScoreUrl, postData);
                 yield return increaseScoreReq;
+                if (increaseScoreReq.error != null)//(loginUserReq.isNetworkError || loginUserReq.isHttpError)
+                {
+                    Debug.Log(increaseScoreReq.error);
+                }
             }
 
             yield return 0;
