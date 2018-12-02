@@ -35,7 +35,8 @@ namespace Rebound
             else
             {
                 Debug.Log("Got respose for login: " + leaderboardReq.text);
-                var leaderboardList = SimpleJSON.JSON.Parse(leaderboardReq.text).AsArray;
+                var leaderboardJSON = SimpleJSON.JSON.Parse(leaderboardReq.text);
+                var leaderboardList = leaderboardJSON["leaders"].AsArray;
                 if(leaderboardList.Count == 0)
                 {
                     PopulateLeaderboardWithConstants();

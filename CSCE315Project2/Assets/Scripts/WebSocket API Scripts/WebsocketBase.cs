@@ -65,7 +65,7 @@ namespace Rebound
         {
             while (true)
             {
-                List<string> replies = m_socket.RecvString(5);
+                List<string> replies = m_socket.RecvString(1);
                 for (int i = 0; i < replies.Count; i++)
                 {
                     string reply = replies[i];

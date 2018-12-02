@@ -107,8 +107,8 @@ namespace Rebound {
         // Test Server IP : 206.189.214.224
         // Server IP : 206.189.78.132
         public static readonly string MAIN_SERVER_IP = "206.189.78.132:80";
-        public static readonly string TEST_SERVER_IP = "206.189.214.224:80";
-        public static readonly string SERVER_IP = MAIN_SERVER_IP; // Just change this when switching from one server to another
+        public static readonly string TEST_SERVER_IP = "138.68.229.33:80";
+        public static readonly string SERVER_IP = TEST_SERVER_IP; // Just change this when switching from one server to another
 
         // Endpoints
         public static readonly string ADD_USER_ENDPONT = "/adduser";
