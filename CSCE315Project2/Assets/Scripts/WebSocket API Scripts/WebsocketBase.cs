@@ -65,14 +65,18 @@ namespace Rebound
         {
             while (true)
             {
-                string reply = m_socket.RecvString();
-                if (reply != null)
+                List<string> replies = m_socket.RecvString(5);
+                for (int i = 0; i < replies.Count; i++)
                 {
-                    HandleMessage(reply);
-                }
-                if (m_socket.error != null)
-                {
-                    Debug.LogError(m_socket.error);
+                    string reply = replies[i];
+                    if (reply != null)
+                    {
+                        HandleMessage(reply);
+                    }
+                    if (m_socket.error != null)
+                    {
+                        Debug.LogError(m_socket.error);
+                    }
                 }
                 yield return 0;
             }
@@ -173,7 +177,9 @@ namespace Rebound
             yield return 0;
         }
 
-        public IEnumerator KillUserPlayer(string _lastHitByPlayer){
+        public IEnumerator KillUserPlayer(string _lastHitByPlayer)
+        {
+            AudioPlayer.PlayRandomDeathSound(gameObject.GetComponent<AudioSource>());
             Debug.Log("Killing user player");
             m_playerList[m_curPlayerSlot].SetActive(false); // TODO - Despawn the user object if required, just deactivates it for now
             m_infoPanel.KillUser(m_curPlayerSlot);

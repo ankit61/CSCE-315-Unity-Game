@@ -27,12 +27,17 @@ public class WebSocket
 		Send(Encoding.UTF8.GetBytes (str));
 	}
 
-	public string RecvString()
+	public List<string> RecvString(int maxCount = 5)
 	{
-		byte[] retval = Recv();
-		if (retval == null)
-			return null;
-		return Encoding.UTF8.GetString (retval);
+		List<byte[]> retvalList = Recv(maxCount);
+        List<string> returnList = new List<string>();
+
+        for(int i = 0; i < retvalList.Count; i++)
+        {
+            returnList.Add(Encoding.UTF8.GetString(retvalList[i]));
+        }
+
+		return returnList;
 	}
 
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -109,7 +114,7 @@ public class WebSocket
 	public IEnumerator Connect()
     {
         m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
-        m_Socket.OnMessage += (sender, e) => m_Messages.Enqueue(e.RawData);
+        m_Socket.OnMessage += (sender, e) => BaseListener(e.RawData);
         m_Socket.OnOpen += (sender, e) => m_IsConnected = true;
         m_Socket.OnError += (sender, e) => m_Error = e.Message;
 
@@ -117,6 +122,14 @@ public class WebSocket
 		while (!m_IsConnected && m_Error == null)
 			yield return 0;
 	}
+
+    public void BaseListener(byte[] _data)
+    {
+        if(Encoding.UTF8.GetString(_data) != null)
+        {
+            m_Messages.Enqueue(_data);
+        }
+    }
 
     public void AddMessageListener(Action<string> _listener){
         m_Socket.OnMessage += (sender, e) => _listener(Encoding.UTF8.GetString(e.RawData));
@@ -127,11 +140,18 @@ public class WebSocket
 		m_Socket.Send(buffer);
 	}
 
-	public byte[] Recv()
+	public List<byte[]> Recv(int maxCount = 5)
 	{
+        List<byte[]> returnList = new List<byte[]>();
 		if (m_Messages.Count == 0)
-			return null;
-		return m_Messages.Dequeue();
+			return returnList;
+        int numMessages = m_Messages.Count;
+        int maxMessages = Mathf.Min(numMessages, maxCount);
+        for (int i = 0; i < numMessages; i++)
+        {
+            returnList.Add(m_Messages.Dequeue());
+        }
+		return returnList;
 	}
 
 	public void Close()

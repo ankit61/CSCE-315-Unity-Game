@@ -163,7 +163,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: You Died....
+  m_Text: YOU DIED
 --- !u!114 &114486655707571876
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -202,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d43f972ffd164a44a5d795cd8d98dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_alphaIncrease: 0.01
+  m_alphaIncrease: 0.005
   m_exitBtn: {fileID: 114883358549068160}
 --- !u!114 &114883358549068160
 MonoBehaviour:
