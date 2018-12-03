@@ -46,6 +46,8 @@ namespace Rebound {
             m_username.text = _username;
             m_username.gameObject.SetActive(true);
             m_img.gameObject.SetActive(true);
+			foreach (KeyValuePair<Player.State, int> entry in Constants.NUM_AVAILABLE_ACTIONS)
+				MakeVisible(entry.Value, m_availableMoves[entry.Key]);
         }
 
         public void DisableInfo()
